@@ -1,7 +1,4 @@
 1. Cần thông báo lỗi phần  public static $loginFailed = "Your username or password was incorrect";
 ở file Constants chi tiết hơn ra là username sai, hay là password sai. Đoạn này liên kết với hàm login 
 trong Account.php và file login.php
-3. Thêm nền đằng sau cho trang login thay vì chỉ nền trắng
-4. Thay trang login bằng nền đen thay vì trắng như hiện tại
-5. Chỉnh lại sao cho khi nhập vào rồi vẫn biết mình đang nhập ở ô yêu cầu cái gì (không bị mất placeholder)
 6. Chia thành 2 cột ở trang sign up và log in để có thể đăng nhập bằng facebook, google
