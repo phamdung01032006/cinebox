@@ -2,3 +2,4 @@
 ở file Constants chi tiết hơn ra là username sai, hay là password sai. Đoạn này liên kết với hàm login 
 trong Account.php và file login.php
 6. Chia thành 2 cột ở trang sign up và log in để có thể đăng nhập bằng facebook, google
+7. Thêm nút cộng vào wishlist ở trang landing page.

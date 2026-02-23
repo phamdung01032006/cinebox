@@ -6,6 +6,7 @@ function volumeToggle(button) {
     
     $(button).find("i").toggleClass("fa-solid fa-volume-xmark");
     $(button).find("i").toggleClass("fa-solid fa-volume");
+    $(button).toggleClass("active");
 }
 
 function previewEnded() {
