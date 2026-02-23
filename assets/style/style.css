@@ -12,7 +12,9 @@ body {
 }
 
 .signInContainer {
-    background-color: #efefee;
+    background-image: url('../images/background_sign_up.jpg');
+    background-size: cover;
+    background-position: center;
     height: 100vh;
     display: flex;
     align-items: center;
