@@ -50,15 +50,17 @@ class CategoryContainers {
         }
 
         return "<div class='category'>
-                <a href='category.php?id=$categoryId'>
-                    <h3>$title</h3>
-                </a>
-                <div class='category-content'>
-                    <button class='scroll-arrow left'><i class='fa-solid fa-chevron-left'></i></button>
-                    <div class='entities'>
-                        $entitiesHtml
+                <div class='category-header'>
+                    <a href='category.php?id=$categoryId'>
+                        <h3>$title</h3>
+                    </a>
+                    <div class='category-arrows'>
+                        <button class='scroll-arrow left'><i class='fa-solid fa-chevron-left'></i></button>
+                        <button class='scroll-arrow right'><i class='fa-solid fa-chevron-right'></i></button>
                     </div>
-                    <button class='scroll-arrow right'><i class='fa-solid fa-chevron-right'></i></button>
+                </div>
+                <div class='entities'>
+                    $entitiesHtml
                 </div>
         </div>";
     }
