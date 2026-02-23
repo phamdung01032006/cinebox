@@ -13,3 +13,35 @@ function previewEnded() {
     $(".previewVideo").toggle();
     $(".previewImage").toggle();
 }
+
+// Scroll arrows for entities
+$(document).ready(function() {
+    // Kiểm tra overflow và hiển thị arrows
+    function checkScrollArrows(entities, category) {
+        var hasOverflow = entities[0].scrollWidth > entities.width();
+        if(hasOverflow) {
+            category.find('.scroll-arrow.left').addClass('show');
+            category.find('.scroll-arrow.right').addClass('show');
+        }
+    }
+    
+    // Setup scroll on click
+    $('.scroll-arrow').click(function() {
+        var category = $(this).closest('.category');
+        var entities = category.find('.entities');
+        var scrollAmount = 300;
+        
+        if($(this).hasClass('left')) {
+            entities.scrollLeft(entities.scrollLeft() - scrollAmount);
+        } else {
+            entities.scrollLeft(entities.scrollLeft() + scrollAmount);
+        }
+    });
+    
+    // Check overflow khi load
+    $('.entities').each(function() {
+        var entities = $(this);
+        var category = entities.closest('.category');
+        checkScrollArrows(entities, category);
+    });
+});
