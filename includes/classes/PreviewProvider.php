@@ -38,7 +38,7 @@ class PreviewProvider {
 
                     <div class='button'>
                     
-                        <button><i class='fa-solid fa-play'></i> Play</button>
+                        <button><i class='fa-solid fa-play'></i></button>
                         <button onclick='volumeToggle(this)'><i class='fa-solid fa-volume-xmark'></i></button>
 
                     </div>
@@ -62,7 +62,7 @@ class PreviewProvider {
         </a>";
     }
 
-    
+
     // chọn film ngẫu nhiên để chiếu preview
     private function getRandomEntity() {
 

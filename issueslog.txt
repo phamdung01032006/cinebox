@@ -3,3 +3,5 @@
 trong Account.php và file login.php
 6. Chia thành 2 cột ở trang sign up và log in để có thể đăng nhập bằng facebook, google
 7. Thêm nút cộng vào wishlist ở trang landing page.
+8. thêm nút phóng to, bấm vào có 1 cửa sổ hiện ra preview không bị nền đen vào landing page phần preview như netflix
+9. chuyển lại các cover phim ở category thành bo tròn và phóng to không bị cắt

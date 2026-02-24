@@ -16,12 +16,15 @@ function previewEnded() {
 
 // Scroll arrows for entities
 $(document).ready(function() {
-    // Kiểm tra overflow và hiển thị arrows
+    // Kiểm tra overflow và hiển thị/ẩn arrows
     function checkScrollArrows(entities, category) {
         var hasOverflow = entities[0].scrollWidth > entities.width();
+        var arrows = category.find('.scroll-arrow');
+        
         if(hasOverflow) {
-            category.find('.scroll-arrow.left').addClass('show');
-            category.find('.scroll-arrow.right').addClass('show');
+            arrows.addClass('show');
+        } else {
+            arrows.removeClass('show');
         }
     }
     
@@ -38,10 +41,21 @@ $(document).ready(function() {
         }
     });
     
-    // Check overflow khi load
-    $('.entities').each(function() {
-        var entities = $(this);
-        var category = entities.closest('.category');
-        checkScrollArrows(entities, category);
+    // Check overflow khi load (with delay to ensure images are loaded)
+    setTimeout(function() {
+        $('.entities').each(function() {
+            var entities = $(this);
+            var category = entities.closest('.category');
+            checkScrollArrows(entities, category);
+        });
+    }, 1000);
+    
+    // Check overflow khi window resize
+    $(window).resize(function() {
+        $('.entities').each(function() {
+            var entities = $(this);
+            var category = entities.closest('.category');
+            checkScrollArrows(entities, category);
+        });
     });
 });
