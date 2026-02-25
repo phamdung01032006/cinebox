@@ -7,8 +7,17 @@ body {
 
 * {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    color: #333;
+    /* đoạn color này đang gây lỗi cho phần plyr */
+    /* color: #333; */
     box-sizing: border-box;
+}
+
+:root {
+    --plyr-color-main: rgba(229, 9, 20, 0.5);
+    --plyr-control-bg: rgba(0, 0, 0, 0.5);
+    --plyr-menu-color: #fff;
+    --plyr-menu-radius: 24px;
+    --plyr-menu-background: rgba(255, 255, 255, 0.9);
 }
 
 h3 {
@@ -65,26 +74,6 @@ a {
     background: rgb(174, 174, 174);  /* Scrollbar mỏng */
     border-radius: 4px;
 }
-
-/* Scroll indicator - mũi tên chỉ có thể vuốt xuống */
-/* .column::after {
-    content: "...";
-    position: absolute;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #999;
-    font-size: 50px;
-    animation: scrollBounce 2s infinite;
-    z-index: 10;
-} */
-
-/* Animation nhảy của indicator */
-/* @keyframes scrollBounce {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(8px); }
-} */
-
 
 .column form {
     display: flex;
@@ -194,6 +183,7 @@ a {
     font-size: 14px;
     font-weight: bold;
     text-decoration: none;
+    color: rgb(71, 70, 70);
 }
 
 .signInMessage span {
@@ -335,7 +325,8 @@ button i {
     gap: 15px;
 }
 
-.entities {
+.entities,
+.videos {
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
@@ -422,4 +413,146 @@ button i {
     width: 80%;
     left: 50%;
     transform: translateX(-50%);
+}
+
+/* Video popup ở landing khi không có CSS Plyr */
+.videoPopup { 
+    position: fixed; 
+    inset: 0; 
+    z-index: 9999; 
+    display: none; 
+}
+
+.videoPopup.show { 
+    display: block; 
+}
+
+.videoPopupBackdrop { 
+    position: absolute; 
+    inset: 0; 
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    z-index: 1;
+}
+
+.videoPopupContent { 
+    position: relative; 
+    width: min(900px, 92vw); 
+    margin: 5vh auto; 
+    background: none; 
+    padding: 5px; 
+    z-index: 2; 
+}
+
+#videoPopupPlayer { 
+    width: 100%; 
+    max-height: 75vh;
+    overflow: hidden;
+    display: block;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Css cho phần style của Plyr */
+.videoPopupContent .plyr {
+    border-radius: 24px;
+    width: 100%; 
+    max-height: 75vh;
+    overflow: hidden;
+    display: block;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.videoPopupContent .plyr.plyr--menu-open {
+    overflow: visible; /* chỉ khi mở menu settings */
+}
+
+.videoPopupContent .plyr__video-wrapper {
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+/* .videoPopupClose { 
+    position: absolute; 
+    top: 10px; 
+    right: 10px;
+
+} */
+
+.videoPopupContent .plyr__control {
+    background: var(--plyr-control-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 100px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.videoPopupClose {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    border-radius: 100px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    z-index: 10;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    padding: 0;
+    line-height: 1; /* Loại bỏ không gian dư thừa trong button */
+    position: absolute; 
+    top: 10px; 
+    right: 10px;
+}
+
+/* Hiệu ứng hover - đổi màu sang đỏ Netflix và phóng to */
+.videoPopupClose:hover {
+    background: rgba(220, 19, 35, 0.5);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.1);
+}
+
+/* Hiệu ứng khi click - thu nhỏ nút */
+.videoPopupClose:active {
+    transform: scale(0.95);
+}
+
+.season {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 50px;
+}
+
+.episodeContainer {
+    display: inline-flex;
+    justify-content: center;
+    margin-right: 4px;
+}
+
+.episodeContainer .contents {
+    display: flex;
+    flex-direction: column;
+    width: 230px;
+}
+
+.episodeContainer img {
+    width: 230px;
+    height: 129px;
+    object-fit: cover;
+}
+
+.episodeContainer .videoInfo h4,
+.episodeContainer .videoInfo span {
+    color: #fff;
+    width:100%;
+    white-space: normal;
+}
+
+.episodeContainer .videoInfo {
+    max-height: 200px;
+    overflow-y: auto;
 }

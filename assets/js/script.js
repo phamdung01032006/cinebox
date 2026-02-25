@@ -1,7 +1,7 @@
 // làm cho nút volume nó muted khi bấm vào lúc không mute và mute khi đang không muted
 function volumeToggle(button) {
     var muted = $(".previewVideo").prop("muted");
-    // set the muted propeties to be not muted, and set the not muted to muted
+    // set the muted properties to be not muted, and set the not muted to muted
     $(".previewVideo").prop("muted", !muted);
     
     $(button).find("i").toggleClass("fa-solid fa-volume-xmark");
@@ -59,3 +59,59 @@ $(document).ready(function() {
         });
     });
 });
+
+// thêm tính năng expand video preview
+// function openVideoPopup(button) {
+//     var src = $(button).data("src");
+//     var title = $(button).data("title") || "";
+
+//     $("#videoPopupTitle").text(title);
+//     $("#videoPopupPlayer source").attr("src", src);
+
+//     var player = $("#videoPopupPlayer")[0];
+//     player.load();
+//     player.play();
+
+//     $("#videoPopup").addClass("show");
+// }
+
+// function closeVideoPopup() {
+//     var player = $("#videoPopupPlayer")[0];
+//     $("#videoPopupPlayer source").attr("src", "");
+//     player.load();
+
+//     $("#videoPopup").removeClass("show");
+// }
+
+let popupPlayer = null;
+
+$(document).ready(function () {
+    popupPlayer = new Plyr("#videoPopupPlayer", {
+        controls: [
+            "play-large", "play", "progress", "current-time", "duration",
+            "mute", "volume", "settings", "pip", "download", "fullscreen"
+        ],
+        ratio: "16:9"
+    });
+});
+
+function openVideoPopup(button) {
+    var src = $(button).data("src");
+    var title = $(button).data("title") || "";
+
+    $("#videoPopupTitle").text(title);
+
+    popupPlayer.source = {
+        type: "video",
+        sources: [{ src:src, type: "video/mp4" }]
+    };
+
+    $("#videoPopup").addClass("show");
+    popupPlayer.play();
+}
+
+function closeVideoPopup() {
+    popupPlayer.pause();
+    popupPlayer.stop();
+    $("#videoPopup").removeClass("show");
+}

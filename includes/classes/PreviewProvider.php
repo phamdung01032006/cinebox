@@ -23,6 +23,8 @@ class PreviewProvider {
         $preview = $entity->getPreview();
         $thumbnail = $entity->getThumbnail();
 
+        $safePreview = htmlspecialchars($preview, ENT_QUOTES, 'UTF-8');
+        $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
         return "<div class='previewContainer'>
             <img src='$thumbnail' class='previewImage' hidden>
 
@@ -40,7 +42,7 @@ class PreviewProvider {
                     
                         <button><i class='fa-solid fa-play'></i></button>
                         <button onclick='volumeToggle(this)'><i class='fa-solid fa-volume-xmark'></i></button>
-
+                        <button class='openPopupBtn' onclick='openVideoPopup(this)' data-src = '$safePreview' data-title='$safeName'><i class='fa-solid fa-expand'></i></button>
                     </div>
 
                 </div>

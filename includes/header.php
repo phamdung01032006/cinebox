@@ -24,9 +24,13 @@ $userLoggedIn = $_SESSION["userLoggedIn"];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CineBox</title>
+
+    <link rel="stylesheet" href="assets/style/plyr.css" />
     <link rel="stylesheet" type="text/css" href="assets/style/style.css"/>
+
     <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/eeaac7bcf0.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.min.js"></script>
     <script src="assets/js/script.js"></script>
 </head>
 <body>
