@@ -30,7 +30,7 @@ class CategoryContainers {
         $query->bindValue(":id",$categoryId);
         $query->execute();
 
-        $html = "<div class='previewCategories' noScroll>";
+        $html = "<div class='previewCategories noScroll'>";
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $html .= $this->getCategoryHtml($row, $title, true, true);

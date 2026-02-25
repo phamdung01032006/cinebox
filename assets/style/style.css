@@ -337,20 +337,23 @@ button i {
 /* Ẩn scrollbar default */
 .entities::-webkit-scrollbar,
 .videos::-webkit-scrollbar,
-.previewCategories.noScroll .category .videos::-webkit-scrollbar {
+.previewCategories.noScroll .category .videos::-webkit-scrollbar,
+.episodeContainer .videoInfo::-webkit-scrollbar {
     height: 0;
     display: none;
 }
 
 .entities::-webkit-scrollbar-track,
 .videos::-webkit-scrollbar-track,
-.previewCategories.noScroll .category .videos::-webkit-scrollbar-track {
+.previewCategories.noScroll .category .videos::-webkit-scrollbar-track,
+.episodeContainer .videoInfo::-webkit-scrollbar {
     background: transparent;
 }
 
 .entities::-webkit-scrollbar-thumb,
 .videos::-webkit-scrollbar-thumb,
-.previewCategories.noScroll .category .videos::-webkit-scrollbar-thumb {
+.previewCategories.noScroll .category .videos::-webkit-scrollbar-thumb,
+.episodeContainer .videoInfo::-webkit-scrollbar {
     background: transparent;
 }
 
@@ -564,3 +567,8 @@ button i {
     max-height: 200px;
     overflow-y: auto;
 }
+
+/* Phần này để cho phần you may also like có thể scroll theo trục y thay vì trục x như thông thường */
+/* .previewCategories.noScroll .category .entities {
+    white-space: normal;
+} */
