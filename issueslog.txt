@@ -1,3 +1,7 @@
+11 (ưu tiên). Tìm thấy lỗi: khi tua video quá nhanh, vượt ra ngoài phần đã được tải (buffer) thì nó sẽ tự động hiện ra 
+hộp thoại hỏi rằng có tải video xuống không, sau đó nếu có tắt hộp thoại đi, vào lại xem video một thời gian ngắn 
+vẫn cứ hiển thị hộp thoại tải video xuống.
+12. Cần có tính năng gửi mã code đến email để xác thực tài khoản như các dịch vụ khác vd Netflix, Discord,...
 1. Cần thông báo lỗi phần  public static $loginFailed = "Your username or password was incorrect";
 ở file Constants chi tiết hơn ra là username sai, hay là password sai. Đoạn này liên kết với hàm login 
 trong Account.php và file login.php
@@ -5,5 +9,5 @@ trong Account.php và file login.php
 7. Thêm nút cộng vào wishlist ở trang landing page.
 8. thêm nút phóng to, bấm vào có 1 cửa sổ hiện ra preview không bị nền đen vào landing page phần preview như netflix
 9. chuyển lại các cover phim ở category thành bo tròn và phóng to không bị cắt
-10 Chỉnh sửa lại các nút bấm trong popup play video preview ở index để cho nó đẹp hơn, các
+10. Chỉnh sửa lại các nút bấm trong popup play video preview ở index để cho nó đẹp hơn, các
 nút trong phím có màu trắng
