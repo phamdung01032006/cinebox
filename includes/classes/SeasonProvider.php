@@ -26,11 +26,18 @@ class SeasonProvider {
             }
 
             $seasonHtml .= "<div class='season'>
-                                    <h3>Season $seasonNumber</h3>
-                                    <div class='videos'>
-                                    $videosHtml
-                                    </div>
-                                </div>";
+                <div class='category-header'>
+                    <h3>Season $seasonNumber</h3>
+                    <div class='category-arrows'>
+                        <button class='scroll-arrow left'><i class='fa-solid fa-chevron-left'></i></button>
+                        <button class='scroll-arrow right'><i class='fa-solid fa-chevron-right'></i></button>
+                    </div>
+                </div>
+                <div class='videos'>
+                    $videosHtml
+                </div>
+            </div>";
+
         }
         return $seasonHtml;
     }
@@ -46,7 +53,6 @@ class SeasonProvider {
                 <div class='episodeContainer'>
                     <div class='contents'>
                         <img src='$thumbnail'>
-
                         <div class='videoInfo'>
                             <h4>$name</h4>
                             <span>$description</span>

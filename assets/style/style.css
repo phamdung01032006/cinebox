@@ -335,15 +335,14 @@ button i {
 }
 
 /* Ẩn scrollbar default */
-.entities::-webkit-scrollbar {
+.entities, .videos::-webkit-scrollbar {
     height: 0;
 }
 
-.entities::-webkit-scrollbar-track {
+.entities, .videos::-webkit-scrollbar-track {
     background: transparent;
 }
-
-.entities::-webkit-scrollbar-thumb {
+.entities, .videos::-webkit-scrollbar-thumb {
     background: transparent;
 }
 
@@ -524,7 +523,7 @@ button i {
 .season {
     display: flex;
     flex-direction: column;
-    padding: 10px 50px;
+    padding: 20px 50px;
 }
 
 .episodeContainer {

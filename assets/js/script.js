@@ -14,75 +14,95 @@ function previewEnded() {
     $(".previewImage").toggle();
 }
 
-// Scroll arrows for entities
+// // Scroll arrows for entities
+// $(document).ready(function() {
+//     // Kiểm tra overflow và hiển thị/ẩn arrows
+//     function checkScrollArrows(entities, category) {
+//         var hasOverflow = entities[0].scrollWidth > entities.width();
+//         var arrows = category.find('.scroll-arrow');
+        
+//         if(hasOverflow) {
+//             arrows.addClass('show');
+//         } else {
+//             arrows.removeClass('show');
+//         }
+//     }
+    
+//     // Setup scroll on click
+//     $('.scroll-arrow').click(function() {
+//         var category = $(this).closest('.category');
+//         var entities = category.find('.entities');
+//         var scrollAmount = 300;
+        
+//         if($(this).hasClass('left')) {
+//             entities.scrollLeft(entities.scrollLeft() - scrollAmount);
+//         } else {
+//             entities.scrollLeft(entities.scrollLeft() + scrollAmount);
+//         }
+//     });
+    
+//     // Check overflow khi load
+//     setTimeout(function() {
+//         $('.entities').each(function() {
+//             var entities = $(this);
+//             var category = entities.closest('.category');
+//             checkScrollArrows(entities, category);
+//         });
+//     }, 1000);
+    
+//     // Check overflow khi window resize
+//     $(window).resize(function() {
+//         $('.entities').each(function() {
+//             var entities = $(this);
+//             var category = entities.closest('.category');
+//             checkScrollArrows(entities, category);
+//         });
+//     });
+// });
+
+// Scroll arrows for entities/videos
 $(document).ready(function() {
-    // Kiểm tra overflow và hiển thị/ẩn arrows
-    function checkScrollArrows(entities, category) {
-        var hasOverflow = entities[0].scrollWidth > entities.width();
-        var arrows = category.find('.scroll-arrow');
-        
-        if(hasOverflow) {
-            arrows.addClass('show');
-        } else {
-            arrows.removeClass('show');
-        }
+    function getScrollContainer(buttonOrRow) {
+        return buttonOrRow.closest(".category, .season");
     }
-    
-    // Setup scroll on click
-    $('.scroll-arrow').click(function() {
-        var category = $(this).closest('.category');
-        var entities = category.find('.entities');
-        var scrollAmount = 300;
-        
-        if($(this).hasClass('left')) {
-            entities.scrollLeft(entities.scrollLeft() - scrollAmount);
-        } else {
-            entities.scrollLeft(entities.scrollLeft() + scrollAmount);
-        }
+
+    function getScrollableRow(container) {
+        return container.find(".entities, .videos").first();
+    }
+
+    function checkScrollArrows(row) {
+        if (!row.length || !row[0]) return;
+
+        var container = getScrollContainer(row);
+        var hasOverflow = row[0].scrollWidth > row.outerWidth();
+        container.find(".scroll-arrow").toggleClass("show", hasOverflow);
+    }
+
+    function refreshScrollArrows() {
+        $(".entities, .videos").each(function() {
+            checkScrollArrows($(this));
+        });
+    }
+
+    $(document).on("click", ".scroll-arrow", function() {
+        var container = getScrollContainer($(this));
+        var row = getScrollableRow(container);
+        var scrollAmount = parseInt($(this).attr("data-scroll"), 10) || 300;
+        var delta = $(this).hasClass("left") ? -scrollAmount : scrollAmount;
+
+        row.scrollLeft(row.scrollLeft() + delta);
     });
-    
-    // Check overflow khi load (with delay to ensure images are loaded)
-    setTimeout(function() {
-        $('.entities').each(function() {
-            var entities = $(this);
-            var category = entities.closest('.category');
-            checkScrollArrows(entities, category);
-        });
-    }, 1000);
-    
-    // Check overflow khi window resize
-    $(window).resize(function() {
-        $('.entities').each(function() {
-            var entities = $(this);
-            var category = entities.closest('.category');
-            checkScrollArrows(entities, category);
-        });
+
+    setTimeout(refreshScrollArrows, 0);
+    $(window).on("load resize", refreshScrollArrows);
+
+    $(document).on("load", ".entities img, .videos img", function() {
+        checkScrollArrows($(this).closest(".entities, .videos"));
     });
 });
 
-// thêm tính năng expand video preview
-// function openVideoPopup(button) {
-//     var src = $(button).data("src");
-//     var title = $(button).data("title") || "";
 
-//     $("#videoPopupTitle").text(title);
-//     $("#videoPopupPlayer source").attr("src", src);
-
-//     var player = $("#videoPopupPlayer")[0];
-//     player.load();
-//     player.play();
-
-//     $("#videoPopup").addClass("show");
-// }
-
-// function closeVideoPopup() {
-//     var player = $("#videoPopupPlayer")[0];
-//     $("#videoPopupPlayer source").attr("src", "");
-//     player.load();
-
-//     $("#videoPopup").removeClass("show");
-// }
-
+// Thêm tính năng expand trên trang index preview
 let popupPlayer = null;
 
 $(document).ready(function () {
