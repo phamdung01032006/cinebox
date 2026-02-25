@@ -335,16 +335,25 @@ button i {
 }
 
 /* Ẩn scrollbar default */
-.entities, .videos::-webkit-scrollbar {
+.entities::-webkit-scrollbar,
+.videos::-webkit-scrollbar,
+.previewCategories.noScroll .category .videos::-webkit-scrollbar {
     height: 0;
+    display: none;
 }
 
-.entities, .videos::-webkit-scrollbar-track {
+.entities::-webkit-scrollbar-track,
+.videos::-webkit-scrollbar-track,
+.previewCategories.noScroll .category .videos::-webkit-scrollbar-track {
     background: transparent;
 }
-.entities, .videos::-webkit-scrollbar-thumb {
+
+.entities::-webkit-scrollbar-thumb,
+.videos::-webkit-scrollbar-thumb,
+.previewCategories.noScroll .category .videos::-webkit-scrollbar-thumb {
     background: transparent;
 }
+
 
 /* Arrow buttons - Nút mũi tên để scroll ngang qua các entity */
 /* Mặc định ẩn (display: none), chỉ hiển thị khi overflow (class 'show' được thêm bởi JS) */
@@ -418,7 +427,7 @@ button i {
 .videoPopup { 
     position: fixed; 
     inset: 0; 
-    z-index: 9999; 
+    z-index: 9999;
     display: none; 
 }
 
