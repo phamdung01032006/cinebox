@@ -61,7 +61,23 @@ $(document).ready(function() {
 let popupPlayer = null;
 
 $(document).ready(function () {
+
+
     popupPlayer = new Plyr("#videoPopupPlayer", {
+        controls: [
+            "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
+            "mute", "volume", "settings", "pip", "fullscreen"
+        ],
+        ratio: "16:9"
+    });
+});
+
+
+$(document).ready(function () {
+    const watchEl = document.getElementById("watchPlayer");
+    if (!watchEl) return;
+
+    new Plyr("#watchPlayer", "#watchPlayer", {
         controls: [
             "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
             "mute", "volume", "settings", "pip", "fullscreen"

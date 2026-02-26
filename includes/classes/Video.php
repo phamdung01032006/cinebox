@@ -32,7 +32,7 @@ class Video {
         return $this->sqlData["description"];
     }
     public function getFilePath() {
-        return $this->sqlData["filepath"];
+        return $this->sqlData["filePath"];
     }
     public function getThumbnail() {
         return $this->entity->getThumbnail();
@@ -40,6 +40,17 @@ class Video {
     public function getEpisodeNumber() {
         return $this->sqlData["episode"];
     }
+
+    public function incrementView() {
+        $query = $this->con->prepare("UPDATE videos SET views=views+1 WHERE id=:id");
+        $query->bindValue(":id", $this->getId());
+        $query->execute();
+    }
+
+    public function getEntity() {
+    return $this->entity;
+}
+
 }
 
 ?>

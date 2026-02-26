@@ -643,3 +643,29 @@ button i {
 /* .previewCategories.noScroll .category .entities {
     white-space: normal;
 } */
+
+/* Watch page full screen */
+
+.watchContainer {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #2d2727 0%, #1a0f0f 25%, #2d1515 50%, #231f1f 75%, #0a0a0a 100%);
+    z-index: 999;
+}
+
+.watchContainer .plyr,
+.watchContainer video {
+    width: 100vw; 
+    max-height: 100vh;
+    overflow: auto;
+    display: block;
+}
+
+.watchContainer .plyr__control {
+    background: var(--plyr-control-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 100px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
