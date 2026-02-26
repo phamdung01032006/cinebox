@@ -40,14 +40,23 @@ function getInputValue($name) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CineBox</title>
     <link rel="stylesheet" type="text/css" href="assets/style/style.css"/>
+
 </head>
 <body>
     
     <div class="signInContainer">
+
+        <div class="authSide">
+            <div class="authOverlay">
+                <img src="assets\images\cinebox.png" title="CineBox Logo" alt="CineBox Logo">
+                <h2>STEP INTO THE WORLD OF CINEMA</h2>
+                <p>Watch trailers, movies and series in one place.</p>
+            </div>
+        </div>
+
         <div class="column">
 
             <div class="header">
-                <img src="assets\images\cinebox.png" title="CineBox Logo" alt="CineBox Logo">
                 <h3>Log in</h3>
                 <span>to continue to CineBox</span>
             </div>

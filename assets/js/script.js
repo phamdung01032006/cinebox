@@ -64,7 +64,7 @@ $(document).ready(function () {
     popupPlayer = new Plyr("#videoPopupPlayer", {
         controls: [
             "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
-            "mute", "volume", "settings", "pip", "download", "fullscreen"
+            "mute", "volume", "settings", "pip", "fullscreen"
         ],
         ratio: "16:9"
     });

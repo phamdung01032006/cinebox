@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+
 html,
 body {
     height: 100%;
@@ -6,7 +8,7 @@ body {
 }
 
 * {
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-family: "Be Vietnam Pro", sans-serif;
     /* đoạn color này đang gây lỗi cho phần plyr */
     /* color: #333; */
     box-sizing: border-box;
@@ -39,13 +41,16 @@ a {
 }
 
 .signInContainer {
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a0f0f 25%, #2d1515 50%, #231f1f 75%, #2d2727 100%);
+    /* background: linear-gradient(135deg, #0a0a0a 0%, #1a0f0f 25%, #2d1515 50%, #231f1f 75%, #2d2727 100%); */
+    background: url("../images/signup.png") center/cover no-repeat;
     background-size: cover;
     background-position: center;
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 100vh;
+    gap: 0;
 }
 
 /* .column::-webkit-scrollbar {
@@ -53,16 +58,71 @@ a {
 } */
 
 .column {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.9   );
     min-height: 300px;
-    max-height: 80%;
     width: 450px;
-    box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
     padding: 20px 35px;
     overflow-y: auto;
     backdrop-filter: blur(10px);
-    border-radius: 24px;
     position: relative;
+    flex: 0 0 450px;      /* cố định width form */
+    height: 90vh;         /* cùng chiều cao */
+    max-height: 760px;
+    margin: 0;
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 1),
+        0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.authSide {
+    position: relative;
+    width: 420px;
+    height: 90vh;
+    max-height: 760px;
+    background: url("../images/signupcontainer.jpeg") center/cover no-repeat;
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 1),
+        0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.authSide::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
+}
+
+.authOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 40px;
+    text-align: left;
+}
+
+
+.authOverlay h2 {
+    font-family: "Be Vietnam Pro", sans-serif;
+    /* margin: 0 0 8px; */
+    color: #fff;
+    font-size: 40px;
+    line-height: 1.2;
+    font-weight: 900;
+    text-wrap: pretty;
+    max-width: 8ch;
+}
+
+.authOverlay p {
+    margin: 0;
+    color: #f2f2f2;
+}
+
+.authSide .authOverlay img {
+    width: 125px;
 }
 
 .column::-webkit-scrollbar {
@@ -71,8 +131,8 @@ a {
 }
 
 .column::-webkit-scrollbar-thumb {
-    background: rgb(174, 174, 174);  /* Scrollbar mỏng */
-    border-radius: 4px;
+    background: linear-gradient(135deg, #2d2727 0%, #1a0f0f 25%, #2d1515 50%, #231f1f 75%, #0a0a0a 100%);
+    border-radius: 0px;
 }
 
 .column form {
@@ -108,7 +168,7 @@ a {
     background-color: #E50914;
     color: #fff;
     height: 36px;
-    width: 88px;
+    width: 96px;
     border: none;
     border-radius: 3px;
     font-weight: bold;
@@ -137,7 +197,7 @@ a {
     left: 0;
     right: 0;
     bottom: 0;
-    background: #B80710;
+    background: rgba(158, 2, 2, 0.8);
     -webkit-transform: scaleX(0);
     transform: scaleX(0);
     -webkit-transform-origin: 0 50%;
@@ -157,27 +217,32 @@ a {
     transform: scaleX(1);
 }
 
+.column form button[type="submit"]:hover,
+.column form button[type="submit"]:focus,
+.column form button[type="submit"]:active {
+    color: #ffffffc1; /* màu chữ sau hover */
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.25);
+    transform: translate(-1px);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease, color 0.3s;
+}
+
 .column .header {
     padding: 20px 0;
 
 }
 
 .column h3 {
-    font-size: 24px;
-    font-weight: 400;
+    font-size: 32px;
+    font-weight: 900;
     line-height: 32px;
     margin: 0;
-    padding-top: 16px;
-    color: #000;
+    color: #1a1a1a;
 }
 
 .column .header span {
     font-size: 14px;
 }
 
-.column .header img {
-    width: 100px;
-}
 
 .signInMessage {
     font-size: 14px;
@@ -460,7 +525,6 @@ button i {
     max-height: 75vh;
     overflow: hidden;
     display: block;
-    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Css cho phần style của Plyr */
@@ -473,12 +537,19 @@ button i {
     border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
+/* Fullscreen thì bỏ border */
+.videoPopupContent .plyr:fullscreen,
+.videoPopupContent .plyr:-webkit-full-screen,
+.videoPopupContent .plyr.plyr--fullscreen-fallback {
+    border: none ;
+    border-radius: 0;
+}
+
 .videoPopupContent .plyr.plyr--menu-open {
     overflow: visible; /* chỉ khi mở menu settings */
 }
 
 .videoPopupContent .plyr__video-wrapper {
-    border-radius: 24px;
     overflow: hidden;
 }
 
