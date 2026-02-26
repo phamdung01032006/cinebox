@@ -62,7 +62,6 @@ let popupPlayer = null;
 
 $(document).ready(function () {
 
-
     popupPlayer = new Plyr("#videoPopupPlayer", {
         controls: [
             "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
@@ -77,7 +76,7 @@ $(document).ready(function () {
     const watchEl = document.getElementById("watchPlayer");
     if (!watchEl) return;
 
-    new Plyr("#watchPlayer", "#watchPlayer", {
+    new Plyr("#watchPlayer", {
         controls: [
             "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
             "mute", "volume", "settings", "pip", "fullscreen"
@@ -105,4 +104,41 @@ function closeVideoPopup() {
     popupPlayer.pause();
     popupPlayer.stop();
     $("#videoPopup").removeClass("show");
+}
+
+// function cho nút mũi tên banner phần xem phim
+function goBack() {
+    window.history.back();
+}
+
+// phần này để nút mũi tên trên ẩn đi sau một thời gian không di chuột
+function startHideTimer() {
+    var timeout = null;
+
+    $(document).on("mousemove", function() {
+        clearTimeout(timeout);
+        $(".watchNav").fadeIn();
+
+        timeout = setTimeout(function() {
+            $(".watchNav").fadeOut();
+        }, 1000);
+    })
+}
+
+function initVideo(videoId, username) {
+    startHideTimer();
+    updateProgressTimer(videoId, username);
+}
+
+function updateProgressTimer(videoId, username) {
+    addDuration(videoId, username);
+}
+
+function addDuration(videoId, username) {
+    $.post("ajax/addDuration.php", { videoId: videoId, username:username }, function(data) {
+        if(data !== null && data !== "")
+            alert(data);
+        // trong javascript khi so sánh 1 == "1" thì cho ra True, khi 1 === "1" thì False,
+        // nên điều kiện ở đây là vừa khác giá trị vừa khác kiểu dữ liệu
+    })
 }

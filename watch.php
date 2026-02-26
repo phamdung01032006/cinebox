@@ -10,11 +10,33 @@ $video->incrementView();
 
 $entity = $video->getEntity();
 $seasonProvider = new SeasonProvider($con, $userLoggedIn);
+
+// Tạo dữ liệu related TRƯỚC khi render HTML
+$previewProvider = new PreviewProvider($con, $userLoggedIn);
+$relatedEntities = EntityProvider::getEntities($con, $entity->getCategoryId(), 30);
+
+$relatedHtml = "";
+$relatedCount = 0;
+
+foreach($relatedEntities as $relatedEntity) {
+    if($relatedEntity->getId() == $entity->getId()) continue;
+
+    $relatedHtml .= $previewProvider->createEntityPreviewSquare($relatedEntity);
+    $relatedCount++;
+    if($relatedCount >= 12) break;
+}
 ?>
 
 <div class="watchPage">
     <div class="watchContainer">
-        <video id="watchPlayer" playsinline preload="metadata" controls>
+
+        <div class="videoControls watchNav">
+            <button onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></button>
+            <h2><?php echo $video->getTitle(); ?></h2>
+        </div>
+
+
+        <video id="watchPlayer" playsinline preload="metadata">
             <source src="<?php echo htmlspecialchars($video->getFilePath()); ?>" type="video/mp4">
         </video>
     </div>
@@ -22,4 +44,25 @@ $seasonProvider = new SeasonProvider($con, $userLoggedIn);
     <div class="watchEpisodes">
         <?php echo $seasonProvider->create($entity); ?>
     </div>
+
+    <?php if($relatedCount > 0): ?>
+    <div class="watchRelated">
+        <div class="category">
+            <div class="category-header">
+                <h3>You might also like</h3>
+                <div class="category-arrows">
+                    <button class="scroll-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="scroll-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div class="entities">
+                <?php echo $relatedHtml; ?>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
+
+<script>
+    initVideo("<?php echo $video->getId(); ?>", "<?php echo $userLoggedIn; ?>");
+</script>
