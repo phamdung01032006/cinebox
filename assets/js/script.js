@@ -1,3 +1,4 @@
+
 // làm cho nút volume nó muted khi bấm vào lúc không mute và mute khi đang không muted
 function volumeToggle(button) {
     var muted = $(".previewVideo").prop("muted");
@@ -127,6 +128,7 @@ function startHideTimer() {
 
 function initVideo(videoId, username) {
     startHideTimer();
+    setStartTime(videoId, username);
     updateProgressTimer(videoId, username);
 }
 
@@ -145,6 +147,7 @@ function updateProgressTimer(videoId, username) {
     })
 
     .on("ended", function() {
+        setFinished(videoId, username);
         window.clearInterval(timer);
     })
 }
@@ -164,5 +167,29 @@ function updateProgress(videoId, username, progress) {
         alert(data);
     // trong javascript khi so sánh 1 == "1" thì cho ra True, khi 1 === "1" thì False,
     // nên điều kiện ở đây là vừa khác giá trị vừa khác kiểu dữ liệu
+    })
+}
+
+// Hàm kiểm tra xem đã xem xong video chưa
+function setFinished(videoId, username) {
+    $.post("ajax/setFinished.php", { videoId: videoId, username:username }, function(data) {
+    if(data !== null && data !== "")
+        alert(data);
+    // trong javascript khi so sánh 1 == "1" thì cho ra True, khi 1 === "1" thì False,
+    // nên điều kiện ở đây là vừa khác giá trị vừa khác kiểu dữ liệu
+    })
+}
+
+// hàm để bắt đầu video từ đoạn trước đây đã xem đến đó
+function setStartTime(videoId, username) {
+    $.post("ajax/getProgress.php", { videoId: videoId, username:username }, function(data) {
+        if(isNaN(data)) {
+            alert(data);
+        }
+
+        $("video").on("canplay", function() {
+            this.currentTime = data;
+            $("video").off("canplay");
+        })
     })
 }
