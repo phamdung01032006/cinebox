@@ -41,6 +41,13 @@ class Video {
         return $this->sqlData["episode"];
     }
 
+        public function getSeasonNumber() {
+        return $this->sqlData["season"];
+    }
+    public function getEntityId() {
+        return $this->sqlData["entityId"];
+    }
+
     public function incrementView() {
         $query = $this->con->prepare("UPDATE videos SET views=views+1 WHERE id=:id");
         $query->bindValue(":id", $this->getId());
@@ -49,8 +56,23 @@ class Video {
 
     public function getEntity() {
     return $this->entity;
-}
+    }
+
+    public function getSeasonAndEpisode() {
+        if($this->isMovie()) {
+            return;
+        }
+
+        $season = $this->getSeasonNumber();
+        $episode = $this->getEpisodeNumber();
+
+        return "Season $season, Episode $episode";
+    }
+
+    public function isMovie() {
+        return $this->sqlData["isMovie"] == 1;
+    }
+
 
 }
-
 ?>

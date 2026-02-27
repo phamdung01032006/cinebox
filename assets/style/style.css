@@ -898,3 +898,18 @@ button i {
     .footerCountry{ font-size:17px; }
     .footerCaptcha{ font-size:15px; }
 }
+
+/* Nút restart và nút play video tiếp theo ở trang phim */
+.upNext {
+    height: 80%;
+    justify-content: right;
+}
+
+.upNextContainer button {
+    padding: 0;
+}
+
+.upNextContainer h2,
+.upNextContainer h3 {
+    color: #fff;
+}

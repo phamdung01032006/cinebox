@@ -65,8 +65,8 @@ $(document).ready(function () {
 
     popupPlayer = new Plyr("#videoPopupPlayer", {
         controls: [
-            "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
-            "mute", "volume", "settings", "pip", "fullscreen"
+            "restart", "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
+            "mute", "volume", "settings", "pip", "fullscreen",
         ],
         ratio: "16:9"
     });
@@ -79,7 +79,7 @@ $(document).ready(function () {
 
     new Plyr("#watchPlayer", {
         controls: [
-            "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
+            "restart", "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
             "mute", "volume", "settings", "pip", "fullscreen"
         ],
         ratio: "16:9"
@@ -192,4 +192,9 @@ function setStartTime(videoId, username) {
             $("video").off("canplay");
         })
     })
+
+}
+
+function watchVideo(videoId) {
+        window.location.href = "watch.php?id=" + videoId;
 }

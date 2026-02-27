@@ -25,6 +25,8 @@ foreach($relatedEntities as $relatedEntity) {
     $relatedCount++;
     if($relatedCount >= 12) break;
 }
+
+$upNextVideo = VideoProvider::getUpNext($con, $video);
 ?>
 
 <div class="watchPage">
@@ -35,6 +37,19 @@ foreach($relatedEntities as $relatedEntity) {
             <h2><?php echo $video->getTitle(); ?></h2>
         </div>
 
+        <!-- các nút chuyển tập sau khi xem xong-->
+        <div class="videoControls upNext">
+
+            <div class="upNextContainer">
+                <h2>Up next:</h2>
+                <h3><?php echo $upNextVideo->getTitle(); ?></h3>
+                <h3><?php echo $upNextVideo->getSeasonAndEpisode(); ?></h3>
+
+                <button class="playNext" onclick="watchVideo(<?php echo $upNextVideo->getId(); ?>)">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+            </div>
+        </div>
 
         <video id="watchPlayer" playsinline preload="metadata">
             <source src="<?php echo htmlspecialchars($video->getFilePath()); ?>" type="video/mp4">
