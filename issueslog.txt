@@ -8,3 +8,39 @@ trong Account.php và file login.php
 6. Chia thành 2 cột ở trang sign up và log in để có thể đăng nhập bằng facebook, google
 7. Thêm nút cộng vào wishlist ở trang landing page.
 13. Xóa nút phóng to hoặc bấm vào phóng popup lên như trang preview ban đầu
+14. sửa lỗi theo chatgpt codex sau:
+Đúng, bạn nên đổi logic thành: **ai cũng vào được trang chủ**, chỉ khi bấm xem phim mới bắt đăng nhập.
+
+Sửa như sau:
+
+1. Trong [header.php](c:\xampp\htdocs\cinebox\includes\header.php), bỏ redirect cứng sang register  
+Xóa đoạn này:
+
+```php
+if(!isset($_SESSION["userLoggedIn"])) {
+    header("Location: register.php");
+}
+```
+
+Thay bằng:
+
+```php
+$userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
+```
+
+2. Chặn ở trang xem phim [watch.php](c:\xampp\htdocs\cinebox\watch.php)  
+Thêm ngay đầu file (sau `require_once("includes/header.php");`):
+
+```php
+if(!isset($_SESSION["userLoggedIn"])) {
+    header("Location: login.php?returnUrl=" . urlencode("watch.php?id=" . $_GET["id"]));
+    exit();
+}
+```
+
+3. (Khuyên dùng) Chặn luôn ở [entity.php](c:\xampp\htdocs\cinebox\entity.php) nếu bạn muốn bấm vào chi tiết cũng cần login  
+Nếu không thì để public.
+
+Sau đó:
+- vào `localhost/cinebox` sẽ vào trang chủ
+- chỉ khi mở `watch.php` mới bị chuyển sang login/register.

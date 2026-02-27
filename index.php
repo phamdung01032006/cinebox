@@ -33,6 +33,8 @@ echo $containers->showAllCategories();
             <video id="videoPopupPlayer" playsinline></video>
         </div>
     </div>
+
     <?php require_once("footer.php"); ?>
+    
 </body>
 </html>

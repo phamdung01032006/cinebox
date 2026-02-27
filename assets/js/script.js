@@ -130,8 +130,23 @@ function initVideo(videoId, username) {
     updateProgressTimer(videoId, username);
 }
 
+// update progress xem phim của user
+// hàm cập nhật thời gian
 function updateProgressTimer(videoId, username) {
     addDuration(videoId, username);
+
+    var timer;
+
+    $("video").on("playing", function(event) {
+        window.clearInterval(timer);
+        timer = window.setInterval(function() {
+            updateProgress(videoId, username, event.target.currentTime);
+        }, 3000);
+    })
+
+    .on("ended", function() {
+        window.clearInterval(timer);
+    })
 }
 
 function addDuration(videoId, username) {
@@ -140,5 +155,14 @@ function addDuration(videoId, username) {
             alert(data);
         // trong javascript khi so sánh 1 == "1" thì cho ra True, khi 1 === "1" thì False,
         // nên điều kiện ở đây là vừa khác giá trị vừa khác kiểu dữ liệu
+    })
+}
+
+function updateProgress(videoId, username, progress) {
+    $.post("ajax/updateDuration.php", { videoId: videoId, username:username, progress: progress }, function(data) {
+    if(data !== null && data !== "")
+        alert(data);
+    // trong javascript khi so sánh 1 == "1" thì cho ra True, khi 1 === "1" thì False,
+    // nên điều kiện ở đây là vừa khác giá trị vừa khác kiểu dữ liệu
     })
 }
