@@ -66,3 +66,5 @@ foreach($relatedEntities as $relatedEntity) {
 <script>
     initVideo("<?php echo $video->getId(); ?>", "<?php echo $userLoggedIn; ?>");
 </script>
+
+<?php require_once("footer.php"); ?>

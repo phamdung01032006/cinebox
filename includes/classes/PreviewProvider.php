@@ -56,11 +56,13 @@ class PreviewProvider {
         $id = $entity->getId();
         $thumbnail = $entity->getThumbnail();
         $name = $entity->getName();
+        $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
 
-        return "<a href='entity.php?id=$id'>
+        return "<a href='entity.php?id=$id' class='entityCard'>
                     <div class='previewContainer small'>
-                        <img src='$thumbnail' title='$name'>
+                        <img src='$thumbnail' title='$safeName' alt='$safeName'>
                     </div>
+                    <div class='entityTitle'>$safeName</div>
         </a>";
     }
 

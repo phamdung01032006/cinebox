@@ -278,19 +278,22 @@ a {
 .previewContainer.small {
     width: 150px;
     height: 210px;
-    margin-right: 10px;
+    margin-right: 5px;
+    margin-left: 10px;
     display: inline-flex;
     transition: all 0.3s ease;
 }
 
 /* Hiệu ứng hover phóng to */
 .previewContainer.small:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
+    box-shadow: 2px 2px 5px 2px rgba(5, 5, 5, 0.2);
 }
 
-/* Hiệu ứng khi click thu nhỏ nút */
+/* Hiệu ứng khi click thu nhỏ ảnh preview */
 .previewContainer.small:active {
     transform: scale(0.9);
+    z-index:5;
 }
 
 .previewContainer.small img {
@@ -298,6 +301,20 @@ a {
     height: 100%;
     /* Tránh hình ảnh cover phim bị kéo dãn */
     object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Cho item hover không bị cắt */
+.category,
+.entities {
+    overflow: visible;
+}
+
+/* Chỉ cho cuộn ngang ở entities bằng auto + thêm khoảng đệm */
+.entities {
+    overflow-x: auto;
+    overflow-y: visible;
+    padding: 14px 0;
 }
 
 .previewOverlay {
@@ -612,7 +629,10 @@ button i {
 .episodeContainer {
     display: inline-flex;
     justify-content: center;
-    margin-right: 4px;
+    margin-right: 5px;
+    margin-left: 20px;
+    margin-top:20px;
+    margin-bottom: 20px;
 }
 
 .episodeContainer .contents {
@@ -625,6 +645,19 @@ button i {
     width: 230px;
     height: 129px;
     object-fit: cover;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.episodeContainer img:hover {
+    transform: scale(1.05);
+    box-shadow: 2px 2px 5px 2px rgba(5, 5, 5, 0.2);
+}
+
+/* Hiệu ứng khi click thu nhỏ ảnh preview */
+.episodeContainer img:active {
+    transform: scale(0.9);
+    z-index:5;
 }
 
 .episodeContainer .videoInfo h4,
@@ -637,6 +670,32 @@ button i {
 .episodeContainer .videoInfo {
     max-height: 200px;
     overflow-y: auto;
+}
+
+/* Tên cho các cover phim ở trang mở đầu */
+.entityCard{
+    width: 150px;
+    margin-left: 10px;
+    margin-right: 5px;
+    text-decoration: none;
+    color: #fff;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.entityCard .previewContainer.small{
+    margin: 0;
+}
+
+.entityTitle{
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 1.3;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
 }
 
 /* Phần này để cho phần you may also like có thể scroll theo trục y thay vì trục x như thông thường */
@@ -712,4 +771,110 @@ button i {
 .videoControls button:hover {
     transform: translatex(-4px);
     transition: transform 0.2s ease-in-out;
+}
+
+/* Tên cho các cover phim ở trang mở đầu */
+.entityCard{
+    width: 150px;
+    margin-left: 10px;
+    margin-right: 5px;
+    text-decoration: none;
+    color: #fff;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.entityCard .previewContainer.small{
+    margin: 0;
+}
+
+.entityTitle{
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 1.3;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+
+/* Chỉnh lại fotter trang */
+.siteFooterCinebox{
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0f0f 25%, #2d1515 50%, #231f1f 75%, #2d2727 100%);
+    color:#ffffffd5;
+    padding:48px 0 36px;
+}
+
+.siteFooterInner{
+    width:min(1000px, 92vw);
+    margin:0 auto;
+}
+
+.footerTop{
+    margin:0 0 28px;
+    font-size:16px;
+    color:#b3b3b3;
+}
+
+.footerTop a,
+.footerLinks a,
+.footerCaptcha a{
+    color:#b3b3b3;
+    text-decoration:underline;
+}
+
+.footerLinks{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(140px, 1fr));
+    gap:14px 28px;
+    margin-bottom:32px;
+}
+
+.footerLinks a{
+    font-size:16px;
+    line-height:1.4;
+}
+
+.footerLangWrap{
+    margin-bottom:28px;
+}
+
+.footerLangBtn{
+    border:1px solid #555;
+    background:transparent;
+    color:#fff;
+    padding:10px 14px;
+    border-radius:4px;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.footerCountry{
+    margin:0 0 26px;
+    font-size:20px;
+    color:#9d9d9d;
+}
+
+.footerCaptcha{
+    margin:0;
+    font-size:18px;
+    color:#8c8c8c;
+    line-height:1.5;
+}
+
+/* Responsive */
+@media (max-width: 900px){
+    .footerLinks{
+        grid-template-columns:repeat(2, minmax(120px, 1fr));
+    }
+
+    .footerTop{ font-size:20px; }
+    .footerLinks a{ font-size:18px; }
+    .footerLangBtn{ font-size:17px; }
+    .footerCountry{ font-size:17px; }
+    .footerCaptcha{ font-size:15px; }
 }

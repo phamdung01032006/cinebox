@@ -21,3 +21,5 @@ $categoryContainers = new CategoryContainers($con, $userLoggedIn);
 echo $categoryContainers->showCategory($entity->getCategoryId(), "You might also like");
 
 ?>
+
+<?php require_once("footer.php"); ?>
