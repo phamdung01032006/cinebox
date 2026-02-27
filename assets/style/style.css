@@ -801,9 +801,29 @@ button i {
 
 /* Chỉnh lại fotter trang */
 .siteFooterCinebox{
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a0f0f 25%, #2d1515 50%, #231f1f 75%, #2d2727 100%);
+    position: relative;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0f0f 25%, #2d1515 50%, #231f1f 75%, #2d2727 100%),
+                url("../images/signup.png") center/cover no-repeat;
     color:#ffffffd5;
     padding:48px 0 36px;
+    overflow: hidden;
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* blur ảnh phần footer */
+.siteFooterCinebox::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("../images/signup.png") center/cover no-repeat;
+    filter: blur(12px);
+    transform: scale(1.05);
+    z-index: 0;
+}
+
+.siteFooterCinebox > *{
+    position: relative;
+    z-index: 1;
 }
 
 .siteFooterInner{
