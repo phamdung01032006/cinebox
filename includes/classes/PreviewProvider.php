@@ -26,9 +26,15 @@ class PreviewProvider {
         $safePreview = htmlspecialchars($preview, ENT_QUOTES, 'UTF-8');
         $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
         
-        // TODO: add SUBTITLE
 
         $videoId = VideoProvider::getEntityVideoForUser($this->con, $id, $this->username);
+        $video = new Video($this->con, $videoId);
+
+        $inProgress = $video->isInProgress($this->username);
+        $playButtonText = $inProgress ? "Continue watching" : "Play";
+        $seasonEpisode = $video->getSeasonAndEpisode();
+        $title = $video->getTitle();
+        $subHeading = $video->isMovie() ? "": "<h4>$seasonEpisode</h4>";
 
 
         return "<div class='previewContainer'>
@@ -43,10 +49,11 @@ class PreviewProvider {
                 <div class='mainDetails'>
 
                     <h3>$name</h3>
-
+                    <h4>$title</h4>
+                    $subHeading
                     <div class='button'>
                     
-                        <button class='playBtn' onclick='watchVideo($videoId)'><i class='fa-solid fa-play'></i></button>
+                        <button class='playBtn' onclick='watchVideo($videoId)'><i class='fa-solid fa-play'></i> $playButtonText</button>
                         <button onclick='volumeToggle(this)'><i class='fa-solid fa-volume-xmark'></i></button>
                         <button class='openPopupBtn' onclick='openVideoPopup(this)' data-src = '$safePreview' data-title='$safeName'><i class='fa-solid fa-expand'></i></button>
                     </div>

@@ -326,9 +326,16 @@ a {
 
 .previewOverlay .mainDetails h3 {
     color: #fff;
-    font-size: 40px;
-    margin: 15px 0;
+    font-size: 44px;
+    margin: 10px 0;
 }
+
+.previewOverlay .mainDetails h4 {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 18px;
+    margin: 10px 5px;
+}
+
 .previewOverlay .mainDetails {
     position: relative;
     top: 35%;
@@ -360,7 +367,7 @@ a {
 /* Nút play nổi bật hơn các nút còn lại trên trang preview */
 
 .mainDetails .playBtn {
-    width:90px;
+    width: 280px;
     background: linear-gradient(135deg, rgba(160, 5, 5, 0.5), rgba(51, 51, 51, 0.5));
 }
 
@@ -377,6 +384,7 @@ button i {
 
 .mainDetails .playBtn:hover {
     background: linear-gradient(135deg, rgba(160, 5, 5, 0.8), rgba(51, 51, 51, 0.8));
+    transform: scale(1.025);
 }
 
 /* Hiệu ứng khi click - thu nhỏ nút */
