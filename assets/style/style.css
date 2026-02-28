@@ -19,7 +19,7 @@ body {
     --plyr-control-bg: rgba(0, 0, 0, 0.5);
     --plyr-menu-color: #fff;
     --plyr-menu-radius: 24px;
-    --plyr-menu-background: rgba(255, 255, 255, 0.9);
+    --plyr-menu-background: rgba(52, 52, 52, 0.5);
 }
 
 h3 {
@@ -154,13 +154,9 @@ a {
 .column form input[type="password"] {
     font-size: 14px;
     margin: 0 0 10px 0;
-    border: none;
-    border: 1px solid #dedede;
+    border: 1px solid #aaaaaa;
     width: 100%;
-    height: 40px;
     padding: 10px;
-    background-color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
     border-radius: 100px;
 }
 
@@ -221,7 +217,7 @@ a {
 .column form button[type="submit"]:focus,
 .column form button[type="submit"]:active {
     color: #ffffffc1; /* màu chữ sau hover */
-    box-shadow: 0px 10px 16px rgba(73, 73, 73, 0.431);
+    box-shadow: 0px 10px 16px rgba(73, 73, 73, 0.5);
     transform: translate(-1px);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease, color 0.3s;
 }
@@ -367,7 +363,7 @@ a {
 /* Nút play nổi bật hơn các nút còn lại trên trang preview */
 
 .mainDetails .playBtn {
-    width: 280px;
+    width: 200px;
     background: linear-gradient(135deg, rgba(160, 5, 5, 0.5), rgba(51, 51, 51, 0.5));
 }
 
@@ -379,7 +375,7 @@ button i {
 .mainDetails button:hover {
     background: rgba(220, 19, 35, 0.5);
     border-color: rgba(255, 255, 255, 0.6);
-    transform: scale(1.1);
+    transform: scale(1.075);
 }
 
 .mainDetails .playBtn:hover {
@@ -963,3 +959,17 @@ button i {
     .footerCaptcha{ font-size:15px; }
 }
 
+.episodeContainer .contents .fa-solid.fa-circle-check.seen{
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
+}
+
+.episodeContainer .contents .watchedButton {
+    background: linear-gradient(135deg, rgba(160, 5, 5, 0.5), rgba(51, 51, 51, 0.5));
+    color: rgba(255, 255, 255, 0.85);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(16px);
+    border-radius: 100px;
+    margin-top: 4px;
+    width: 50%;
+}

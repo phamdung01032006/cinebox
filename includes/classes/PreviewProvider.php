@@ -31,7 +31,7 @@ class PreviewProvider {
         $video = new Video($this->con, $videoId);
 
         $inProgress = $video->isInProgress($this->username);
-        $playButtonText = $inProgress ? "Continue watching" : "Play";
+        $playButtonText = $inProgress ? "We continue" : "Play";
         $seasonEpisode = $video->getSeasonAndEpisode();
         $title = $video->getTitle();
         $subHeading = $video->isMovie() ? "": "<h4>$seasonEpisode</h4>";
