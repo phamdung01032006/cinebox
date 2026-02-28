@@ -49,8 +49,8 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
         </ul>
 
         <div class="rightItems">
-            <a href="search.php"><i class="fa-solid fa-magnifying-glass"></i></a>
-            <a href="profile.php"><i class="fa-regular fa-user"></i></a>
+            <div><a href="search.php"><i class="fa-solid fa-magnifying-glass"></i></a></div>
+            <div><a href="profile.php"><i class="fa-regular fa-user"></i></a></div>
         </div>
 
     </div>
