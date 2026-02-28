@@ -1,6 +1,11 @@
 <?php
 require_once("includes/header.php");
 
+if(!isset($_SESSION["userLoggedIn"])) {
+    header("Location: login.php?returnUrl=" . urlencode("watch.php?id=" . $_GET["id"]));
+    exit();
+}
+
 if(!isset($_GET["id"])) {
     ErrorMessage::show("No ID passed into page");
 }
