@@ -1,4 +1,9 @@
 
+$(document).scroll(function() {
+    var isScrolled = $(this).scrollTop() > $(".topBar").height();
+    $(".topBar").toggleClass("scrolled", isScrolled);
+})
+
 // làm cho nút volume nó muted khi bấm vào lúc không mute và mute khi đang không muted
 function volumeToggle(button) {
     var muted = $(".previewVideo").prop("muted");

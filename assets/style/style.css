@@ -323,13 +323,13 @@ a {
 .previewOverlay .mainDetails h3 {
     color: #fff;
     font-size: 44px;
-    margin: 10px 0;
+    margin: 0;
 }
 
 .previewOverlay .mainDetails h4 {
     color: rgba(255, 255, 255, 0.85);
     font-size: 18px;
-    margin: 10px 5px;
+    margin: 2px 2px 8px 2px;
 }
 
 .previewOverlay .mainDetails {
@@ -791,12 +791,13 @@ button i {
     color: rgba(255, 255, 255, 0.8);
 }
 
+/* Background của upnext */
 .videoControls.upNext {
     display: none;
     padding: 32px;
-    background: rgba(24, 24, 24, 0.5);
+    background: rgba(29, 29, 29, 0.5);
     color: #fff;
-    border: 2px solid rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     font-weight: 600;
     position: absolute;
     pointer-events: none;
@@ -959,6 +960,7 @@ button i {
     .footerCaptcha{ font-size:15px; }
 }
 
+/* Dấu tick chỉ thị là tập đã xem */
 .episodeContainer .contents .fa-solid.fa-circle-check.seen{
     color: rgba(255, 255, 255, 0.85);
     font-size: 14px;
@@ -972,4 +974,56 @@ button i {
     border-radius: 100px;
     margin-top: 4px;
     width: 50%;
+}
+
+/* navbar */
+.topBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 11;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 30px 20px 30px 20px;   
+    box-sizing: border-box;
+    min-width: 500px;
+}
+
+.topBar .logoContainer {
+    height: 40px;
+}
+
+.topBar .logoContainer img {
+    height: 100%;
+}
+
+.topBar .navLinks {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.topBar .navLinks a {
+    color: #fff;
+    font-size: 16px;
+    margin: 20px;
+}
+
+.topBar .rightItems {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.topBar .rightItems a {
+    color: #fff;
+}
+
+.topBar.scrolled {
+    background: linear-gradient(135deg, rgba(51, 51, 51, 1), rgb(125, 0, 0));
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
 }
