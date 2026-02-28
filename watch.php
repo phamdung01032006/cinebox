@@ -46,12 +46,12 @@ $upNextVideo = VideoProvider::getUpNext($con, $video);
                 <h3><?php echo $upNextVideo->getSeasonAndEpisode(); ?></h3>
 
                 <button class="playNext" onclick="watchVideo(<?php echo $upNextVideo->getId(); ?>)">
-                    <i class="fa-solid fa-play"></i>
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 </button>
             </div>
         </div>
 
-        <video id="watchPlayer" playsinline preload="metadata">
+        <video id="watchPlayer" playsinline preload="metadata" onended="showUpNext()" onplaying="hideUpNext()">
             <source src="<?php echo htmlspecialchars($video->getFilePath()); ?>" type="video/mp4">
         </video>
     </div>

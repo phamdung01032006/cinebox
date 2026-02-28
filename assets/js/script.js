@@ -198,3 +198,11 @@ function setStartTime(videoId, username) {
 function watchVideo(videoId) {
         window.location.href = "watch.php?id=" + videoId;
 }
+
+function showUpNext() {
+    $(".upNext").fadeIn(300);
+}
+
+function hideUpNext() {
+    $(".upNext").fadeOut(300);
+}

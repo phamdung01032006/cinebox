@@ -37,11 +37,11 @@ a {
 .wrapper {
     min-width: 1050px;
     min-height:100%;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a0f0f 25%, #2d1515 50%, #231f1f 75%, #2d2727 100%);
+    background: linear-gradient(135deg, rgb(0, 0, 0), rgb(67, 67, 67));
 }
 
 .signInContainer {
-    /* background: linear-gradient(135deg, #0a0a0a 0%, #1a0f0f 25%, #2d1515 50%, #231f1f 75%, #2d2727 100%); */
+    /* background: linear-gradient(135deg, rgb(0, 0, 0), rgb(67, 67, 67)); */
     background: url("../images/signup.png") center/cover no-repeat;
     background-size: cover;
     background-position: center;
@@ -131,7 +131,7 @@ a {
 }
 
 .column::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #2d2727 0%, #1a0f0f 25%, #2d1515 50%, #231f1f 75%, #0a0a0a 100%);
+    background: linear-gradient(135deg, rgb(0, 0, 0), rgb(67, 67, 67));
     border-radius: 0px;
 }
 
@@ -221,7 +221,7 @@ a {
 .column form button[type="submit"]:focus,
 .column form button[type="submit"]:active {
     color: #ffffffc1; /* màu chữ sau hover */
-    box-shadow: 0 10px 18px rgba(73, 73, 73, 0.431);
+    box-shadow: 0px 10px 16px rgba(73, 73, 73, 0.431);
     transform: translate(-1px);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease, color 0.3s;
 }
@@ -739,7 +739,7 @@ button i {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 100px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.25);
 }
 
 .watchEpisodes {
@@ -767,10 +767,55 @@ button i {
     color: #fff;
     background-color: transparent;
     border: none;
+    transition: transform 0.3s ease-in-out;
 }
+
 .videoControls button:hover {
-    transform: translatex(-4px);
-    transition: transform 0.2s ease-in-out;
+    transform: translatex(4px);
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.videoControls.upNext {
+    display: none;
+    padding: 32px;
+    background: rgba(24, 24, 24, 0.5);
+    color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    font-weight: 600;
+    position: absolute;
+    pointer-events: none;
+    border-radius: 16px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9;
+    width: min(520px, 80%);
+    height: min(300px, 100%);
+    text-align: center;
+}
+
+.videoControls.upNext.show { display: flex; }
+
+/* nút upnext khi đến hết video */
+.upNext {
+    display: flex;
+    backdrop-filter: blur(10px);
+}
+
+.upNextContainer button {
+    padding: 0;
+    font-size: 36px;
+}
+
+.upNextContainer h2,
+.upNextContainer h3 {
+    color: #fff;
+}
+
+.videoControls.upNext a,
+.videoControls.upNext button{
+    pointer-events: auto;
 }
 
 /* Tên cho các cover phim ở trang mở đầu */
@@ -802,7 +847,7 @@ button i {
 /* Chỉnh lại fotter trang */
 .siteFooterCinebox{
     position: relative;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a0f0f 25%, #2d1515 50%, #231f1f 75%, #2d2727 100%),
+    background: linear-gradient(135deg, rgb(0, 0, 0), rgb(67, 67, 67)),
                 url("../images/signup.png") center/cover no-repeat;
     color:#ffffffd5;
     padding:48px 0 36px;
@@ -816,7 +861,7 @@ button i {
     position: absolute;
     inset: 0;
     background: url("../images/signup.png") center/cover no-repeat;
-    filter: blur(12px);
+    filter: blur(16px);
     transform: scale(1.05);
     z-index: 0;
 }
@@ -899,17 +944,3 @@ button i {
     .footerCaptcha{ font-size:15px; }
 }
 
-/* Nút restart và nút play video tiếp theo ở trang phim */
-.upNext {
-    height: 80%;
-    justify-content: right;
-}
-
-.upNextContainer button {
-    padding: 0;
-}
-
-.upNextContainer h2,
-.upNextContainer h3 {
-    color: #fff;
-}
