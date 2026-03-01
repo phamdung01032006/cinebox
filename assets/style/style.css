@@ -35,7 +35,7 @@ a {
 }
 
 .wrapper {
-    min-width: 1050px;
+    min-width: 500px;
     min-height:100%;
     background: linear-gradient(45deg, rgb(0, 0, 0), rgb(47, 47, 47));
 }
@@ -400,8 +400,8 @@ button i {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
     gap: 15px;
+    margin-top: 10px;
 }
 
 /* Loại bỏ margin mặc định của h3 trong header */
@@ -989,6 +989,10 @@ button i {
     padding: 30px 20px 30px 20px;   
     box-sizing: border-box;
     min-width: 500px;
+    transition: background-color .35 cubic-bezier(.22,.61,.36,1),
+                backdrop-filter .35s cubic-bezier(.22,.61,.36,1),
+                box-shadow .35s cubic-bezier(.22,.61,.36,1);   
+    will-change: background-color, box-shadow, backdrop-filter;
 }
 
 .topBar .logoContainer {
@@ -1012,16 +1016,16 @@ button i {
     margin: 20px;
 }
 
+
 .topBar .rightItems {
     margin-left: auto;
     display: flex;
     align-items: center;
     gap: 16px;
-    transition: all 0.3s ease-in-out;
 }
 
-.topBar .rightItems div:hover {
-    transform: scale(1.1);
+.topBar .rightItems div {
+    transition: all 0.3s ease-in-out;
 }
 
 .topBar .rightItems div:hover {
@@ -1047,6 +1051,14 @@ button i {
     box-shadow: 0 0 1px rgba(0, 0, 0, 0);
     position: relative;
     overflow: hidden;
+    transition: all 0.3s ease-in-out;
+}
+
+
+.topBar .navLinks a:hover,
+.topBar .rightItems a:hover{
+    transform: translateY(-1px);
+    opacity: .9;
 }
 
 .topBar .navLinks a:before {
@@ -1070,4 +1082,14 @@ button i {
 .topBar .navLinks a:focus::before,
 .topBar .navLinks a:active::before {
     right: 0;
+}
+
+/* Style cho chữ TV Shows và Movies */
+
+.previewCategories h1 {
+    color: rgba(255, 255, 255, 1);
+    font-size: 48px;
+    margin-bottom: 0;
+    text-transform: uppercase;
+    font-style: oblique;
 }

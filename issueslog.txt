@@ -1,6 +1,9 @@
+6. Chia thành 2 cột ở trang sign up và log in để có thể đăng nhập bằng facebook, google (tức là thêm tính năng đăng nhập bằng google và facebook).
+13. Hãy cho video xuống phía dưới navigation bar để không bị che khuất nội dung video ở trang
+xem phim
+14. Chỉnh sửa lại animation cho thanh navbar
 12. Cần có tính năng gửi mã code đến email để xác thực tài khoản như các dịch vụ khác vd Netflix, Discord,...
 1. Cần thông báo lỗi phần  public static $loginFailed = "Your username or password was incorrect";
 ở file Constants chi tiết hơn ra là username sai, hay là password sai. Đoạn này liên kết với hàm login 
 trong Account.php và file login.php
-6. Chia thành 2 cột ở trang sign up và log in để có thể đăng nhập bằng facebook, google (tức là thêm tính năng đăng nhập bằng google và facebook).
 7. Thêm nút cộng vào wishlist ở trang landing page. (tức là thêm tính năng wishlist)
