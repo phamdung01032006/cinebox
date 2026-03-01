@@ -10,6 +10,7 @@ require_once("includes/classes/SeasonProvider.php");
 require_once("includes/classes/Season.php");
 require_once("includes/classes/Video.php");
 require_once("includes/classes/VideoProvider.php");
+require_once("includes/classes/User.php");
 
 $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
 
@@ -45,7 +46,7 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
         <ul class="navLinks">
             <li><a href="index.php">Home</a></li>
             <li><a href="shows.php">TV Shows</a></li>
-            <li><a href="movies.php">Movie</a></li>
+            <li><a href="movies.php">Movies</a></li>
         </ul>
 
         <div class="rightItems">

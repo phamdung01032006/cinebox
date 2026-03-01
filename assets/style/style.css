@@ -58,7 +58,7 @@ a {
 } */
 
 .column {
-    background-color: rgba(255, 255, 255, 0.9   );
+    background-color: rgba(255, 255, 255, 0.9);
     min-height: 300px;
     width: 450px;
     padding: 20px 35px;
@@ -70,19 +70,19 @@ a {
     max-height: 760px;
     margin: 0;
     box-shadow:
-        0 24px 60px rgba(0, 0, 0, 1),
-        0 8px 20px rgba(0, 0, 0, 0.25);
+        10px 24px 60px rgba(0, 0, 0, 1),
+        10px 8px 20px rgba(0, 0, 0, 0.25);
 }
 
 .authSide {
     position: relative;
-    width: 420px;
-    height: 90vh;
+    min-width: 420px;
+    min-height: 90vh;
     max-height: 760px;
     background: url("../images/signupcontainer.jpeg") center/cover no-repeat;
     box-shadow:
-        0 24px 60px rgba(0, 0, 0, 1),
-        0 8px 20px rgba(0, 0, 0, 0.25);
+        -10px 24px 60px rgba(0, 0, 0, 1),
+        -10px 8px 20px rgba(0, 0, 0, 0.25);
 }
 
 .authSide::after {
@@ -1092,4 +1092,97 @@ button i {
     margin-bottom: 0;
     text-transform: uppercase;
     font-style: oblique;
+}
+
+.textboxContainer {
+    padding:100px 100px 0px 100px;
+}
+
+.searchInput {
+    width:600px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background-color: transparent;
+    color: white;
+    font-size: 20px;
+    padding: 15px;
+    border-radius: 100px;
+}
+
+/* Search: hiển thị dạng lưới, tự xuống dòng */
+.previewCategories.noScroll .searchEntities{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 12px;
+    white-space: normal;
+    overflow-x: visible;
+    overflow-y: visible;
+    padding: 50px;
+}
+
+.category .category-header h1 {
+    margin-bottom: 4px;
+}
+
+/* 2 nút bấm ở trang User Profile */
+
+input[name="saveDetailsButton"] {
+    background-color: #E50914;
+    color: #fff;
+    height: 36px;
+    width: 96px;
+    border: none;
+    border-radius: 3px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    align-self: flex-end;
+    cursor: pointer;
+    position: relative;
+    -webkit-transform: perspective(1px) translateZ(0);
+    transform: perspective(1px) translateZ(0);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+    -webkit-transition-property: color;
+    transition-property: color;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    overflow: hidden;
+    border-radius: 100px;
+}
+
+input[name="saveDetailsButton"]:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(158, 2, 2, 0.8);
+    -webkit-transform: scaleX(0);
+    transform: scaleX(0);
+    -webkit-transform-origin: 0 50%;
+    transform-origin: 0 50%;
+    -webkit-transition-property: transform;
+    transition-property: transform;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-timing-function: ease-out;
+    transition-timing-function: ease-out;
+}
+
+input[name="saveDetailsButton"]:hover:before, 
+input[name="saveDetailsButton"]:focus:before, 
+input[name="saveDetailsButton"]:active:before {
+    -webkit-transform: scaleX(1);
+    transform: scaleX(1);
+}
+
+input[name="saveDetailsButton"]:hover,
+input[name="saveDetailsButton"]:focus,
+input[name="saveDetailsButton"]:active {
+    color: #ffffffc1; /* màu chữ sau hover */
+    box-shadow: 0px 10px 16px rgba(73, 73, 73, 0.5);
+    transform: translate(-1px);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease, color 0.3s;
 }
