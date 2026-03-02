@@ -65,24 +65,43 @@ a {
     overflow-y: auto;
     backdrop-filter: blur(10px);
     position: relative;
-    flex: 0 0 450px;      /* cố định width form */
+    flex: 0 0 450px;     
     height: 90vh;         /* cùng chiều cao */
     max-height: 760px;
     margin: 0;
     box-shadow:
         10px 24px 60px rgba(0, 0, 0, 1),
         10px 8px 20px rgba(0, 0, 0, 0.25);
+    border-radius: 0 24px 24px 0;
+}
+
+/* màn nhỏ: ẩn panel trái */
+@media (max-width: 500px){
+    .signInContainer{
+        width: min(520px, 94vw);
+    }
+
+    .authSide{
+        display: none;
+    }
+
+    .column{
+        flex: 1 1 100%;
+        max-height: none;
+    }
 }
 
 .authSide {
     position: relative;
-    min-width: 420px;
-    min-height: 90vh;
-    max-height: 760px;
+    width:450px;
+    min-height: 300px;
     background: url("../images/signupcontainer.jpeg") center/cover no-repeat;
     box-shadow:
         -10px 24px 60px rgba(0, 0, 0, 1),
         -10px 8px 20px rgba(0, 0, 0, 0.25);
+    height: 90vh;
+    max-height: 760px;
+    border-radius: 24px 0 0 24px;
 }
 
 .authSide::after {
@@ -132,7 +151,7 @@ a {
 
 .column::-webkit-scrollbar-thumb {
     background: linear-gradient(135deg, rgb(0, 0, 0), rgb(67, 67, 67));
-    border-radius: 0px;
+    border-radius: 4px;
 }
 
 .column form {
@@ -1125,7 +1144,7 @@ button i {
 
 /* 2 nút bấm ở trang User Profile */
 
-input[name="saveDetailsButton"] {
+button[name="saveDetailsButton"] {
     background-color: #E50914;
     color: #fff;
     height: 36px;
@@ -1150,7 +1169,7 @@ input[name="saveDetailsButton"] {
     border-radius: 100px;
 }
 
-input[name="saveDetailsButton"]:before {
+button[name="saveDetailsButton"]:before{
     content: "";
     position: absolute;
     z-index: -1;
@@ -1171,16 +1190,16 @@ input[name="saveDetailsButton"]:before {
     transition-timing-function: ease-out;
 }
 
-input[name="saveDetailsButton"]:hover:before, 
-input[name="saveDetailsButton"]:focus:before, 
-input[name="saveDetailsButton"]:active:before {
+button[name="saveDetailsButton"]:hover:before, 
+button[name="saveDetailsButton"]:focus:before, 
+button[name="saveDetailsButton"]:active:before {
     -webkit-transform: scaleX(1);
     transform: scaleX(1);
 }
 
-input[name="saveDetailsButton"]:hover,
-input[name="saveDetailsButton"]:focus,
-input[name="saveDetailsButton"]:active {
+button[name="saveDetailsButton"]:hover,
+button[name="saveDetailsButton"]:focus,
+button[name="saveDetailsButton"]:active {
     color: #ffffffc1; /* màu chữ sau hover */
     box-shadow: 0px 10px 16px rgba(73, 73, 73, 0.5);
     transform: translate(-1px);

@@ -25,18 +25,24 @@ require_once("includes/header.php");
             <label for="email">Email</label>
             <input type="email" id="email" name="email" placeholder="Email" value="<?php echo $email; ?>">
 
-            <input type="submit" name="saveDetailsButton" value="Save">
+            <button type="submit" name="submitDetailButton">Update</button>
         </form>
     </div>
         <div class="formSection">
         <form method="POST">
             <h2>Update password</h2>
 
-            <input type="password" name="oldPassword" placeholder="Old password">
-            <input type="password" name="newPassword" placeholder="New password">
-            <input type="email" name="newPassword2" placeholder="Confirm new password">
+            <label for="oldPassword">Old password</label>
+            <input type="password" id="oldPassword" name="oldPassword" placeholder="Old password">
 
-            <input type="submit" name="saveDetailsButton" value="Update password">
+            <label for="newPassword">New password</label>
+            <input type="password" id="newPassword" name="newPassword" placeholder="New password">
+
+            <label for="newPassword2">Confirm new password</label>
+            <input type="password" id="newPassword2" name="newPassword2" placeholder="Confirm new password">
+
+
+            <button type="submit" name="submitDetailButton">Update</button>
         </form>
     </div>
 </div>
