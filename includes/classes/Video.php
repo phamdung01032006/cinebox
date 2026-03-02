@@ -16,6 +16,11 @@ class Video {
             $query->execute();
 
             $this->sqlData = $query->fetch(PDO::FETCH_ASSOC);
+            if(!$this->sqlData) {
+                ErrorMessage::show("Video not found");
+                exit();
+            }
+            
         }
 
         $this->entity = new Entity($con, $this->sqlData["entityId"]);

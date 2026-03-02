@@ -1,8 +1,8 @@
-
+// đổi màu thanh navibar bằng cách thêm class vào tên và chỉnh bằng css
 $(document).scroll(function() {
-    var isScrolled = $(this).scrollTop() > $(".topBar").height();
+    var isScrolled = $(this).scrollTop() > 20;
     $(".topBar").toggleClass("scrolled", isScrolled);
-})
+});
 
 // làm cho nút volume nó muted khi bấm vào lúc không mute và mute khi đang không muted
 function volumeToggle(button) {
@@ -211,3 +211,45 @@ function showUpNext() {
 function hideUpNext() {
     $(".upNext").fadeOut(300);
 }
+
+function hideNavBar() {
+    $(".topBar").stop(true,true).fadeOut(300);
+}
+
+function showNavBar() {
+    $(".topBar").stop(true,true).fadeIn(300);
+}
+
+// ẩn thanh navbar ở trang xem phim
+$(function () {
+    // chỉ áp dụng cho trang xem phim
+    if (!$(".watchPage").length) return;
+
+    const $episodes = $(".watchEpisodes");
+    if (!$episodes.length) return;
+
+    let navVisible = true;
+
+    function setNav(visible) {
+        if (visible === navVisible) return;
+        navVisible = visible;
+        if (visible) showNavBar();
+        else hideNavBar();
+    }
+
+    // vào trang xem phim thì ẩn nav
+    setNav(false);
+
+    let ticking = false;
+    $(window).on("scroll", function () {
+        if (ticking) return;
+        ticking = true;
+
+        requestAnimationFrame(function () {
+            const scrollTop = $(window).scrollTop();
+            const trigger = $episodes.offset().top - 120; // xuống gần vùng tập thì hiện nav
+            setNav(scrollTop >= trigger);
+            ticking = false;
+        });
+    });
+});

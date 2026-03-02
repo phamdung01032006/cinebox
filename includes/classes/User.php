@@ -13,13 +13,15 @@ class User {
     }
 
     public function getFirstName() {
-        $this->sqlData["firstName"];
+        return $this->sqlData["firstName"] ?? "";
     }
+
     public function getLastName() {
-        $this->sqlData["lastName"];
+        return $this->sqlData["lastName"] ?? "";
     }
+
     public function getEmail() {
-        $this->sqlData["email"];
+        return $this->sqlData["email"] ?? "";
     }
 }
 ?>

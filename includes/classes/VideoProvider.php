@@ -17,14 +17,20 @@ class VideoProvider {
 
         if($query->rowCount() == 0) {
             $query = $con->prepare("SELECT * FROM videos
-                                    WHERE season <= 1 AND episode <=1
-                                    AND id != :videoIds
-                                    ORDER BY views DESC LIMIT 1");
+                                    WHERE entityId=:entityId
+                                    AND id != :videoId
+                                    ORDER BY season, episode ASC LIMIT 1");
+            $query->bindValue(":entityId", $currentVideo->getEntityId());
             $query->bindValue(":videoId", $currentVideo->getId());
             $query->execute();
         }
 
         $row = $query->fetch(PDO::FETCH_ASSOC);
+        if(!$row) {
+            // Entity chi co 1 tap/1 phim, khong co "up next"
+            return $currentVideo;
+        }
+
         return new Video($con, $row);
     }
 
