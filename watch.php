@@ -46,13 +46,16 @@ $upNextVideo = VideoProvider::getUpNext($con, $video);
         <div class="videoControls upNext">
 
             <div class="upNextContainer">
-                <h2>Up next:</h2>
-                <h3><?php echo $upNextVideo->getTitle(); ?></h3>
-                <h3><?php echo $upNextVideo->getSeasonAndEpisode(); ?></h3>
-
-                <button class="playNext" onclick="watchVideo(<?php echo $upNextVideo->getId(); ?>)">
-                    <i class="fa-regular fa-circle-right"></i>
-                </button>
+                <div class="upNextText">
+                    <h2>Up next: </h2>
+                    <h3><?php echo $upNextVideo->getTitle(); ?></h3>
+                    <h3><?php echo $upNextVideo->getSeasonAndEpisode(); ?></h3>
+                </div>
+                <div class="upNextAction">
+                    <button class="playNext" onclick="watchVideo(<?php echo $upNextVideo->getId(); ?>)">
+                        <i class="fa-regular fa-circle-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
 

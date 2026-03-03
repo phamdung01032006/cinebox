@@ -52,7 +52,7 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
         <div class="rightItems">
             <div><a href="search.php"><i class="fa-solid fa-magnifying-glass"></i></a></div>
             <div><a href="profile.php"><i class="fa-regular fa-user"></i></a></div>
-            <div><a href="logout.php"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a></div>
+            <div class="logOutButton"><a href="logout.php"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a></div>
         </div>
 
     </div>

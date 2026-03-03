@@ -18,3 +18,5 @@ trong Account.php và file login.php
 mới có cửa sổ volume hiện ra.
 17. phần footer ở mobile đang lỗi
 18. Làm thanh navbar có menu cho mobile thay vì hiện ra hết như máy tính
+19. Khi chuyển sang mobile thì đang bị bấm vào video thì chỉ hiện các điều khiển, tap vào video thì 
+không play hay pause mà phải bấm nút ở các điều khiển.
