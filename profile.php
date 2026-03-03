@@ -1,5 +1,53 @@
 <?php
     require_once("includes/header.php");
+    require_once("includes/classes/Account.php");
+    require_once("includes/classes/FormSanitizer.php");
+    require_once("includes/classes/Constants.php");
+
+    $detailsMessage="";
+    $passwordMessage="";
+
+    if(isset($_POST["saveDetailsButton"])) {
+        $account = new Account($con);
+
+        $firstName = FormSanitizer::sanitizeFormString($_POST["firstName"]);
+        $lastName = FormSanitizer::sanitizeFormString($_POST["lastName"]);
+        $email = FormSanitizer::sanitizeFormEmail($_POST["email"]);
+        
+        if($account->updateDetails($firstName, $lastName, $email, $userLoggedIn)) {
+            $detailsMessage = "<div class='successMessage'> 
+                                    Details saved
+                                </div>";
+        }
+        else {
+            $errorMessage = $account->getFirstError();
+            
+            $detailsMessage = "<div class='errorMessage'> 
+                                    $errorMessage
+                                </div>";
+    }
+}
+    
+    if(isset($_POST["savePasswordButton"])) {
+        $account = new Account($con);
+
+        $oldPassword = FormSanitizer::sanitizeFormPassword($_POST["oldPassword"]);
+        $newPassword = FormSanitizer::sanitizeFormPassword($_POST["newPassword"]);
+        $newPassword2 = FormSanitizer::sanitizeFormPassword($_POST["newPassword2"]);
+        
+        if($account->updatePassword($oldPassword, $newPassword, $newPassword2, $userLoggedIn)) {
+            $passwordMessage = "<div class='successMessage'> 
+                                    Password changed
+                                </div>";
+        }
+        else {
+            $errorMessage = $account->getFirstError();
+            
+            $passwordMessage = "<div class='errorMessage'> 
+                                    $errorMessage
+                                </div>";
+    }
+}
 
     if(!$userLoggedIn){
         header("Location: login.php");
@@ -40,25 +88,28 @@
 
                     <div class="profileField">
                     <label for="firstName">First name</label>
-                    <input type="text" id="firstName" name="firstName" placeholder="Your first name">
+                    <input type="text" id="firstName" name="firstName" placeholder="Your first name" value="<?php echo $firstName; ?>">
                     </div>
 
                     <div class="profileField">
                     <label for="lastName">Last name</label>
-                    <input type="text" id="lastName" name="lastName" placeholder="Your last name">
+                    <input type="text" id="lastName" name="lastName" placeholder="Your last name" value="<?php echo $lastName; ?>">
                     </div>
 
                     <div class="profileField">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="Your email">
+                    <input type="email" id="email" name="email" placeholder="Your email" value="<?php echo $email; ?>">
                     </div>
 
                     <div class="profileField">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" placeholder=<?php echo htmlspecialchars($userLoggedIn); ?> disabled>
                     </div>
-
+                    
                     <div class="profileActions full">
+                    <div class="message">
+                        <?php echo $detailsMessage; ?>
+                    </div>
                     <button type="submit" name="saveDetailsButton">Save details</button>
                     </div>
                 </div>
@@ -82,7 +133,10 @@
                     </div>
 
                     <div class="profileActions full">
-                    <button type="submit" name="saveDetailsButton">Change password</button>
+                    <div class="message">
+                        <?php echo $passwordMessage; ?>
+                    </div>
+                    <button type="submit" name="savePasswordButton">Change password</button>
                     </div>
                 </div>
             </form>

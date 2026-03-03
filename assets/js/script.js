@@ -213,11 +213,11 @@ function hideUpNext() {
 }
 
 function hideNavBar() {
-    $(".topBar").stop(true,true).fadeOut(300);
+    $(".topBar").stop(true, true).slideUp(220);
 }
 
 function showNavBar() {
-    $(".topBar").stop(true,true).fadeIn(300);
+    $(".topBar").stop(true, true).slideDown(220);
 }
 
 // ẩn thanh navbar ở trang xem phim
@@ -253,3 +253,7 @@ $(function () {
         });
     });
 });
+
+function hideNavBar() { $(".topBar").addClass("isHidden"); }
+function showNavBar() { $(".topBar").removeClass("isHidden"); }
+

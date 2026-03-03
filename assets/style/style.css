@@ -280,6 +280,15 @@ a {
     text-align: center;
 }
 
+.successMessage {
+    color: #099D09;
+    background-color: rgba(9, 157, 9, 0.1);
+    border: 1px dashed #099D09;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+}
+
 .previewImage,
 .previewVideo {
     width: 100%;
@@ -879,7 +888,7 @@ button i {
     text-align: center;
 }
 
-/* Chỉnh lại fotter trang */
+/* Chỉnh lại footer trang */
 .siteFooterCinebox{
     position: relative;
     background: linear-gradient(135deg, rgb(0, 0, 0), rgb(67, 67, 67)),
@@ -897,7 +906,6 @@ button i {
     inset: 0;
     background: url("../images/signup.png") center/cover no-repeat;
     filter: blur(16px);
-    transform: scale(1.05);
     z-index: 0;
 }
 
@@ -1062,6 +1070,17 @@ button i {
     transition: all 300ms ease-in-out;
 }
 
+.topBar{
+    transform: translateY(0);
+    opacity: 1;
+    transition: transform .25s ease, opacity .25s ease;
+}
+.topBar.isHidden{
+    transform: translateY(-18px);
+    opacity: 0;
+    pointer-events: none;
+}
+
 .topBar.scrolled {
     border-bottom: 2px solid rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(36px);
@@ -1154,7 +1173,8 @@ button i {
 
 /* 2 nút bấm ở trang User Profile */
 
-button[name="saveDetailsButton"] {
+button[name="saveDetailsButton"],
+button[name="savePasswordButton"] {
     background-color: #E50914;
     color: #fff;
     height: 36px;
@@ -1179,7 +1199,8 @@ button[name="saveDetailsButton"] {
     border-radius: 100px;
 }
 
-button[name="saveDetailsButton"]:before{
+button[name="saveDetailsButton"]:before,
+button[name="savePasswordButton"]:before{
     content: "";
     position: absolute;
     z-index: -1;
@@ -1202,14 +1223,20 @@ button[name="saveDetailsButton"]:before{
 
 button[name="saveDetailsButton"]:hover:before, 
 button[name="saveDetailsButton"]:focus:before, 
-button[name="saveDetailsButton"]:active:before {
+button[name="saveDetailsButton"]:active:before,
+button[name="savePasswordButton"]:hover:before,
+button[name="savePasswordButton"]:focus:before,
+button[name="savePasswordButton"]:active:before {
     -webkit-transform: scaleX(1);
     transform: scaleX(1);
 }
 
 button[name="saveDetailsButton"]:hover,
 button[name="saveDetailsButton"]:focus,
-button[name="saveDetailsButton"]:active {
+button[name="saveDetailsButton"]:active,
+button[name="savePasswordButton"]:hover,
+button[name="savePasswordButton"]:focus,
+button[name="savePasswordButton"]:active{
     color: #ffffffc1; /* màu chữ sau hover */
     box-shadow: 0px 3px 2px rgba(63, 63, 63, 0.5);
     transform: translate(-1px);
@@ -1305,9 +1332,8 @@ button[name="saveDetailsButton"]:active {
 
 .profileActions{
     grid-column: 1 / -1;
-    display: flex;
+    display: inline-block;
     gap: 10px;
-    margin-top: 6px;
 }
 
 .profileActions button{
@@ -1351,12 +1377,6 @@ button[name="saveDetailsButton"]:active {
     gap: 6px;
 }
 
-.profileActions{
-    display: flex;
-    gap: 10px;
-    margin-top: 8px;
-}
-
 @media (max-width: 900px){
     .profileForm{
         grid-template-columns: 1fr;
@@ -1366,5 +1386,6 @@ button[name="saveDetailsButton"]:active {
 h3[class="updateProfile"] {
     font-style: oblique;
     color: #fff;
-    margin: 20px 0px;
+    margin: 10px 0px;
 }
+

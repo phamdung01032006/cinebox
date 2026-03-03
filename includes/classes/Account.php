@@ -8,6 +8,25 @@ class Account {
         $this->con = $con;
     }
 
+    public function updateDetails($fn, $ln, $em, $un) {
+        $this -> validateFirstName($fn);
+        $this -> validateLastName($ln);
+        $this->validateNewEmail($em, $un);
+
+        if(empty($this->errorArray)) {
+            $query = $this->con->prepare("UPDATE users 
+                                            SET firstName=:fn, lastName=:ln, email=:em
+                                            WHERE username=:un");
+            $query->bindValue(":fn", $fn);
+            $query->bindValue(":ln", $ln);
+            $query->bindValue(":em", $em);
+            $query->bindValue(":un", $un);
+
+            return $query->execute();
+        }
+        return false;
+    }
+
     public function register($fn, $ln, $un, $em, $em2, $pw, $pw2) {
         $this -> validateFirstName($fn);
         $this -> validateLastName($ln);
@@ -127,6 +146,31 @@ class Account {
 
     }
 
+    private function validateNewEmail($em, $un) {
+
+        if(!filter_var($em, FILTER_VALIDATE_EMAIL)) {
+            array_push($this->errorArray, Constants::$emailInvalid);
+            return;
+        }
+
+        // Kiểm tra xem thử có email trùng trong database hay không bằng SQL
+        $query = $this->con->prepare("SELECT * FROM users 
+                                        WHERE email=:em 
+                                        AND username != :un");
+
+        // bind :un to $un variable
+        $query->bindValue(":em", $em);
+        $query->bindValue(":un", $un);
+
+        // execute query
+        $query->execute();
+
+        if($query->rowCount() != 0) {
+            array_push($this->errorArray, Constants::$emailTaken);
+        }
+
+    }
+
     private function validatePasswords($pw,$pw2) {
         if($pw != $pw2) {
             array_push($this->errorArray, Constants::$passwordsDontMatch);
@@ -146,6 +190,53 @@ class Account {
         }
     }
 
+    public function getFirstError() {
+        if(!empty($this->errorArray)) {
+            return $this->errorArray[0];
+        }
+    }
+
+    public function updatePassword($oldPw, $pw, $pw2, $un) {
+        $this->validateOldPassword($oldPw, $un);
+        $this->validatePasswords($pw, $pw2);
+
+        if(empty($this->errorArray)) {
+            $query = $this->con->prepare("UPDATE users 
+                                            SET password=:pw
+                                            WHERE username=:un");
+            $pw = hash("sha512", $pw);
+            $query->bindValue(":pw", $pw);
+            $query->bindValue(":un", $un);
+
+            return $query->execute();
+        }
+        return false;
+
+    }
+
+    public function validateOldPassword($oldPw, $un) {
+
+    // hash the password and save it to $pw, có thể dùng hàm hash khác ngoài sha512
+    // ở đây tiếp tục hash là do mật khẩu đã lưu trong MySQL đã hash nên mk khi log in người dùng nhập vào cũng
+    // hash để so sánh với mk ở trong database
+    $pw = hash("sha512", $oldPw);
+
+    $query = $this->con->prepare("SELECT * FROM users WHERE username=:un AND password=:pw");
+    
+    $query->bindvalue(":un", $un);
+    $query->bindvalue(":pw", $pw);
+
+    // Code để đưa ra chi tiết lỗi trên màn hình nếu bị lỗi
+    // $query->execute;
+    // var_dump($query->errorInfo());
+    // return false;
+
+    $query->execute();
+
+    if($query->rowCount() == 0) {
+        array_push($this->errorArray, Constants::$passwordIncorrect);
+    }
+    }
 }
 
 ?>

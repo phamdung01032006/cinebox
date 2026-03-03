@@ -7,3 +7,14 @@ xem phim
 ở file Constants chi tiết hơn ra là username sai, hay là password sai. Đoạn này liên kết với hàm login 
 trong Account.php và file login.php
 7. Thêm nút cộng vào wishlist ở trang landing page. (tức là thêm tính năng wishlist)
+8. Thêm tính năng log out cho trang user profile.
+9. Thêm tính năng trả tiền bằng paypal, vnpay, momo
+11. Thêm tính năng hiện upcoming film
+12. Thêm AI vào để thu thập dữ liệu người dùng (đã xem phim gì, xem trong bao lâu, xem thể loại nào nhiều hơn) từ 
+đó đề xuất hoặc thêm dashboard vào trang userprofile, và thêm 1 dòng category là xem nhiều nhất trong tháng, tuần
+13. Thêm tính năng đẩy các category người dùng xem nhiều lên đầu trang.
+15. Đang bị lỗi phần userprofile, muốn enter ở cột nào thì bấm nút ở cột đó nhưng nó lại bấm Save details
+16. player ở mobile đang có nút điều khiển quá lớn và che khuất thanh tiến trình, đang muốn ẩn volume đi khi nào bấm vào
+mới có cửa sổ volume hiện ra.
+17. phần footer ở mobile đang lỗi
+18. Làm thanh navbar có menu cho mobile thay vì hiện ra hết như máy tính
