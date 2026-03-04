@@ -25,6 +25,7 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
 
     <link rel="stylesheet" href="assets/style/plyr.css" />
     <link rel="stylesheet" type="text/css" href="assets/style/style.css"/>
+    <link rel="stylesheet" href="assets/style/header.css">
 
     <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/eeaac7bcf0.js" crossorigin="anonymous"></script>
@@ -40,19 +41,42 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
             <a href="index.php">
                 <img src="assets/images/cinebox.png" alt="CineBox logo">
             </a>
-
         </div>
 
-        <ul class="navLinks">
-            <li><a href="index.php">Home</a></li>
-            <li><a href="shows.php">TV Shows</a></li>
-            <li><a href="movies.php">Movies</a></li>
-        </ul>
+        <a class="navButton" href="index.php">
+            <span class="top-key"></span>
+            <span class="text">Home</span>
+            <span class="bottom-key-1"></span>
+            <span class="bottom-key-2"></span>
+        </a>
+        <a class="navButton" href="shows.php">
+            <span class="top-key"></span>
+            <span class="text">TV Shows</span>
+            <span class="bottom-key-1"></span>
+            <span class="bottom-key-2"></span>
+        </a>
+        <a class="navButton" href="movies.php">
+            <span class="top-key"></span>
+            <span class="text">Movies</span>
+            <span class="bottom-key-1"></span>
+            <span class="bottom-key-2"></span>
+        </a>
 
         <div class="rightItems">
-            <div><a href="search.php"><i class="fa-solid fa-magnifying-glass"></i></a></div>
-            <div><a href="profile.php"><i class="fa-regular fa-user"></i></a></div>
-            <div class="logOutButton"><a href="logout.php"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a></div>
+            <button class="iconButtons" onclick="window.location.href='search.php'"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <button class="iconButtons" onclick="window.location.href='profile.php'"><i class="fa-regular fa-user"></i></button>
+            <button type="button" class="logOutButton" onclick="window.location.href='logout.php'">
+                <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
+                    <path
+                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+                    ></path>
+                </svg>
+                <span class="text">Log out</span>
+                <span class="circle"></span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
+                    <path
+                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+                    ></path>
+                </svg>
         </div>
-
     </div>

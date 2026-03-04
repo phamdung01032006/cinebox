@@ -6,6 +6,11 @@
 
     $detailsMessage="";
     $passwordMessage="";
+    $loggedInUserID = $userLoggedIn;
+
+    // Get logged-in user ID from sesion 
+    // Session name need to be changed as per your system 
+    $loggedInUserID = !empty($_SESSION['userID'])?$_SESSION['userID']:0; 
 
     if(isset($_POST["saveDetailsButton"])) {
         $account = new Account($con);
@@ -65,7 +70,7 @@
     if($displayName === "") $displayName = $userLoggedIn;
     $initial = strtoupper(substr($displayName, 0, 1));
 ?>
-
+<link rel="stylesheet" href="assets/style/profile.css">
 <div class="profilePage">
     <div class="profileLayout">
         <aside class="profileLeft">
@@ -80,6 +85,39 @@
             </div>
         </div>
         </aside>
+
+        <div class="subscriptionButtons">
+            <h3>Subscription</h3>
+            <button type="button" class="animatedSubscriptionButton" onclick="window.location.href='paypal.php'">
+                <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
+                    <path
+                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+                    ></path>
+                </svg>
+                <span class="text">PayPal</span>
+                <span class="circle"></span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
+                    <path
+                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+                    ></path>
+                </svg>
+            </button>
+
+            <button type="button" class="animatedSubscriptionButton" onclick="window.location.href='momo.php'">
+                <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
+                    <path
+                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+                    ></path>
+                </svg>
+                <span class="text">MoMo</span>
+                <span class="circle"></span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
+                    <path
+                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+                    ></path>
+                </svg>
+            </button>
+        </div>
 
         <section class="profileRight">
             <form class="profileForm" method="POST">
@@ -110,7 +148,7 @@
                     <div class="message">
                         <?php echo $detailsMessage; ?>
                     </div>
-                    <button type="submit" name="saveDetailsButton">Save details</button>
+                    <button type="submit" name="saveDetailsButton" class="button type1"><span class="btn-txt">Save details</span></button>
                     </div>
                 </div>
 
@@ -136,16 +174,11 @@
                     <div class="message">
                         <?php echo $passwordMessage; ?>
                     </div>
-                    <button type="submit" name="savePasswordButton">Change password</button>
+                    <button type="submit" name="savePasswordButton" class="button type1"><span class="btn-txt">Change password</span></button>
                     </div>
                 </div>
             </form>
         </section>
-    </div>
-
-    <div class="formSection">
-        <div id="paypal-button-container"></div>
-        <p id="result-message"></p>
     </div>
 </div>
 

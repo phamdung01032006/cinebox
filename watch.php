@@ -33,7 +33,6 @@ foreach($relatedEntities as $relatedEntity) {
 
 $upNextVideo = VideoProvider::getUpNext($con, $video);
 ?>
-
 <div class="watchPage">
     <div class="watchContainer">
 
