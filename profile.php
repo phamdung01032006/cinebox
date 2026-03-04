@@ -142,8 +142,11 @@
             </form>
         </section>
     </div>
+
+    <div class="formSection">
+        <div id="paypal-button-container"></div>
+        <p id="result-message"></p>
+    </div>
 </div>
-
-
 
 <?php require_once("footer.php"); ?>

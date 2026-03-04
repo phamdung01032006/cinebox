@@ -19,4 +19,9 @@ mới có cửa sổ volume hiện ra.
 17. phần footer ở mobile đang lỗi
 18. Làm thanh navbar có menu cho mobile thay vì hiện ra hết như máy tính
 19. Khi chuyển sang mobile thì đang bị bấm vào video thì chỉ hiện các điều khiển, tap vào video thì 
-không play hay pause mà phải bấm nút ở các điều khiển.
+không play hay pause mà phải bấm nút ở các điều khiển, phần player ở mobile điều chỉnh ít nút hơn để tối ưu diện tích
+màn hình.
+20. Thêm tính năng ẩn hiện password khi nhập password.
+21. Cập nhật lại paypal thành phiên bản mới hơn
+22. thay Plyr thành player khác xem thử có chiếu ok hơn không (video.js)
+23. Thêm cột gender vào user.

@@ -1,0 +1,23 @@
+{
+    "name": "hanabi/cinebox",
+    "description": "CineBox",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Hanabi\\Cinebox\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "phamdung01032006",
+            "email": "phamdung01032006@gmail.com"
+        }
+    ],
+    "require": {
+        "paypal/paypal-server-sdk": "2.0.0"
+    },
+
+    "require": {
+    "paypal/paypal-server-sdk": "2.0.0"}
+
+}
