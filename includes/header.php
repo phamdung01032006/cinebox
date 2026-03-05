@@ -39,7 +39,7 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
 
         <div class="logoContainer">
             <a href="index.php">
-                <img src="assets/images/cinebox.png" alt="CineBox logo">
+                <img src="assets/images/logo.png" alt="CineBox logo">
             </a>
         </div>
 

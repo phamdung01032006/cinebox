@@ -1,6 +1,7 @@
 <?php 
 // Include configuration file  
 require_once("includes/config.php");
+require_once("includes/header.php");
  
 // Include the database connection file 
 include_once 'dbConnect.php'; 
@@ -24,24 +25,20 @@ $loggedInUserID = !empty($_SESSION['userID'])?$_SESSION['userID']:0;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://www.paypal.com/sdk/js?client-id=<?php echo PAYPAL_SANDBOX?PAYPAL_SANDBOX_CLIENT_ID:PAYPAL_PROD_CLIENT_ID; ?>&vault=true&intent=subscription"></script>
+    <link rel="stylesheet" href="assets/style/paypal.css">
 </head>
 <body>
-<div class="container">
-    <h1>PayPal subscriptions payment gateway integration</h1>
 
-    <div class="panel">
     <div class="overlay hidden">
-        <div class="overlay-content">
-            <img src="css/loading.gif" alt="Processing..."/>
-        </div>
     </div>
 
-    <div class="panel-heading">
-        <h3 class="panel-title">Subscription with PayPal</h3>
-        
-        <!-- Subscription Plan Info -->
-        <div class="form-group">
-            <label>Select Subscription Plan:</label>
+<div class="container">
+    <div class="card cart">
+    <label class="title">PayPal subscriptions payment</label>
+    <div class="steps">
+        <div class="step">
+        <div>
+            <span>PLANS</span>
             <select id="subscr_plan" class="form-control">
                 <?php 
                 if($hasPlans){ 
@@ -61,16 +58,53 @@ $loggedInUserID = !empty($_SESSION['userID'])?$_SESSION['userID']:0;
                 ?>
             </select>
         </div>
+        <hr />
+        <div>
+            <span>PAYMENT METHOD</span>
+            <div class="panel-body">
+                <!-- Display status message -->
+                <div id="paymentResponse" class="hidden"></div>
+                
+                <!-- Set up a container element for the button -->
+                <div id="paypal-button-container"></div>
+            </div>
+        </div>
+        <hr />
+        <div class="promo">
+            <span>HAVE A PROMO CODE?</span>
+            <form class="form">
+            <input
+                class="input_field"
+                placeholder="Enter a Promo Code"
+                type="text"
+            />
+            <button>Apply</button>
+            </form>
+        </div>
+        <hr />
+        <div class="payments">
+            <span>PAYMENT</span>
+            <div class="details">
+            <span>Subtotal:</span>
+            <span>$240.00</span>
+            <span>Shipping:</span>
+            <span>$10.00</span>
+            <span>Tax:</span>
+            <span>$30.40</span>
+            </div>
+        </div>
+        </div>
     </div>
-    <div class="panel-body">
-        <!-- Display status message -->
-        <div id="paymentResponse" class="hidden"></div>
-        
-        <!-- Set up a container element for the button -->
-        <div id="paypal-button-container"></div>
+    </div>
+
+    <div class="card checkout">
+    <div class="footer">
+        <label class="price">$280.40</label>
+        <button class="checkout-btn">Checkout</button>
+    </div>
     </div>
 </div>
-</div>
+
 <script>
 paypal.Buttons({
     createSubscription: async (data, actions) => {
@@ -173,3 +207,5 @@ const resultMessage = (msg_txt) => {
 </script>
 </body>
 </html>
+
+<?php require_once("footer.php"); ?>

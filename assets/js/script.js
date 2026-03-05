@@ -256,4 +256,3 @@ $(function () {
 
 function hideNavBar() { $(".topBar").addClass("isHidden"); }
 function showNavBar() { $(".topBar").removeClass("isHidden"); }
-
