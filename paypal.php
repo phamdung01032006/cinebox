@@ -26,6 +26,7 @@ $loggedInUserID = !empty($_SESSION['userID'])?$_SESSION['userID']:0;
     <title>Document</title>
     <script src="https://www.paypal.com/sdk/js?client-id=<?php echo PAYPAL_SANDBOX?PAYPAL_SANDBOX_CLIENT_ID:PAYPAL_PROD_CLIENT_ID; ?>&vault=true&intent=subscription"></script>
     <link rel="stylesheet" href="assets/style/paypal.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 

@@ -1,7 +1,6 @@
 <?php  
 // Include the configuration file  
 require_once("includes/config.php");
-  
 // Include the database connection file  
 include_once 'dbConnect.php';  
   

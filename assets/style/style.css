@@ -35,7 +35,10 @@ a {
 }
 
 .wrapper {
-    min-width: 500px;
+    /* CHỉnh lại cho màn hình điện thoại */
+    width: 100%;
+    min-width: 0;
+    /*  */
     min-height:100%;
     background: linear-gradient(45deg, rgb(0, 0, 0), rgb(47, 47, 47));
     overflow:auto;

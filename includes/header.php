@@ -31,6 +31,8 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
     <script src="https://kit.fontawesome.com/eeaac7bcf0.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.min.js"></script>
     <script src="assets/js/script.js"></script>
+    <!-- Chỉnh lại cho màn hình điện thoại -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
     <div class='wrapper'>
