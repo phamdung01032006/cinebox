@@ -26,6 +26,7 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
     <link rel="stylesheet" href="assets/style/plyr.css" />
     <link rel="stylesheet" type="text/css" href="assets/style/style.css"/>
     <link rel="stylesheet" href="assets/style/header.css">
+    <link rel="stylesheet" href="assets/style/menu.css">
 
     <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/eeaac7bcf0.js" crossorigin="anonymous"></script>
@@ -43,6 +44,10 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
                 <img src="assets/images/logo.png" alt="CineBox logo">
             </a>
         </div>
+
+        <!-- Menu khi thu nhỏ màn hình -->
+         
+        <!--  -->
 
         <a class="navButton" href="index.php">
             <span class="top-key"></span>
@@ -62,6 +67,7 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
             <span class="bottom-key-1"></span>
             <span class="bottom-key-2"></span>
         </a>
+
 
         <div class="rightItems">
             <button class="iconButtons" onclick="window.location.href='search.php'"><i class="fa-solid fa-magnifying-glass"></i></button>

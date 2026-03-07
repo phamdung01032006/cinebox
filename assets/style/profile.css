@@ -101,6 +101,12 @@
     cursor: pointer;
 }
 
+.profileForm{
+    display: inline-flex;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+}
+
 @media (max-width: 900px){
     .profileGridForm{
         grid-template-columns: 1fr;
@@ -109,16 +115,12 @@
     .profileIdentity{
         flex-wrap: wrap;
     }
-
-    .profileEditBtn{
-        margin-left: 0;
-    }
-}
-
-.profileForm{
-    display: inline-flex;
+    
+    .profileForm{
+    display: inline;
     grid-template-columns: 1fr 1fr;
     gap: 36px;
+    }
 }
 
 .profileCol{
