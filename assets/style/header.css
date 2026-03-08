@@ -366,5 +366,5 @@
 .navButton:hover .bottom-key-1,
 .navButton:hover .bottom-key-2 {
     right: 10px;
-    width: 1px;
+    width: 0px;
 }
