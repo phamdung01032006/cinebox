@@ -19,8 +19,55 @@ body {
     --plyr-control-bg: rgba(0, 0, 0, 0.5);
     --plyr-menu-color: #fff;
     --plyr-menu-radius: 24px;
-    --plyr-menu-background: rgba(52, 52, 52, 0.5);
+    --plyr-menu-background: rgba(52, 52, 52, 0.8);
 }
+
+/* Khi màn hình nhỏ hơn 768px (Điện thoại) */
+@media (max-width: 768px) {
+    /* Tìm và ẩn các nút không cần thiết dựa trên thuộc tính data-plyr */
+    .plyr__controls [data-plyr="restart"],
+    .plyr__controls [data-plyr="rewind"],
+    .plyr__controls [data-plyr="fast-forward"],
+    .plyr__controls .plyr__time--duration { /* Ẩn tổng thời gian nếu muốn gọn hơn */
+        display: none;
+    }
+
+    /* Giãn thanh tiến trình (progress bar) rộng hơn khi bớt nút */
+    .plyr__progress {
+        flex: 1;
+    }
+
+}
+
+/* Định vị lại vùng chứa volume */
+.plyr__volume {
+    position: relative;
+}
+
+/* Biến thanh trượt thành bảng dọc */
+.plyr__volume input[type=range] {
+    position: absolute;
+    bottom: 50px; /* Đẩy lên trên nút loa */
+    left: 40%;
+    transform: translateY(-20%) translateX(-50%) rotate(-90deg); /* Xoay dọc thanh trượt */
+    width: 100px; /* Đây sẽ là chiều cao của bảng dọc */
+    background: rgba(52, 52, 52, 0.8);
+    padding: 15px;
+    border-radius: 100px;
+    
+    /* Ẩn mặc định */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+
+/* Hiện bảng khi hover vào nút loa */
+.plyr__volume:hover input[type=range] {
+    opacity: 1;
+    visibility: visible;
+    bottom: 60px; /* Hiệu ứng bay lên nhẹ */
+}
+/*  */
 
 h3 {
     color: #e5e5e5;

@@ -73,6 +73,7 @@ $(document).ready(function () {
             "restart", "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
             "mute", "volume", "settings", "pip", "fullscreen",
         ],
+        volume: 1,
         ratio: "16:9"
     });
 });
@@ -87,9 +88,41 @@ $(document).ready(function () {
             "restart", "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
             "mute", "volume", "settings", "pip", "fullscreen"
         ],
+        volume: 1,
         ratio: "16:9"
     });
 });
+
+// $(document).ready(function () {
+//     // 1. Xác định danh sách controls cho từng loại màn hình
+//     const desktopControls = [
+//         "restart", "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
+//         "mute", "volume", "settings", "pip", "fullscreen"
+//     ];
+
+//     const mobileControls = [
+//         "play-large", "play", "progress", "current-time", "mute", "pip", "fullscreen"
+//     ];
+
+//     // 2. Hàm kiểm tra xem có phải màn hình nhỏ (mobile) không
+//     const isMobile = window.innerWidth <= 800;
+//     const activeControls = isMobile ? mobileControls : desktopControls;
+
+//     // 3. Khởi tạo player với bộ controls tương ứng
+//     if (document.getElementById("videoPopupPlayer")) {
+//         popupPlayer = new Plyr("#videoPopupPlayer", {
+//             controls: activeControls,
+//             ratio: "16:9"
+//         });
+//     }
+
+//     if (document.getElementById("watchPlayer")) {
+//         new Plyr("#watchPlayer", {
+//             controls: activeControls,
+//             ratio: "16:9"
+//         });
+//     }
+// });
 
 function openVideoPopup(button) {
     var src = $(button).data("src");
