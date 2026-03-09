@@ -77,6 +77,7 @@ a h3:hover {
     color: #fff;
 }
 
+
 a {
     text-decoration:none;
 }
@@ -407,6 +408,21 @@ a {
     margin: 2px 2px 8px 2px;
 }
 
+/* Responsive */
+@media (max-width: 768px){
+    .previewOverlay .mainDetails h3 {
+    color: #fff;
+    font-size: 20px;
+    margin: 0;
+}
+.previewOverlay .mainDetails h4 {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 12px;
+    margin: 2px 2px 8px 2px;
+}
+
+}
+
 .previewOverlay .mainDetails {
     position: relative;
     top: 35%;
@@ -461,6 +477,54 @@ button i {
 /* Hiệu ứng khi click - thu nhỏ nút */
 .mainDetails button:active {
     transform: scale(0.95);
+}
+
+/* Responsive */
+@media (max-width: 768px){
+    .mainDetails button {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(6px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        width:  32px;
+        height: 32px;
+        min-width: 32px;
+        border-radius: 100px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        z-index: 10;
+        transition: all 0.3s ease-in-out;
+        flex-shrink: 0;
+        padding: 0;
+        line-height: 1; /* Loại bỏ không gian dư thừa trong button */
+    }
+    .mainDetails .playBtn {
+        width: 150px;
+        background: linear-gradient(135deg, rgba(160, 5, 5, 0.5), rgba(51, 51, 51, 0.5));
+    }
+
+    button i {
+        color:inherit;  
+    }
+
+    /* Hiệu ứng hover - đổi màu sang đỏ Netflix và phóng to */
+    .mainDetails button:hover {
+        background: rgba(220, 19, 35, 0.5);
+        border-color: rgba(255, 255, 255, 0.6);
+        transform: scale(1.075);
+    }
+
+    .mainDetails .playBtn:hover {
+        background: linear-gradient(135deg, rgba(160, 5, 5, 0.8), rgba(51, 51, 51, 0.8));
+        transform: scale(1.025);
+    }
+
+    /* Hiệu ứng khi click - thu nhỏ nút */
+    .mainDetails button:active {
+        transform: scale(0.95);
+    }
 }
 
 .category {
@@ -551,6 +615,29 @@ button i {
     flex-shrink: 0;
     padding: 0;
     line-height: 1; /* Loại bỏ không gian dư thừa trong button */
+}
+
+@media (max-width: 650px) {
+    .scroll-arrow {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 100px;
+    cursor: pointer;
+    display: none; /* Ẩn mặc định, chỉ hiển thị khi có overflow */
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    z-index: 10;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    padding: 0;
+    line-height: 1; /* Loại bỏ không gian dư thừa trong button */
+}
 }
 
 /* Căn giữa icon FontAwesome bên trong nút mũi tên */
@@ -692,10 +779,36 @@ button i {
     transition: all 0.3s ease;
     flex-shrink: 0;
     padding: 0;
-    line-height: 1; /* Loại bỏ không gian dư thừa trong button */
+    line-height: 1; 
     position: absolute; 
     top: 10px; 
     right: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px){
+    .videoPopupClose {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(6px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        border-radius: 100px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        z-index: 10;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+        padding: 0;
+        line-height: 1; 
+        position: absolute; 
+        top: 10px; 
+        right: 10px;
+    }
 }
 
 /* Hiệu ứng hover - đổi màu sang đỏ Netflix và phóng to */
@@ -1016,6 +1129,19 @@ button i {
     font-size: 20px;
     padding: 15px;
     border-radius: 100px;
+}
+
+@media (max-width: 650px) {
+    .searchInput {
+    /* width:600px; */
+    min-width: 100%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background-color: transparent;
+    color: white;
+    font-size: 14px;
+    padding: 15px;
+    border-radius: 100px;
+}
 }
 
 /* Search: hiển thị dạng lưới, tự xuống dòng */
