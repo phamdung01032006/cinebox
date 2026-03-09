@@ -126,17 +126,14 @@ a {
 }
 
 /* màn nhỏ: ẩn panel trái */
-@media (max-width: 600px){
-    .signInContainer{
-        width: min(520px, 94vw);
-    }
+@media (max-width: 768px){
 
     .authSide{
         display: none;
     }
 
     .column{
-        flex: 1 1 100%;
+        flex: 0.9;
         max-height: none;
     }
 }
