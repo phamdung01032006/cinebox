@@ -26,7 +26,7 @@
 /* Background của upnext */
 .videoControls.upNext {
     display: none;
-    padding: 16px;
+    padding: 24px;
     background: rgba(29, 29, 29, 0.5);
     color: #fff;
     border: 2px solid rgba(255, 255, 255, 0.3);
@@ -91,9 +91,48 @@
 
 .upNextContainer .upNextText h2 {
     margin-top: 5px;
+    font-size: 20px;
 }
 .upNextContainer .upNextText h3 {
     margin-bottom: 10px;
+    font-size: 16px;
+}
+
+@media (max-width: 650px) {
+
+    .upNextContainer .upNextText h2 {
+        font-size: 14px;
+}
+
+    .upNextContainer .upNextText h3 {
+        font-size: 12px;
+    }
+    .videoControls.upNext {
+        display: none;
+        padding: 16px;
+        background: rgba(29, 29, 29, 0.5);
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        font-weight: 600;
+        position: absolute;
+        pointer-events: none;
+        border-radius: 24px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9;
+        width: min(300px, 80%);
+        height: min(125px, 100%);
+        text-align: center;
+}
+
+    .videoControls.upNext .upNextAction{
+        width: 30px;
+    }
+
+    .upNextContainer .upNextAction .cssbuttons-io-button {
+    font-size: 12px;
+}
 }
 
 /* From Uiverse.io by adamgiebl */ 

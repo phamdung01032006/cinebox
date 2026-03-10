@@ -23,7 +23,7 @@ body {
 }
 
 /* Khi màn hình nhỏ hơn 768px (Điện thoại) */
-@media (max-width: 768px) {
+@media (max-width: 650px) {
     /* Tìm và ẩn các nút không cần thiết dựa trên thuộc tính data-plyr */
     .plyr__controls [data-plyr="restart"],
     .plyr__controls [data-plyr="rewind"],
@@ -127,7 +127,7 @@ a {
 }
 
 /* màn nhỏ: ẩn panel trái */
-@media (max-width: 768px){
+@media (max-width: 660px){
 
     .authSide{
         display: none;
@@ -354,6 +354,19 @@ a {
     margin-left: 10px;
     display: inline-flex;
     transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+@media (max-width: 650px) {
+    .previewContainer.small {
+    width: 132px;
+    height: 184.8px;
+    margin-right: 5px;
+    margin-left: 10px;
+    display: inline-flex;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
 }
 
 /* Hiệu ứng hover phóng to */
@@ -409,7 +422,7 @@ a {
 }
 
 /* Responsive */
-@media (max-width: 768px){
+@media (max-width: 650px){
     .previewOverlay .mainDetails h3 {
     color: #fff;
     font-size: 20px;
@@ -480,7 +493,7 @@ button i {
 }
 
 /* Responsive */
-@media (max-width: 768px){
+@media (max-width: 650px){
     .mainDetails button {
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(6px);
@@ -786,7 +799,7 @@ button i {
 }
 
 /* Responsive */
-@media (max-width: 768px){
+@media (max-width: 650px){
     .videoPopupClose {
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(6px);
@@ -826,7 +839,7 @@ button i {
 .season {
     display: flex;
     flex-direction: column;
-    padding: 20px 50px;
+    padding: 10px 40px 0px 40px;
 }
 
 .episodeContainer {
@@ -844,12 +857,28 @@ button i {
     width: 230px;
 }
 
+@media (max-width: 650px) {
+    .episodeContainer .contents {
+        width: 190px;
+}
+}
+
 .episodeContainer img {
     width: 230px;
     height: 129px;
     object-fit: cover;
     border-radius: 8px;
     transition: all 0.3s ease;
+}
+
+@media (max-width: 650px) {
+    .episodeContainer img {
+        width: 190px;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+}
 }
 
 .episodeContainer img:hover {
@@ -868,6 +897,7 @@ button i {
     color: #fff;
     width:100%;
     white-space: normal;
+    margin: 10px 0px
 }
 
 .episodeContainer .videoInfo {
@@ -875,7 +905,22 @@ button i {
     overflow-y: auto;
 }
 
+@media (max-width: 650px) {
+
+    .episodeContainer .videoInfo {
+        max-height: 120px;
+    }
+
+    .episodeContainer .videoInfo h4 {
+        font-size: 14px;
+}
+    .episodeContainer .videoInfo span {
+        font-size: 12px;
+    }
+}
+
 /* Tên cho các cover phim ở trang mở đầu */
+
 .entityCard{
     width: 150px;
     margin-left: 10px;
@@ -884,6 +929,18 @@ button i {
     color: #fff;
     display: inline-block;
     vertical-align: top;
+}
+
+@media (max-width: 650px) {
+    .entityCard{
+        width: 132px;
+        margin-left: 10px;
+        margin-right: 5px;
+        text-decoration: none;
+        color: #fff;
+        display: inline-block;
+        vertical-align: top;
+}
 }
 
 .entityCard .previewContainer.small{
@@ -962,32 +1019,6 @@ button i {
     border: none;
     transition: transform 0.3s ease-in-out;
 } */
-
-/* Tên cho các cover phim ở trang mở đầu */
-.entityCard{
-    width: 150px;
-    margin-left: 10px;
-    margin-right: 5px;
-    text-decoration: none;
-    color: #fff;
-    display: inline-block;
-    vertical-align: top;
-}
-
-.entityCard .previewContainer.small{
-    margin: 0;
-}
-
-.entityTitle{
-    margin-top: 6px;
-    font-size: 14px;
-    line-height: 1.3;
-    color: #ffffff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
-}
 
 /* Chỉnh lại footer trang */
 .siteFooterCinebox{
