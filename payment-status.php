@@ -42,10 +42,11 @@ if(!empty($_GET['checkout_ref_id'])){
 ?>
 <link rel="stylesheet" href="assets/style/paypal.css">
 <div class="container">
-<?php if(!empty($subscr_data)){ ?>
-<h1 class="<?php echo $status; ?>"><?php echo $statusMsg; ?></h1>    
+  
 <div class="card cart">
-    <label class="title">PayPal Subscription Successful</label>
+    <?php if(!empty($subscr_data)){ ?>
+    <h1 class="<?php echo $status; ?>"><?php echo $statusMsg; ?></h1>  
+    <label class="title">PayPal Subscription</label>
     <div class="steps">
         <div class="step">
         <div>

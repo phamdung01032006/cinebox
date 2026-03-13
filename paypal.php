@@ -2,17 +2,17 @@
 // Include configuration file  
 require_once("includes/config.php");
 require_once("includes/header.php");
- 
+
 // Include the database connection file 
 include_once 'dbConnect.php'; 
- 
+
 // Fetch plans from the database 
 $sqlQ = "SELECT * FROM plans"; 
 $stmt = $db->prepare($sqlQ); 
 $stmt->execute(); 
 $result = $stmt->get_result(); 
 $hasPlans = ($result && $result->num_rows > 0);
- 
+
 // Get logged-in user ID from sesion 
 // Session name need to be changed as per your system 
 $loggedInUserID = !empty($_SESSION['userID'])?$_SESSION['userID']:0; 
@@ -86,24 +86,57 @@ $loggedInUserID = !empty($_SESSION['userID'])?$_SESSION['userID']:0;
         <div class="payments">
             <span>PAYMENT</span>
             <div class="details">
-            <span>Subtotal:</span>
-            <span>$240.00</span>
-            <span>Shipping:</span>
-            <span>$10.00</span>
-            <span>Tax:</span>
-            <span>$30.40</span>
+            <span>Plan price:</span>
+            <span><?php
+                        $host = 'localhost';
+                        $db   = 'cinebox';
+                        $user = 'root';
+                        $pass = '';
+                        $charset = 'utf8mb4';
+
+                        $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+                        $options = [
+                            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                            PDO::ATTR_EMULATE_PREPARES   => false,
+                        ];
+
+                        try {
+                            $pdo = new PDO($dsn, $user, $pass, $options);
+
+                            // Giả sử lấy 'ten_san_pham' từ bảng 'products' nơi có 'id' = 1
+                            $stmt = $pdo->prepare("SELECT price FROM plans WHERE id = ?");
+                            $stmt->execute([1]);
+                            $row = $stmt->fetch();
+
+                            // Kiểm tra xem $row có dữ liệu hay không trước khi truy cập offset
+                            if ($row) {
+                                echo "$" . $row['price'];
+                            } else {
+                                echo "Không tìm thấy dòng nào khớp với điều kiện.";
+                            }
+
+                        } catch (\PDOException $e) {
+                            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+                        }?>
+            </span>
             </div>
         </div>
         </div>
     </div>
-    </div>
-
     <div class="card checkout">
     <div class="footer">
-        <label class="price">$280.40</label>
+        <label class="price"><?php  if ($row) {
+                                echo "$" . $row['price'];
+                            } else {
+                                echo "Không tìm thấy dòng nào khớp với điều kiện.";
+                            }?></label>
         <button class="checkout-btn">Checkout</button>
     </div>
     </div>
+    </div>
+
+
 </div>
 
 <script>

@@ -1,10 +1,20 @@
 /* Body */
 .container {
-    display: grid;
+    /* display: grid; */
     grid-template-columns: auto;
     gap: 0px;
     align-items: center;
-    margin: 100px 0px 50px 38vw;
+    margin: 60px 0 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+    min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin: 10vh 0px 0px 1vw;
+    }
 }
 
 hr {
@@ -180,6 +190,7 @@ hr {
 
 .container h1 {
     color: #fff;
+    margin-left: 20px;
 }
 
 /* Nút subscription ở profile */
