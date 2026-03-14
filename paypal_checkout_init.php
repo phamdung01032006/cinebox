@@ -163,19 +163,45 @@ if(!empty($_POST['request_type']) && $_POST['request_type'] == 'create_plan'){
                 $sqlQ = "INSERT INTO user_subscriptions (userId,planId,paypalOrderId,paypalPlanId,paypalSubscrId,validFrom,validTo,paidAmount,currencyCode,subscriberId,subscriberName,subscriberEmail,status,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())";  
                 $stmt = $db->prepare($sqlQ);  
                 $stmt->bind_param("iisssssdssssss", $custom_user_id, $db_plan_id, $order_id, $plan_id, $subscr_id, $valid_from, $valid_to, $last_payment_amount, $last_payment_curreny, $subscriber_id, $subscriber_name, $subscriber_email, $status, $created);  
-                $insert = $stmt->execute();  
+                $insert = $stmt->execute();
 
                 if($insert){  
                     $user_subscription_id = $stmt->insert_id;
                 }
 
-                
-            }  
+            }
 
             if(!empty($user_subscription_id)){  
                 $ref_id_enc = base64_encode($order_id);  
                 $response = array('status' => 1, 'msg' => 'Subscription created!', 'ref_id' => $ref_id_enc); 
             }  
+        }
+        // Cập nhật dòng isSubscribed ở bảng users thành 1 để biết người đó đã đăng ký
+        // 1. Kiểm tra bảng user_subscriptions trước
+        $checkSql = "SELECT status FROM user_subscriptions WHERE userId = ? ORDER BY id DESC LIMIT 1";
+        $checkStmt = $db->prepare($checkSql);
+        $checkStmt->bind_param("s", $custom_user_id);
+        $checkStmt->execute();
+        $result = $checkStmt->get_result();
+        $payment = $result->fetch_assoc();
+
+        // 2. Nếu trạng thái là 'ACTIVE' thì mới cho phép UPDATE users
+        if ($payment && $payment['status'] === 'ACTIVE') {
+            $updateSql = "UPDATE users SET isSubscribed = 1 WHERE id = ?";
+            $updateStmt = $db->prepare($updateSql);
+            $updateStmt->bind_param("s", $custom_user_id);
+            $updateStmt->execute();
+            $response['msg'] = "Đã nâng cấp tài khoản.";
+        } 
+        elseif ($payment && $payment['status'] !== 'ACTIVE') {
+            $updateSql = "UPDATE users SET isSubscribed = 0 WHERE id = ?";
+            $updateStmt = $db->prepare($updateSql);
+            $updateStmt->bind_param("s", $custom_user_id);
+            $updateStmt->execute();
+            $response['msg'] = "Hủy đăng ký hội viên.";
+        }
+        else {
+            $response['msg'] = "Thanh toán chưa hoàn tất hoặc không tìm thấy hóa đơn.";
         } 
     }else{  
         $response['msg'] = $api_error;  
