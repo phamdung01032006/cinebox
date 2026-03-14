@@ -192,13 +192,6 @@ if(!empty($_POST['request_type']) && $_POST['request_type'] == 'create_plan'){
             $updateStmt->bind_param("s", $custom_user_id);
             $updateStmt->execute();
             $response['msg'] = "Đã nâng cấp tài khoản.";
-        } 
-        elseif ($payment && $payment['status'] !== 'ACTIVE') {
-            $updateSql = "UPDATE users SET isSubscribed = 0 WHERE id = ?";
-            $updateStmt = $db->prepare($updateSql);
-            $updateStmt->bind_param("s", $custom_user_id);
-            $updateStmt->execute();
-            $response['msg'] = "Hủy đăng ký hội viên.";
         }
         else {
             $response['msg'] = "Thanh toán chưa hoàn tất hoặc không tìm thấy hóa đơn.";
