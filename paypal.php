@@ -13,9 +13,19 @@ $stmt->execute();
 $result = $stmt->get_result(); 
 $hasPlans = ($result && $result->num_rows > 0);
 
-// Get logged-in user ID from sesion 
-// Session name need to be changed as per your system 
-$loggedInUserID = !empty($_SESSION['userID'])?$_SESSION['userID']:0; 
+// Get logged-in user ID from users table (cinebox)
+$loggedInUserID = 0;
+$loggedInUsername = !empty($_SESSION['userLoggedIn']) ? $_SESSION['userLoggedIn'] : "";
+if ($loggedInUsername !== "") {
+    $stmt = $db->prepare("SELECT id FROM users WHERE username=? LIMIT 1");
+    $stmt->bind_param("s", $loggedInUsername);
+    $stmt->execute();
+    $stmt->bind_result($uid);
+    if ($stmt->fetch()) {
+        $loggedInUserID = (int)$uid;
+    }
+    $stmt->close();
+}
 ?>
 
 <!DOCTYPE html>

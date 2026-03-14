@@ -89,15 +89,15 @@ if(!empty($_POST['request_type']) && $_POST['request_type'] == 'create_plan'){
         $subscr_id = $subscr_data['id'];  
         $plan_id = $subscr_data['plan_id'];  
         $custom_user_id = $subscr_data['custom_id']; 
- 
+
         $create_time = $subscr_data['create_time'];  
         $dt = new DateTime($create_time);  
         $created = $dt->format("Y-m-d H:i:s"); 
-         
+
         $start_time = $subscr_data['start_time'];  
         $dt = new DateTime($start_time);  
         $valid_from = $dt->format("Y-m-d H:i:s"); 
- 
+
         if(!empty($subscr_data['subscriber'])){ 
             $subscriber = $subscr_data['subscriber']; 
             $subscriber_email = $subscriber['email_address']; 
@@ -105,38 +105,47 @@ if(!empty($_POST['request_type']) && $_POST['request_type'] == 'create_plan'){
             $given_name = trim($subscriber['name']['given_name']); 
             $surname = trim($subscriber['name']['surname']); 
             $subscriber_name = trim($given_name.' '.$surname); 
- 
-            // Insert user details if not exists in the DB users table  
-            if(empty($custom_user_id)){  
-                $sqlQ = "INSERT INTO members (firstName,lastName,email,created) VALUES (?,?,?,NOW())";  
-                $stmt = $db->prepare($sqlQ);  
-                $stmt->bind_param("sss", $given_name, $surname, $subscriber_email);  
-                $insertUser = $stmt->execute();  
-                  
-                if($insertUser){  
-                    $custom_user_id = $stmt->insert_id;  
-                }  
-            }  
         } 
- 
+
+        // custom_id must be users.id (sent from paypal.php)
+        if (empty($custom_user_id)) {
+            $response['msg'] = 'Missing custom_id (users.id).';
+            echo json_encode($response);
+            exit;
+        }
+
+        // Validate that custom_id exists in users table
+        $sqlQ = "SELECT id FROM users WHERE id=? LIMIT 1";
+        $stmt = $db->prepare($sqlQ);
+        $stmt->bind_param("i", $custom_user_id);
+        $stmt->execute();
+        $stmt->bind_result($uid);
+        if (!$stmt->fetch()) {
+            $stmt->close();
+            $response['msg'] = 'User not found in users table.';
+            echo json_encode($response);
+            exit;
+        }
+        $stmt->close();
+
         if(!empty($subscr_data['billing_info'])){ 
             $billing_info = $subscr_data['billing_info']; 
- 
+
             if(!empty($billing_info['outstanding_balance'])){ 
                 $outstanding_balance_value = $billing_info['outstanding_balance']['value']; 
                 $outstanding_balance_curreny = $billing_info['outstanding_balance']['currency_code']; 
             } 
- 
+
             if(!empty($billing_info['last_payment'])){ 
                 $last_payment_amount = $billing_info['last_payment']['amount']['value']; 
                 $last_payment_curreny = $billing_info['last_payment']['amount']['currency_code']; 
             } 
- 
+
             $next_billing_time = $billing_info['next_billing_time']; 
             $dt = new DateTime($next_billing_time);  
             $valid_to = $dt->format("Y-m-d H:i:s"); 
         } 
-  
+
         if(!empty($subscr_id) && $status == 'ACTIVE'){  
             // Check if any subscription data exists with the same ID  
             $sqlQ = "SELECT id FROM user_subscriptions WHERE paypalOrderId = ?";  
@@ -145,7 +154,7 @@ if(!empty($_POST['request_type']) && $_POST['request_type'] == 'create_plan'){
             $stmt->execute();  
             $stmt->bind_result($row_id);  
             $stmt->fetch();  
-              
+
             $payment_id = 0;  
             if(!empty($row_id)){  
                 $payment_id = $row_id; 
@@ -155,18 +164,14 @@ if(!empty($_POST['request_type']) && $_POST['request_type'] == 'create_plan'){
                 $stmt = $db->prepare($sqlQ);  
                 $stmt->bind_param("iisssssdssssss", $custom_user_id, $db_plan_id, $order_id, $plan_id, $subscr_id, $valid_from, $valid_to, $last_payment_amount, $last_payment_curreny, $subscriber_id, $subscriber_name, $subscriber_email, $status, $created);  
                 $insert = $stmt->execute();  
-                  
+
                 if($insert){  
-                    $user_subscription_id = $stmt->insert_id;  
- 
-                    // Update subscription ID in users table  
-                    $sqlQ = "UPDATE members SET subscriptionId=? WHERE id=?";  
-                    $stmt = $db->prepare($sqlQ);  
-                    $stmt->bind_param("ii", $user_subscription_id, $custom_user_id);  
-                    $update = $stmt->execute();  
-                }  
+                    $user_subscription_id = $stmt->insert_id;
+                }
+
+                
             }  
-  
+
             if(!empty($user_subscription_id)){  
                 $ref_id_enc = base64_encode($order_id);  
                 $response = array('status' => 1, 'msg' => 'Subscription created!', 'ref_id' => $ref_id_enc); 
