@@ -4,14 +4,14 @@ require_once("includes/config.php");
 require_once("includes/header.php");
 // Include the database connection file  
 require_once 'dbConnect.php'; 
- 
+
 $statusMsg = ''; 
 $status = 'error'; 
- 
+
 // Check whether the DB reference ID is not empty 
 if(!empty($_GET['checkout_ref_id'])){ 
     $paypal_order_id  = base64_decode($_GET['checkout_ref_id']); 
-     
+
     // Fetch subscription data from the database 
     $sqlQ = "SELECT 
                     S.*,
@@ -26,10 +26,10 @@ if(!empty($_GET['checkout_ref_id'])){
     $stmt->bind_param("s", $paypal_order_id); 
     $stmt->execute(); 
     $result = $stmt->get_result(); 
- 
+
     if($result->num_rows > 0){ 
         $subscr_data = $result->fetch_assoc(); 
-         
+
         $status = 'success'; 
         $statusMsg = 'Your Subscription Payment has been Successful!'; 
     }else{ 
@@ -42,7 +42,7 @@ if(!empty($_GET['checkout_ref_id'])){
 ?>
 <link rel="stylesheet" href="assets/style/paypal.css">
 <div class="container">
-  
+
 <div class="card cart">
     <?php if(!empty($subscr_data)){ ?>
     <h1 class="<?php echo $status; ?>"><?php echo $statusMsg; ?></h1>  

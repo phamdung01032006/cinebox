@@ -43,27 +43,27 @@ if(!empty($_POST['request_type']) && $_POST['request_type'] == 'create_plan'){
         'YEARLY' => 'YEAR' 
     ); 
     $planInterval = !empty($interval_map[$planInterval]) ? $interval_map[$planInterval] : ''; 
- 
+
     if(empty($planName) || !is_numeric($planPrice) || empty($planInterval) || (int)$intervalCount <= 0){ 
         $response['msg'] = 'Plan data is incomplete. Please check name, price, interval, and interval_count.'; 
         echo json_encode($response); 
         exit; 
     } 
- 
+
     $plan_data = array( 
         'name' => $planName,  
         'price' => $planPrice,  
         'interval' => $planInterval,  
         'interval_count' => $intervalCount,  
     );  
-  
+
     // Create plan with PayPal API  
     try {  
         $subscr_plan = $paypal->createPlan($plan_data);  
     } catch(Exception $e) {   
         $api_error = $e->getMessage();   
     }  
-      
+
     if(!empty($subscr_plan)){  
         $response = array(  
             'status' => 1,   
@@ -76,14 +76,14 @@ if(!empty($_POST['request_type']) && $_POST['request_type'] == 'create_plan'){
     $order_id = $_POST['order_id'];  
     $subscription_id = $_POST['subscription_id']; 
     $db_plan_id = $_POST['plan_id'];  
-  
+
     // Fetch & validate subscription with PayPal API  
     try {  
         $subscr_data = $paypal->getSubscription($subscription_id);  
     } catch(Exception $e) {   
         $api_error = $e->getMessage();   
     }  
-      
+
     if(!empty($subscr_data)){  
         $status = $subscr_data['status'];  
         $subscr_id = $subscr_data['id'];  

@@ -21,11 +21,11 @@ class PaypalCheckout{
         $auth_response = json_decode(curl_exec($ch));  
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);  
         curl_close($ch);   
-  
+
         if ($http_code != 200 && !empty($auth_response->error)) {   
             throw new Exception('Failed to generate Access Token: '.$auth_response->error.' >>> '.$auth_response->error_description);   
         }  
-           
+
         if(!empty($auth_response)){  
             return $auth_response->access_token;   
         }else{  
