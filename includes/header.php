@@ -46,7 +46,14 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
         </div>
 
         <!-- Menu khi thu nhỏ màn hình -->
-         
+        <details class="dropdown">
+        <summary>Menu</summary>
+        <ul>
+            <li><a href="index.php">Home</a></li>
+            <li><a href="shows.php">TV Shows</a></li>
+            <li><a href="movies.php">Movies</a></li>
+        </ul>
+        </details>
         <!--  -->
 
         <a class="navButton" href="index.php">
@@ -67,7 +74,6 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
             <span class="bottom-key-1"></span>
             <span class="bottom-key-2"></span>
         </a>
-
 
         <div class="rightItems">
             <button class="iconButtons" onclick="window.location.href='search.php'"><i class="fa-solid fa-magnifying-glass"></i></button>

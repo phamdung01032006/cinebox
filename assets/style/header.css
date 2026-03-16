@@ -35,18 +35,6 @@
 }
 }
 
-/* header cho màn hình độ rộng nhỏ */
-/* Mobile */
-@media (max-width: 900px) {
-    .topBar .navButton{
-        display: none; /* ẩn menu ngang */
-    }
-
-    .topBar .menuToggle {
-        display: inline-flex; /* hiện nút hamburger */
-    }
-}
-
 /*  */
 .topBar .logoContainer {
     height: 40px;
@@ -451,4 +439,120 @@
 .navButton:hover .bottom-key-2 {
     right: 10px;
     width: 0px;
+}
+
+/* header cho màn hình độ rộng nhỏ */
+/* Mobile */
+@media (max-width: 900px) {
+    .topBar .navButton{
+        display: none; /* ẩn menu ngang */
+    }
+
+    .topBar .menuToggle {
+        display: inline-flex; /* hiện nút hamburger */
+    }
+}
+
+/* dropdown menu */
+/* Container chính */
+.dropdown {
+  position: relative;
+  width: max-content; /* Độ rộng tùy chỉnh */
+  font-family: sans-serif;
+  display: none;
+}
+
+@media (max-width: 900px) {
+    .dropdown {
+        display: inline-flex;
+}
+}
+
+/* Phần nút bấm (Summary) */
+.dropdown summary {
+  list-style: none; /* Ẩn mũi tên mặc định trên Chrome/Firefox */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: transparent;
+  backdrop-filter: blur(16px);
+  padding: 7px 15px;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 1);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+@media (max-width: 650px) {
+    .dropdown {
+        font-size: 12px;
+}
+}
+
+/* Ẩn mũi tên mặc định trên Safari */
+.dropdown summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Tạo hình mũi tên tùy chỉnh bằng pseudo-element */
+.dropdown summary::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid rgba(255, 255, 255, 0.5);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+  transform: rotate(45deg);
+  margin-bottom: 4px;
+  margin-left: 4px;
+  transition: transform 0.2s;
+}
+
+/* Hiệu ứng khi đang mở dropdown */
+.dropdown[open] summary {
+  border-color: rgba(248, 136, 136, 0.549);
+  color: #ffffff;
+}
+
+.dropdown[open] summary::after {
+  transform: rotate(-135deg); /* Xoay mũi tên lên khi mở */
+  margin-bottom: -4px;
+}
+
+/* Phần danh sách (UL) */
+.dropdown ul {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin: 5px 0 0 0;
+  padding: 5px 0;
+  background-color: rgb(39, 39, 39);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  list-style: none;
+  z-index: 10;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+/* Các item bên trong */
+.dropdown li a {
+  display: block;
+  padding: 10px 15px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+@media (max-width: 650px) {
+    .dropdown li a {
+  font-size: 12px;
+}
+}
+
+/* Hiệu ứng hover cho từng dòng */
+.dropdown li a:hover {
+  background-color: rgba(218, 218, 218, 0.247);
+  color: rgba(255, 255, 255, 0.3);
 }

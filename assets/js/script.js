@@ -289,3 +289,16 @@ $(function () {
 
 function hideNavBar() { $(".topBar").addClass("isHidden"); }
 function showNavBar() { $(".topBar").removeClass("isHidden"); }
+
+// Tắt dropdown menu khi bấm ra ngoài cửa sổ dropdown
+document.addEventListener('click', function (e) {
+  // Tìm tất cả các thẻ details đang mở
+  const details = document.querySelectorAll('details[open]');
+  
+  details.forEach(detail => {
+    // Nếu vị trí click KHÔNG nằm bên trong thẻ details đó
+    if (!detail.contains(e.target)) {
+      detail.removeAttribute('open');
+    }
+  });
+});
