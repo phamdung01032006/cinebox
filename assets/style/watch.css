@@ -6,7 +6,7 @@
     align-items: center;
     background-color: rgba(25, 25, 25, 0.5);
     color: #fff;
-    backdrop-filter: blur(36px);
+    backdrop-filter: blur(16px);
     border-bottom: 2px solid rgba(255, 255, 255, 0.3);
 }
 
@@ -202,7 +202,7 @@
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-color: transparent;
     font-size: 16px;
-    background-color: inherit;
+    background: transparent;
     border-radius: 100px;
     font-weight: 600;
     color: white;
@@ -296,7 +296,7 @@
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-color: transparent;
     font-size: 12px;
-    background-color: inherit;
+    background: transparent;
     border-radius: 100px;
     font-weight: 600;
     color: white;

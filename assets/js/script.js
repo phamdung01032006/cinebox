@@ -160,7 +160,7 @@ function startHideTimer() {
 
         timeout = setTimeout(function() {
             $(".watchNav").fadeOut();
-        }, 1000);
+        }, 3000);
     })
 }
 
@@ -243,14 +243,6 @@ function showUpNext() {
 
 function hideUpNext() {
     $(".upNext").fadeOut(300);
-}
-
-function hideNavBar() {
-    $(".topBar").stop(true, true).slideUp(220);
-}
-
-function showNavBar() {
-    $(".topBar").stop(true, true).slideDown(220);
 }
 
 // ẩn thanh navbar ở trang xem phim
