@@ -27,16 +27,19 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
     <link rel="stylesheet" type="text/css" href="assets/style/style.css"/>
     <link rel="stylesheet" href="assets/style/header.css">
     <link rel="stylesheet" href="assets/style/menu.css">
+    <link rel="stylesheet" href="assets/style/background.css">
 
     <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
-    <script src="https://kit.fontawesome.com/eeaac7bcf0.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.min.js"></script>
-    <script src="assets/js/script.js"></script>
+	    <script src="https://kit.fontawesome.com/eeaac7bcf0.js" crossorigin="anonymous"></script>
+	    <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.min.js"></script>
+	    <script src="assets/js/script.js"></script>
+	    <script src="assets/js/background.js" defer></script>
     <!-- Chỉnh lại cho màn hình điện thoại -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-<body>
-    <div class='wrapper'>
+	<body>
+	    <?php require_once(__DIR__ . "/../background.php"); ?>
+	    <div class='wrapper'>
 
     <div class="topBar">
         <div class="logoContainer">

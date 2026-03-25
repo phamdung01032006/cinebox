@@ -1,0 +1,30 @@
+.cineboxBackground {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cineboxBackground canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.wrapper,
+.siteFooterCinebox {
+  position: relative;
+  z-index: 1;
+}
+
+.wrapper {
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+.wrapper::before {
+  content: none !important;
+  display: none !important;
+}
