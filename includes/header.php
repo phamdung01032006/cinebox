@@ -11,7 +11,7 @@ require_once("includes/classes/Season.php");
 require_once("includes/classes/Video.php");
 require_once("includes/classes/VideoProvider.php");
 require_once("includes/classes/User.php");
-
+require_once(__DIR__ . "/../includes/background.php");
 $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
 
 ?>
@@ -38,7 +38,6 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 	<body>
-	    <?php require_once(__DIR__ . "/../background.php"); ?>
 	    <div class='wrapper'>
 
     <div class="topBar">
