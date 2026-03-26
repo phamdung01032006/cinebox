@@ -199,7 +199,7 @@ a {
 }
 
 .authSide .authOverlay img {
-    width: 125px;
+    width: 200px;
 }
 
 .column::-webkit-scrollbar {
@@ -309,13 +309,54 @@ a {
     font-weight: 900;
     line-height: 32px;
     margin: 0;
-    color: #1a1a1a;
+    color: rgba(178, 89, 0, 0.72);
 }
 
 .column .header span {
     font-size: 14px;
 }
 
+/* chữ CINEMA ở trang đăng nhập/đăng ký */
+/* From Uiverse.io by mi-series */ 
+.btn {
+    outline: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, rgba(252, 160, 68, 0.8), rgba(132, 132, 132, 0.8));
+    min-width: 200px;
+    border: 0;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+    box-sizing: border-box;
+    padding: 16px 20px;
+    color: #fff;
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.btn:hover {
+  opacity: .95;
+}
+
+.btn .animation {
+  border-radius: 100%;
+  animation: ripple 0.6s linear infinite;
+}
+
+@keyframes ripple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1), 0 0 0 20px rgba(255, 255, 255, 0.1), 0 0 0 40px rgba(255, 255, 255, 0.1), 0 0 0 60px rgba(255, 255, 255, 0.1);
+  }
+
+  100% {
+    box-shadow: 0 0 0 20px rgba(255, 255, 255, 0.1), 0 0 0 40px rgba(255, 255, 255, 0.1), 0 0 0 60px rgba(255, 255, 255, 0.1), 0 0 0 80px rgba(255, 255, 255, 0);
+  }
+}
 
 .signInMessage {
     font-size: 14px;
