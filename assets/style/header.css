@@ -29,7 +29,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(45deg, rgb(140, 70, 0), rgb(105, 105, 105));
+    background: linear-gradient(45deg, rgb(95, 48, 0), rgb(26, 13, 0));
     opacity: 0;
     transform: translateY(-8px) scaleY(0.92);
     transform-origin: top center;
@@ -295,7 +295,7 @@
     text-decoration: none;
     appearance: none;
     background-color: transparent;
-    border: 3px solid #ffffff;
+    border: 2px solid #ffffff;
     border-radius: 100px;
     box-sizing: border-box;
     color: #ffffff;
@@ -315,8 +315,6 @@
     -webkit-user-select: none;
     touch-action: manipulation;
     will-change: transform;
-    min-height: 10px;
-    min-width: 10px;
 }
 
 @media (max-width: 650px) {
@@ -354,11 +352,10 @@
 }
 
 .rightItems .iconButtons:hover {
-    color: rgba(252, 252, 252, 0.525);
+    color: rgba(190, 95, 0, 0.72);
     background-color: #ffffff;
     box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
     transform: translateY(-2px);
-    color: #202020;
 }
 
 .rightItems .iconButtons:active {
@@ -454,11 +451,11 @@
 
 .navButton:hover::before {
     width: 0.9375rem;
-    background: black;
+    background: rgba(190, 95, 0, 0.72);
 }
 
 .navButton:hover .text {
-    color: rgb(23, 23, 23);
+    color: rgba(190, 95, 0, 0.72);
     padding-left: 1.5em;
 }
 

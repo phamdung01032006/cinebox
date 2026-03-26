@@ -238,7 +238,7 @@ a {
 }
 
 .column form button[type="submit"] {
-    background-color: rgba(255,170,84,1);
+    background: linear-gradient(135deg, rgba(252, 160, 68, 0.8), rgba(132, 132, 132, 0.8));
     color: #fff;
     height: 36px;
     width: 96px;
@@ -270,7 +270,7 @@ a {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(214, 108, 1, 0.72);
+    background: linear-gradient(135deg, rgba(133, 66, 0, 0.8), rgba(90, 90, 90, 0.8));
     -webkit-transform: scaleX(0);
     transform: scaleX(0);
     -webkit-transform-origin: 0 50%;
