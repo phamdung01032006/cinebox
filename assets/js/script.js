@@ -68,14 +68,13 @@ let popupPlayer = null;
 
 $(document).ready(function () {
 
-    popupPlayer = new Plyr("#videoPopupPlayer", {
-        controls: [
-            "restart", "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
-            "mute", "volume", "settings", "pip", "fullscreen",
-        ],
-        volume: 1,
-        ratio: "16:9"
-    });
+	    popupPlayer = new Plyr("#videoPopupPlayer", {
+	        controls: [
+	            "restart", "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
+	            "mute", "volume", "settings", "pip", "fullscreen",
+	        ],
+	        volume: 1
+	    });
 });
 
 

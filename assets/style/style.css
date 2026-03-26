@@ -713,7 +713,8 @@ button i {
     position: fixed; 
     inset: 0; 
     z-index: 9999;
-    display: none; 
+    display: none;
+
 }
 
 .videoPopup.show { 
@@ -724,22 +725,22 @@ button i {
     position: absolute; 
     inset: 0; 
     background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(32px);
     z-index: 1;
 }
 
 .videoPopupContent { 
     position: relative; 
-    width: min(900px, 92vw); 
+    width: min(900px,92vw);
     margin: 5vh auto; 
     background: none; 
     padding: 5px; 
-    z-index: 2; 
+    z-index: 2;
 }
 
 #videoPopupPlayer { 
     width: 100%; 
-    max-height: 75vh;
+    max-height: 100vh;
     overflow: hidden;
     display: block;
 }
@@ -748,10 +749,14 @@ button i {
 .videoPopupContent .plyr {
     border-radius: 24px;
     width: 100%; 
-    max-height: 75vh;
+    max-height: 100vh;
     overflow: hidden;
-    display: block;
+    display: flex;
+    flex-direction: column;
     border: 2px solid rgba(255, 255, 255, 0.3);
+    isolation: isolate;
+    clip-path: inset(0 round 24px);
+    background: #000;
 }
 
 /* Fullscreen thì bỏ border */
@@ -764,10 +769,23 @@ button i {
 
 .videoPopupContent .plyr.plyr--menu-open {
     overflow: visible; /* chỉ khi mở menu settings */
+    clip-path: none;
 }
 
 .videoPopupContent .plyr__video-wrapper {
+    border-radius: inherit;
     overflow: hidden;
+}
+
+.videoPopupContent .plyr__poster,
+.videoPopupContent .plyr video {
+    border-radius: 24px;
+    display: block;
+}
+
+.videoPopupContent .plyr__video-wrapper,
+.videoPopupContent .plyr__video-wrapper--fixed-ratio {
+    width: 100%;
 }
 
 /* .videoPopupClose { 

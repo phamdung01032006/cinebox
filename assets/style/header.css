@@ -14,6 +14,35 @@
     opacity: 1;
     /* Chỉnh lại cho màn hình điện thoại */
     min-width: 0;
+    isolation: isolate;
+    border-bottom: 2px solid transparent;
+    box-shadow: none;
+    transition:
+        transform 320ms cubic-bezier(.22, 1, .36, 1),
+        opacity 220ms ease,
+        border-color 280ms ease,
+        box-shadow 320ms ease;
+    will-change: transform, opacity;
+}
+
+.topBar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, rgb(140, 70, 0), rgb(105, 105, 105));
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.92);
+    transform-origin: top center;
+    transition:
+        opacity 280ms ease,
+        transform 320ms cubic-bezier(.22, 1, .36, 1);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.topBar > * {
+    position: relative;
+    z-index: 1;
 }
 
 @media (max-width: 650px) {
@@ -88,12 +117,16 @@
 }
 
 .topBar.scrolled {
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(36px);
+    border: 2px solid rgba(255, 255, 255, 0.5);
     box-shadow: 0 6px 20px rgba(0,0,0,.25);
-    margin:5px 20px 0px 20px;
+    margin: 5px;
     border-radius: 100px;
-    background: linear-gradient(45deg, rgba(0, 0, 0, 0.3), rgba(47, 47, 47, 0.3));
+}
+
+.topBar.scrolled::before {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    border-radius: 100px;
 }
 
 .topBar .navLinks a {
@@ -157,7 +190,6 @@
     overflow: hidden;
     transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
     margin-right: 4px;
-    backdrop-filter: blur(16px);
     }
 
 .logOutButton svg {
@@ -186,7 +218,6 @@
     cursor: pointer;
     overflow: hidden;
     transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-    backdrop-filter: blur(16px);
     }
 
 .logOutButton svg {
@@ -228,7 +259,7 @@
 
 .logOutButton:hover {
     box-shadow: 0 0 0 12px transparent;
-    color: black;
+    color: rgba(190, 95, 0, 0.72);
     border-radius: 12px;
 }
 
@@ -245,7 +276,7 @@
 }
 
 .logOutButton:hover svg {
-    fill: #212121;
+    fill: rgba(190, 95, 0, 0.72);
 }
 
 .logOutButton:active {
