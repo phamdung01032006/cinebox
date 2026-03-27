@@ -48,9 +48,9 @@ function getInputValue($name) {
 
         <div class="authSide">
             <div class="authOverlay">
-                <img src="assets\images\cinebox.png" title="CineBox Logo" alt="CineBox Logo">
-                <h2>STEP INTO THE WORLD OF <div>
-                <button class="btn"><i class="animation"></i>CINEMA<i class="animation"></i>
+                <!-- <img src="assets\images\cinebox.png" title="CineBox Logo" alt="CineBox Logo"> -->
+                <h2>RETURN TO THE WORLD OF <div>
+                <button class="btn"><i class="animation"></i>CINEBOX<i class="animation"></i>
                 </button>
                 </div>
                 </h2>

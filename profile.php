@@ -121,7 +121,7 @@
 
         <section class="profileRight">
             <form class="profileForm" method="POST">
-                <div class="profileCol">
+                <div class="profileCol left">
                     <h3 class="updateProfile">User details</h3>
 
                     <div class="profileField">
@@ -151,8 +151,9 @@
                     <button type="submit" name="saveDetailsButton" class="button type1"><span class="btn-txt">Save details</span></button>
                     </div>
                 </div>
-
-                <div class="profileCol">
+                </form>
+                <form class="profileForm" method="POST">
+                <div class="profileCol right">
                     <h3 class="updateProfile">Update password</h3>
 
                     <div class="profileField">
