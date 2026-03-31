@@ -29,6 +29,12 @@ define('DB_HOST', 'localhost');
 define('DB_USERNAME', 'root'); 
 define('DB_PASSWORD', '');  
 define('DB_NAME', 'cinebox'); 
+
+$recommendationApiBaseUrl = getenv('RECOMMENDATION_API_BASE_URL');
+if(!$recommendationApiBaseUrl) {
+    $recommendationApiBaseUrl = 'http://127.0.0.1:8000';
+}
+define('RECOMMENDATION_API_BASE_URL', rtrim($recommendationApiBaseUrl, '/'));
  
  
 // Start session 

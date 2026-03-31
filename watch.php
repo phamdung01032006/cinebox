@@ -18,7 +18,7 @@ $seasonProvider = new SeasonProvider($con, $userLoggedIn);
 
 // Tạo dữ liệu related TRƯỚC khi render HTML
 $previewProvider = new PreviewProvider($con, $userLoggedIn);
-$relatedEntities = EntityProvider::getEntities($con, $entity->getCategoryId(), 30);
+$relatedEntities = EntityProvider::getSimilarEntities($con, $entity->getId(), 12, $video->isMovie());
 
 $relatedHtml = "";
 $relatedCount = 0;

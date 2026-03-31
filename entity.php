@@ -55,9 +55,29 @@ echo $preview->createPreviewVideo($entity);
 
 $seasonProvider = new SeasonProvider($con, $userLoggedIn);
 echo $seasonProvider->create($entity);
+$similarEntities = EntityProvider::getSimilarEntities($con, $entity->getId(), 10);
+$similarEntitiesHtml = "";
 
-$categoryContainers = new CategoryContainers($con, $userLoggedIn);
-echo $categoryContainers->showCategory($entity->getCategoryId(), "You might also like");
+foreach($similarEntities as $similarEntity) {
+    $similarEntitiesHtml .= $preview->createEntityPreviewSquare($similarEntity);
+}
+
+if($similarEntitiesHtml !== "") {
+    echo "<div class='previewCategories noScroll'>
+            <div class='category'>
+                <div class='category-header'>
+                    <h3>Similar titles</h3>
+                    <div class='category-arrows'>
+                        <button class='scroll-arrow left'><i class='fa-solid fa-chevron-left'></i></button>
+                        <button class='scroll-arrow right'><i class='fa-solid fa-chevron-right'></i></button>
+                    </div>
+                </div>
+                <div class='entities'>
+                    $similarEntitiesHtml
+                </div>
+            </div>
+        </div>";
+}
 
 ?>
 

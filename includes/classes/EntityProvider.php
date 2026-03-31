@@ -89,7 +89,7 @@ class EntityProvider {
         return $result;
     }
 
-        public static function getSearchEntities($con, $term) {
+    public static function getSearchEntities($con, $term) {
 
         $sql = "SELECT * FROM entities WHERE name LIKE CONCAT('%', :term, '%') LIMIT 30";
 
@@ -104,6 +104,263 @@ class EntityProvider {
         }
 
         return $result;
+    }
+
+    public static function getRecommendedEntitiesForUser($con, $username, $limit = 30, $movies = true, $tvShows = true) {
+
+        if(!$username) {
+            return [];
+        }
+
+        $entityIds = self::fetchRecommendedEntityIdsFromApi($con, $username);
+
+        if(!empty($entityIds)) {
+            $entities = self::getEntitiesByIds($con, $entityIds, $movies, $tvShows);
+
+            if(!empty($entities)) {
+                return array_slice($entities, 0, $limit);
+            }
+        }
+
+        return self::getFallbackRecommendedEntities($con, $username, $limit, $movies, $tvShows);
+    }
+
+    public static function getSimilarEntities($con, $entityId, $limit = 10, $isMovie = null) {
+
+        RecommendationProvider::ensureSchema($con);
+
+        $entityId = (int)$entityId;
+        $limit = (int)$limit;
+
+        if($entityId <= 0 || $limit <= 0) {
+            return [];
+        }
+
+        $typeSql = "";
+        if($isMovie !== null) {
+            $typeSql = "AND EXISTS (
+                            SELECT 1
+                            FROM videos typeVideos
+                            WHERE typeVideos.entityId = e.id
+                            AND typeVideos.isMovie = :isMovie
+                        )";
+        }
+
+        $query = $con->prepare("
+            SELECT e.id
+            FROM entities e
+            LEFT JOIN entityRatings r ON r.entityId = e.id
+            WHERE e.categoryId = (
+                SELECT categoryId
+                FROM entities
+                WHERE id = :sourceEntityId
+            )
+            AND e.id <> :currentEntityId
+            $typeSql
+            GROUP BY e.id
+            ORDER BY COALESCE(AVG(r.rating), 0) DESC, e.id DESC
+            LIMIT :limit
+        ");
+
+        $query->bindValue(":sourceEntityId", $entityId, PDO::PARAM_INT);
+        $query->bindValue(":currentEntityId", $entityId, PDO::PARAM_INT);
+        if($isMovie !== null) {
+            $query->bindValue(":isMovie", $isMovie ? 1 : 0, PDO::PARAM_INT);
+        }
+        $query->bindValue(":limit", $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        $entityIds = array_map("intval", $query->fetchAll(PDO::FETCH_COLUMN));
+        return self::getEntitiesByIds($con, $entityIds, true, true);
+    }
+
+    public static function getEntitiesByIds($con, $entityIds, $movies = true, $tvShows = true) {
+
+        $entityIds = array_values(array_unique(array_filter(array_map("intval", $entityIds), function($id) {
+            return $id > 0;
+        })));
+
+        if(empty($entityIds)) {
+            return [];
+        }
+
+        $idList = implode(",", $entityIds);
+        $typeSql = "";
+
+        if($movies xor $tvShows) {
+            $typeSql = "AND EXISTS (
+                            SELECT 1
+                            FROM videos filterVideos
+                            WHERE filterVideos.entityId = e.id
+                            AND filterVideos.isMovie = " . ($movies ? "1" : "0") . "
+                        )";
+        }
+
+        $query = $con->prepare("
+            SELECT e.*
+            FROM entities e
+            WHERE e.id IN ($idList)
+            $typeSql
+            ORDER BY FIELD(e.id, $idList)
+        ");
+        $query->execute();
+
+        $result = [];
+        while($row = $query->fetch(PDO::FETCH_ASSOC)) {
+            $result[] = new Entity($con, $row);
+        }
+
+        return $result;
+    }
+
+    private static function fetchRecommendedEntityIdsFromApi($con, $username) {
+
+        $userId = self::getUserIdByUsername($con, $username);
+        if($userId <= 0 || !function_exists("curl_init")) {
+            return [];
+        }
+
+        $apiBaseUrl = defined("RECOMMENDATION_API_BASE_URL")
+            ? RECOMMENDATION_API_BASE_URL
+            : "http://127.0.0.1:8000";
+
+        $ch = curl_init($apiBaseUrl . "/recommend/" . rawurlencode((string)$userId));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+        curl_setopt($ch, CURLOPT_HTTPGET, true);
+
+        $response = curl_exec($ch);
+        $httpCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $hasError = curl_errno($ch);
+        curl_close($ch);
+
+        if($hasError || $httpCode >= 400 || !$response) {
+            return [];
+        }
+
+        $decoded = json_decode($response, true);
+
+        if(isset($decoded["entityIds"]) && is_array($decoded["entityIds"])) {
+            return array_map("intval", $decoded["entityIds"]);
+        }
+
+        if(is_array($decoded)) {
+            return array_map("intval", $decoded);
+        }
+
+        return [];
+    }
+
+    private static function getFallbackRecommendedEntities($con, $username, $limit, $movies, $tvShows) {
+
+        RecommendationProvider::ensureSchema($con);
+
+        $lastWatchedCategory = self::getLastWatchedCategoryData($con, $username);
+        $entityIds = [];
+
+        if($lastWatchedCategory) {
+            $entityIds = self::getUnseenTopRatedEntityIds(
+                $con,
+                $username,
+                (int)$lastWatchedCategory["categoryId"],
+                $limit,
+                $movies,
+                $tvShows
+            );
+        }
+
+        if(empty($entityIds)) {
+            $entityIds = self::getUnseenTopRatedEntityIds(
+                $con,
+                $username,
+                null,
+                $limit,
+                $movies,
+                $tvShows
+            );
+        }
+
+        return self::getEntitiesByIds($con, $entityIds, $movies, $tvShows);
+    }
+
+    private static function getLastWatchedCategoryData($con, $username) {
+
+        $query = $con->prepare("
+            SELECT e.categoryId, v.isMovie
+            FROM videoprogress vp
+            INNER JOIN videos v ON v.id = vp.videoId
+            INNER JOIN entities e ON e.id = v.entityId
+            WHERE vp.username = :username
+            AND vp.finished = 1
+            ORDER BY vp.dateModified DESC
+            LIMIT 1
+        ");
+        $query->bindValue(":username", $username);
+        $query->execute();
+
+        return $query->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+    private static function getUserIdByUsername($con, $username) {
+
+        $query = $con->prepare("SELECT id FROM users WHERE username = :username LIMIT 1");
+        $query->bindValue(":username", $username);
+        $query->execute();
+
+        $userId = $query->fetchColumn();
+        return $userId === false ? 0 : (int)$userId;
+    }
+
+    private static function getUnseenTopRatedEntityIds($con, $username, $categoryId, $limit, $movies, $tvShows) {
+
+        $typeSql = "";
+        if($movies xor $tvShows) {
+            $typeSql = "AND EXISTS (
+                            SELECT 1
+                            FROM videos typeVideos
+                            WHERE typeVideos.entityId = e.id
+                            AND typeVideos.isMovie = " . ($movies ? "1" : "0") . "
+                        )";
+        }
+
+        $categorySql = "";
+        if($categoryId !== null) {
+            $categorySql = "AND e.categoryId = :categoryId";
+        }
+
+        $query = $con->prepare("
+            SELECT e.id
+            FROM entities e
+            LEFT JOIN entityRatings r ON r.entityId = e.id
+            WHERE e.id NOT IN (
+                SELECT DISTINCT watchedVideos.entityId
+                FROM videos watchedVideos
+                INNER JOIN videoprogress vp ON vp.videoId = watchedVideos.id
+                WHERE vp.username = :watchedUsername
+                AND vp.finished = 1
+            )
+            AND e.id NOT IN (
+                SELECT w.entityId
+                FROM wishlist w
+                WHERE w.username = :wishlistUsername
+            )
+            $categorySql
+            $typeSql
+            GROUP BY e.id
+            ORDER BY COALESCE(AVG(r.rating), 0) DESC, e.id DESC
+            LIMIT :limit
+        ");
+
+        $query->bindValue(":watchedUsername", $username);
+        $query->bindValue(":wishlistUsername", $username);
+        if($categoryId !== null) {
+            $query->bindValue(":categoryId", (int)$categoryId, PDO::PARAM_INT);
+        }
+        $query->bindValue(":limit", (int)$limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return array_map("intval", $query->fetchAll(PDO::FETCH_COLUMN));
     }
 
 }

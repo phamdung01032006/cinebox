@@ -1,5 +1,4 @@
 <?php 
-require_once(__DIR__ . "/RecommendationProvider.php");
 
 class CategoryContainers {
 
@@ -118,10 +117,10 @@ class CategoryContainers {
                     $entitiesHtml
                 </div>
 	        </div>";
-	    }
+    }
 
     private function getRecommendedCategoryHtml($title, $tvShows, $movies) {
-        $entities = RecommendationProvider::getRecommendedEntities($this->con, $this->username, 30, $movies, $tvShows);
+        $entities = EntityProvider::getRecommendedEntitiesForUser($this->con, $this->username, 30, $movies, $tvShows);
 
         if(empty($entities)) {
             return "";
