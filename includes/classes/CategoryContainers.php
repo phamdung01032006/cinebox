@@ -1,4 +1,5 @@
 <?php 
+require_once(__DIR__ . "/RecommendationProvider.php");
 
 class CategoryContainers {
 
@@ -18,6 +19,10 @@ class CategoryContainers {
 
         $html = "<div class='previewCategories'>";
 
+        if($this->username) {
+            $html .= $this->getRecommendedCategoryHtml("Recommended for you", true, true);
+        }
+
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $html .= $this->getCategoryHtml($row, null, true, true);
         }
@@ -32,6 +37,10 @@ class CategoryContainers {
         $html = "<div class='previewCategories'>
                     <h1>TV Shows</h1>";
 
+        if($this->username) {
+            $html .= $this->getRecommendedCategoryHtml("Recommended TV Shows", true, false);
+        }
+
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $html .= $this->getCategoryHtml($row, null, true, false);
         }
@@ -45,6 +54,10 @@ class CategoryContainers {
 
         $html = "<div class='previewCategories'>
                     <h1>Movies</h1>";
+
+        if($this->username) {
+            $html .= $this->getRecommendedCategoryHtml("Recommended Movies", false, true);
+        }
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $html .= $this->getCategoryHtml($row, null, false, true);
@@ -91,11 +104,38 @@ class CategoryContainers {
             $entitiesHtml .= $previewProvider->createEntityPreviewSquare($entity);
         }
 
-        return "<div class='category'>
+	        return "<div class='category'>
                 <div class='category-header'>
                     <a href='category.php?id=$categoryId'>
                         <h3>$title</h3>
                     </a>
+                    <div class='category-arrows'>
+                        <button class='scroll-arrow left'><i class='fa-solid fa-chevron-left'></i></button>
+                        <button class='scroll-arrow right'><i class='fa-solid fa-chevron-right'></i></button>
+                    </div>
+                </div>
+                <div class='entities'>
+                    $entitiesHtml
+                </div>
+	        </div>";
+	    }
+
+    private function getRecommendedCategoryHtml($title, $tvShows, $movies) {
+        $entities = RecommendationProvider::getRecommendedEntities($this->con, $this->username, 30, $movies, $tvShows);
+
+        if(empty($entities)) {
+            return "";
+        }
+
+        $entitiesHtml = "";
+        $previewProvider = new PreviewProvider($this->con, $this->username);
+        foreach($entities as $entity) {
+            $entitiesHtml .= $previewProvider->createEntityPreviewSquare($entity);
+        }
+
+        return "<div class='category recommendedCategory'>
+                <div class='category-header'>
+                    <h3>$title</h3>
                     <div class='category-arrows'>
                         <button class='scroll-arrow left'><i class='fa-solid fa-chevron-left'></i></button>
                         <button class='scroll-arrow right'><i class='fa-solid fa-chevron-right'></i></button>

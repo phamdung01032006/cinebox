@@ -138,6 +138,99 @@ function openVideoPopup(button) {
     popupPlayer.play();
 }
 
+function addToWishlist(entityId, button) {
+    const $button = $(button);
+    const isEntityCardButton = $button.hasClass("entityWishlistBtn");
+
+    if ($button.hasClass("active")) {
+        $.post("ajax/removeFromWishlist.php", { entityId: entityId }, function(response) {
+            if (!response || response.status !== "success") {
+                alert("Unable to remove this movie from your wishlist right now.");
+                return;
+            }
+
+            $button.removeClass("active");
+            $button.attr("title", "Add to wishlist");
+            $button.attr("aria-label", "Add to wishlist");
+            $button.find("i")
+                .removeClass("fa-check")
+                .addClass("fa-plus");
+
+            if ($(".wishlistPage").length && isEntityCardButton) {
+                $button.closest(".entityCard").fadeOut(180, function() {
+                    $(this).remove();
+
+                    if (!$(".wishlistPage .entityCard").length) {
+                        $(".wishlistPage .wishlistEntities").replaceWith(
+                            "<div class='wishlistEmptyState'><p>You haven't added any movies to your wishlist yet.</p></div>"
+                        );
+                    }
+                });
+            }
+        }, "json").fail(function() {
+            alert("Unable to remove this movie from your wishlist right now.");
+        });
+        return;
+    }
+
+    $.post("ajax/addToWishlist.php", { entityId: entityId }, function(response) {
+        if (!response || response.status !== "success") {
+            if (response && response.message === "login_required") {
+                window.location.href = "login.php";
+                return;
+            }
+
+            alert("Unable to add this movie to your wishlist right now.");
+            return;
+        }
+
+        $button.addClass("active");
+        $button.attr("title", "Added to wishlist");
+        $button.attr("aria-label", "Added to wishlist");
+        $button.find("i")
+            .removeClass("fa-plus")
+            .addClass("fa-check");
+    }, "json").fail(function() {
+        alert("Unable to add this movie to your wishlist right now.");
+    });
+}
+
+$(document).on("click", ".ratingStar", function() {
+    const $button = $(this);
+    const $wrapper = $button.closest(".entityRatingStars");
+    const entityId = parseInt($wrapper.data("entity-id"), 10);
+    const rating = parseInt($button.data("rating"), 10);
+
+    if (!entityId || !rating || $button.is(":disabled")) {
+        return;
+    }
+
+    $.post("ajax/rateEntity.php", { entityId: entityId, rating: rating }, function(response) {
+        if (!response || response.status !== "success") {
+            if (response && response.message === "login_required") {
+                window.location.href = "login.php";
+                return;
+            }
+
+            alert("Unable to save your rating right now.");
+            return;
+        }
+
+        $wrapper.find(".ratingStar").each(function() {
+            const $star = $(this);
+            const starValue = parseInt($star.data("rating"), 10);
+            $star.toggleClass("active", starValue <= rating);
+        });
+
+        $(".entityUserRatingValue").text(rating + "/5");
+        if (response.averageRating) {
+            $(".entityAverageRatingValue").text(parseFloat(response.averageRating).toFixed(1) + "/5");
+        }
+    }, "json").fail(function() {
+        alert("Unable to save your rating right now.");
+    });
+});
+
 function closeVideoPopup() {
     popupPlayer.pause();
     popupPlayer.stop();

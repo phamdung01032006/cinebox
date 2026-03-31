@@ -228,13 +228,18 @@ a {
 
 .column form input[type="text"],
 .column form input[type="email"],
-.column form input[type="password"] {
+.column form input[type="password"],
+.column form select {
     font-size: 14px;
     margin: 0 0 10px 0;
     border: 1px solid #aaaaaa;
     width: 100%;
     padding: 10px;
     border-radius: 100px;
+}
+
+.column form select option {
+    color: #111111;
 }
 
 .column form button[type="submit"] {
@@ -522,6 +527,11 @@ a {
     background: linear-gradient(135deg, rgba(255,170,84,0.5), rgba(51, 51, 51, 0.5));
 }
 
+.mainDetails .wishlistBtn.active {
+    background: linear-gradient(135deg, rgba(255,170,84,0.78), rgba(51, 51, 51, 0.72));
+    border-color: rgba(255, 232, 203, 0.75);
+}
+
 button i {
     color:inherit;  
 }
@@ -567,6 +577,11 @@ button i {
     .mainDetails .playBtn {
         width: 150px;
         background: linear-gradient(135deg, rgba(255, 186, 117, 0.5), rgba(51, 51, 51, 0.5));
+    }
+
+    .mainDetails .wishlistBtn.active {
+        background: linear-gradient(135deg, rgba(255,170,84,0.78), rgba(51, 51, 51, 0.72));
+        border-color: rgba(255, 232, 203, 0.75);
     }
 
     button i {
@@ -732,6 +747,73 @@ button i {
 
 .previewCategories {
     padding: 0 50px;
+}
+
+.wishlistPage {
+    padding-top: 120px;
+}
+
+.wishlistEmptyState {
+    margin: 0 50px 40px;
+    padding: 24px 28px;
+    color: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 24px;
+    background: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(10px);
+}
+
+.entityRatingSection {
+    padding: 16px 50px 8px;
+}
+
+.entityRatingCard {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px 22px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(10px);
+}
+
+.entityRatingCard h3 {
+    margin: 0;
+}
+
+.entityRatingStars {
+    display: flex;
+    gap: 10px;
+}
+
+.ratingStar {
+    width: 42px;
+    height: 42px;
+    border-radius: 100px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.42);
+    color: rgba(255, 255, 255, 0.55);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ratingStar:hover:not(:disabled),
+.ratingStar.active {
+    color: rgba(255, 193, 94, 1);
+    border-color: rgba(255, 210, 146, 0.8);
+    background: rgba(255, 170, 84, 0.18);
+}
+
+.ratingStar:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.entityRatingMeta {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.84);
+    line-height: 1.6;
 }
 
 .errorBanner {
@@ -998,6 +1080,7 @@ button i {
     color: #fff;
     display: inline-block;
     vertical-align: top;
+    position: relative;
 }
 
 @media (max-width: 650px) {
@@ -1009,7 +1092,14 @@ button i {
         color: #fff;
         display: inline-block;
         vertical-align: top;
+        position: relative;
 }
+}
+
+.entityCardLink {
+    display: block;
+    color: inherit;
+    text-decoration: none;
 }
 
 .entityCard .previewContainer.small{
@@ -1025,6 +1115,65 @@ button i {
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: center;
+}
+
+.entityWishlistBtn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 100px;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 3;
+    transition: all 0.25s ease;
+}
+
+.entityWishlistBtn:hover {
+    transform: scale(1.08);
+    background: rgba(255, 170, 84, 0.8);
+    border-color: rgba(255, 232, 203, 0.8);
+}
+
+.entityWishlistBtn.active {
+    background: linear-gradient(135deg, rgba(255,170,84,0.9), rgba(91, 91, 91, 0.72));
+    border-color: rgba(255, 232, 203, 0.85);
+}
+
+@media (max-width: 650px) {
+    .entityWishlistBtn {
+        top: 8px;
+        right: 8px;
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+        font-size: 12px;
+    }
+
+    .entityRatingSection {
+        padding: 12px 16px 4px;
+    }
+
+    .entityRatingCard {
+        width: 100%;
+    }
+
+    .entityRatingStars {
+        gap: 8px;
+    }
+
+    .ratingStar {
+        width: 36px;
+        height: 36px;
+    }
 }
 
 /* Phần này để cho phần you may also like có thể scroll theo trục y thay vì trục x như thông thường */

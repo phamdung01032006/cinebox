@@ -43,7 +43,7 @@ class PreviewProvider {
     return $this->createPreviewVideo($entitiesArray[0]);
 }
 
-    public function createPreviewVideo($entity) {
+	    public function createPreviewVideo($entity) {
 
         if($entity == null) {
             $entity = $this->getRandomEntity();
@@ -58,18 +58,17 @@ class PreviewProvider {
         $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
         
 
-        $videoId = VideoProvider::getEntityVideoForUser($this->con, $id, $this->username);
-        $video = new Video($this->con, $videoId);
+	        $videoId = VideoProvider::getEntityVideoForUser($this->con, $id, $this->username);
+	        $video = new Video($this->con, $videoId);
 
         $inProgress = $video->isInProgress($this->username);
-        $playButtonText = $inProgress ? "We continue" : "Play";
-        $seasonEpisode = $video->getSeasonAndEpisode();
-        $title = $video->getTitle();
-        $subHeading = $video->isMovie() ? "": "<h4>$seasonEpisode</h4>";
+	        $playButtonText = $inProgress ? "We continue" : "Play";
+	        $seasonEpisode = $video->getSeasonAndEpisode();
+	        $title = $video->getTitle();
+	        $subHeading = $video->isMovie() ? "": "<h4>$seasonEpisode</h4>";
 
-
-        return "<div class='previewContainer'>
-            <img src='$thumbnail' class='previewImage' hidden>
+	        return "<div class='previewContainer'>
+	            <img src='$thumbnail' class='previewImage' hidden>
 
             <video autoplay muted class='previewVideo' onended='previewEnded()'>
                 <source src='$preview' type='video/mp4'>
@@ -82,12 +81,12 @@ class PreviewProvider {
                     <h3>$name</h3>
                     <h4>$title</h4>
                     $subHeading
-                    <div class='button'>
-                    
-                        <button class='playBtn' onclick='watchVideo($videoId)'><i class='fa-solid fa-play'></i> $playButtonText</button>
-                        <button onclick='volumeToggle(this)'><i class='fa-solid fa-volume-xmark'></i></button>
-                        <button class='openPopupBtn' onclick='openVideoPopup(this)' data-src = '$safePreview' data-title='$safeName'><i class='fa-solid fa-expand'></i></button>
-                    </div>
+	                    <div class='button'>
+	                    
+		                        <button class='playBtn' onclick='watchVideo($videoId)'><i class='fa-solid fa-play'></i> $playButtonText</button>
+		                        <button onclick='volumeToggle(this)'><i class='fa-solid fa-volume-xmark'></i></button>
+		                        <button class='openPopupBtn' onclick='openVideoPopup(this)' data-src = '$safePreview' data-title='$safeName'><i class='fa-solid fa-expand'></i></button>
+		                    </div>
 
                 </div>
 
@@ -96,19 +95,35 @@ class PreviewProvider {
         </div>";
     }
 
-    public function createEntityPreviewSquare($entity) {
-        $id = $entity->getId();
-        $thumbnail = $entity->getThumbnail();
-        $name = $entity->getName();
-        $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+	    public function createEntityPreviewSquare($entity) {
+	        $id = $entity->getId();
+	        $thumbnail = $entity->getThumbnail();
+	        $name = $entity->getName();
+	        $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+            $wishlistButton = "";
 
-        return "<a href='entity.php?id=$id' class='entityCard'>
-                    <div class='previewContainer small'>
-                        <img src='$thumbnail' title='$safeName' alt='$safeName'>
-                    </div>
-                    <div class='entityTitle'>$safeName</div>
-        </a>";
-    }
+            if($this->username) {
+                $user = new User($this->con, $this->username);
+                $isInWishlist = $user->hasEntityInWishlist($id);
+                $wishlistStateClass = $isInWishlist ? " active" : "";
+                $wishlistIcon = $isInWishlist ? "fa-check" : "fa-plus";
+                $wishlistTitle = $isInWishlist ? "Added to wishlist" : "Add to wishlist";
+
+                $wishlistButton = "<button class='entityWishlistBtn$wishlistStateClass' type='button' onclick='event.preventDefault(); event.stopPropagation(); addToWishlist($id, this)' title='$wishlistTitle' aria-label='$wishlistTitle'>
+                                        <i class='fa-solid $wishlistIcon'></i>
+                                   </button>";
+            }
+
+	        return "<div class='entityCard'>
+                        <a href='entity.php?id=$id' class='entityCardLink'>
+    	                    <div class='previewContainer small'>
+    	                        <img src='$thumbnail' title='$safeName' alt='$safeName'>
+    	                    </div>
+    	                    <div class='entityTitle'>$safeName</div>
+                        </a>
+                        $wishlistButton
+	        </div>";
+	    }
 
 
     // chọn film ngẫu nhiên để chiếu preview

@@ -79,6 +79,10 @@
     background-color: transparent;
 }
 
+.profileField select option{
+    color: #111111;
+}
+
 .profileField input:disabled{
     background: rgba(151, 151, 151, 0.25);
     color: #ffffff;

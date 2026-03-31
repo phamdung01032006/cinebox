@@ -38,6 +38,14 @@ class FormSanitizer {
         return $inputText;
     }
 
+    public static function sanitizeGender($inputText) {
+        $inputText = strip_tags($inputText);
+        $inputText = strtolower(trim($inputText));
+
+        $allowed = ["male", "female", "other", "prefer_not_to_say"];
+        return in_array($inputText, $allowed, true) ? $inputText : "";
+    }
+
 }
 
 

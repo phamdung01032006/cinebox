@@ -6,20 +6,23 @@ class Account {
 
     public function __construct($con) {
         $this->con = $con;
+        $this->ensureUserSchema();
     }
 
-    public function updateDetails($fn, $ln, $em, $un) {
+    public function updateDetails($fn, $ln, $em, $gender, $un) {
         $this -> validateFirstName($fn);
         $this -> validateLastName($ln);
         $this->validateNewEmail($em, $un);
+        $this->validateGender($gender);
 
         if(empty($this->errorArray)) {
             $query = $this->con->prepare("UPDATE users 
-                                            SET firstName=:fn, lastName=:ln, email=:em
+                                            SET firstName=:fn, lastName=:ln, email=:em, gender=:gender
                                             WHERE username=:un");
             $query->bindValue(":fn", $fn);
             $query->bindValue(":ln", $ln);
             $query->bindValue(":em", $em);
+            $query->bindValue(":gender", $gender);
             $query->bindValue(":un", $un);
 
             return $query->execute();
@@ -27,15 +30,16 @@ class Account {
         return false;
     }
 
-    public function register($fn, $ln, $un, $em, $em2, $pw, $pw2) {
+    public function register($fn, $ln, $un, $em, $em2, $gender, $pw, $pw2) {
         $this -> validateFirstName($fn);
         $this -> validateLastName($ln);
         $this -> validateUserName($un);
         $this -> validateEmails($em, $em2);
+        $this -> validateGender($gender);
         $this -> validatePasswords($pw, $pw2);
 
         if(empty($this->errorArray)) {
-            return $this->insertUserDetails($fn, $ln, $un, $em, $pw);
+            return $this->insertUserDetails($fn, $ln, $un, $em, $gender, $pw);
         }
 
         return false;
@@ -69,18 +73,19 @@ class Account {
 
     }
 
-    private function insertUserDetails($fn, $ln, $un, $em, $pw) {
+    private function insertUserDetails($fn, $ln, $un, $em, $gender, $pw) {
 
     // hash the password and save it to $pw, có thể dùng hàm hash khác ngoài sha512
     $pw = hash("sha512", $pw);
 
-    $query = $this->con->prepare("INSERT INTO users (firstName, lastName, username, email, password)
-                                    VALUES (:fn, :ln, :un, :em, :pw)");
+    $query = $this->con->prepare("INSERT INTO users (firstName, lastName, username, email, gender, password)
+                                    VALUES (:fn, :ln, :un, :em, :gender, :pw)");
     
     $query->bindvalue(":fn", $fn);
     $query->bindvalue(":ln", $ln);
     $query->bindvalue(":un", $un);
     $query->bindvalue(":em", $em);
+    $query->bindvalue(":gender", $gender);
     $query->bindvalue(":pw", $pw);
 
     // Code để đưa ra chi tiết lỗi trên màn hình nếu bị lỗi
@@ -184,6 +189,13 @@ class Account {
 
     }
 
+    private function validateGender($gender) {
+        $allowed = ["male", "female", "other", "prefer_not_to_say"];
+        if(!in_array($gender, $allowed, true)) {
+            array_push($this->errorArray, Constants::$genderInvalid);
+        }
+    }
+
     public function getError($error) {
         if(in_array($error, $this->errorArray)) {
             return "<span class='errorMessage'>$error</span>";
@@ -233,9 +245,16 @@ class Account {
 
     $query->execute();
 
-    if($query->rowCount() == 0) {
-        array_push($this->errorArray, Constants::$passwordIncorrect);
-    }
+	    if($query->rowCount() == 0) {
+	        array_push($this->errorArray, Constants::$passwordIncorrect);
+	    }
+	    }
+
+    private function ensureUserSchema() {
+        $query = $this->con->query("SHOW COLUMNS FROM users LIKE 'gender'");
+        if(!$query->fetch(PDO::FETCH_ASSOC)) {
+            $this->con->exec("ALTER TABLE users ADD COLUMN gender VARCHAR(32) NOT NULL DEFAULT 'prefer_not_to_say'");
+        }
     }
 }
 

@@ -15,11 +15,12 @@
     if(isset($_POST["saveDetailsButton"])) {
         $account = new Account($con);
 
-        $firstName = FormSanitizer::sanitizeFormString($_POST["firstName"]);
-        $lastName = FormSanitizer::sanitizeFormString($_POST["lastName"]);
-        $email = FormSanitizer::sanitizeFormEmail($_POST["email"]);
-        
-        if($account->updateDetails($firstName, $lastName, $email, $userLoggedIn)) {
+	        $firstName = FormSanitizer::sanitizeFormString($_POST["firstName"]);
+	        $lastName = FormSanitizer::sanitizeFormString($_POST["lastName"]);
+	        $email = FormSanitizer::sanitizeFormEmail($_POST["email"]);
+            $gender = FormSanitizer::sanitizeGender($_POST["gender"] ?? "");
+	        
+	        if($account->updateDetails($firstName, $lastName, $email, $gender, $userLoggedIn)) {
             $detailsMessage = "<div class='successMessage'> 
                                     Details saved
                                 </div>";
@@ -61,9 +62,10 @@
 
     $user = new User($con, $userLoggedIn);
 
-    $firstName = isset($_POST["firstName"]) ? $_POST["firstName"] : $user->getFirstName();
-    $lastName = isset($_POST["lastName"]) ? $_POST["lastName"] : $user->getLastName();
-    $email= isset($_POST["email"]) ? $_POST["email"] : $user->getEmail();
+	    $firstName = isset($_POST["firstName"]) ? $_POST["firstName"] : $user->getFirstName();
+	    $lastName = isset($_POST["lastName"]) ? $_POST["lastName"] : $user->getLastName();
+	    $email= isset($_POST["email"]) ? $_POST["email"] : $user->getEmail();
+        $gender = isset($_POST["gender"]) ? $_POST["gender"] : $user->getGender();
             
 
     $displayName = trim($firstName . " " . $lastName);
@@ -86,11 +88,25 @@
         </div>
         </aside>
 
-        <div class="subscriptionButtons">
-            <h3>Subscription</h3>
-            <button type="button" class="animatedSubscriptionButton" onclick="window.location.href='paypal.php'">
-                <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
-                    <path
+	        <div class="subscriptionButtons">
+	            <h3>Subscription</h3>
+                <button type="button" class="animatedSubscriptionButton" onclick="window.location.href='wishlist.php'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
+                        <path
+                        d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+                        ></path>
+                    </svg>
+                    <span class="text">Wishlist</span>
+                    <span class="circle"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
+                        <path
+                        d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+                        ></path>
+                    </svg>
+                </button>
+	            <button type="button" class="animatedSubscriptionButton" onclick="window.location.href='paypal.php'">
+	                <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
+	                    <path
                     d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
                     ></path>
                 </svg>
@@ -134,10 +150,20 @@
                     <input type="text" id="lastName" name="lastName" placeholder="Your last name" value="<?php echo $lastName; ?>">
                     </div>
 
-                    <div class="profileField">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="Your email" value="<?php echo $email; ?>">
-                    </div>
+	                    <div class="profileField">
+	                    <label for="email">Email</label>
+	                    <input type="email" id="email" name="email" placeholder="Your email" value="<?php echo $email; ?>">
+	                    </div>
+
+                        <div class="profileField">
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender">
+                            <option value="male" <?php echo $gender === "male" ? "selected" : ""; ?>>Male</option>
+                            <option value="female" <?php echo $gender === "female" ? "selected" : ""; ?>>Female</option>
+                            <option value="other" <?php echo $gender === "other" ? "selected" : ""; ?>>Other</option>
+                            <option value="prefer_not_to_say" <?php echo $gender === "prefer_not_to_say" ? "selected" : ""; ?>>Prefer not to say</option>
+                        </select>
+                        </div>
 
                     <div class="profileField">
                     <label for="username">Username</label>

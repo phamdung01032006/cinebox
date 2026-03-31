@@ -12,13 +12,14 @@ if(isset($_POST["submitButton"])) {
 // Gọi đến hàm sanitizeFormString trong class FormSanitizer
     $firstName = FormSanitizer::sanitizeFormString($_POST["firstName"]);
     $lastName = FormSanitizer::sanitizeFormString($_POST["lastName"]);
-    $username = FormSanitizer::sanitizeFormUsername($_POST["username"]);
-    $email = FormSanitizer::sanitizeFormEmail($_POST["email"]);
-    $email2 = FormSanitizer::sanitizeFormEmail($_POST["email2"]);
-    $password = FormSanitizer::sanitizeFormPassword($_POST["password"]);
-    $password2 = FormSanitizer::sanitizeFormPassword($_POST["password2"]);
+	    $username = FormSanitizer::sanitizeFormUsername($_POST["username"]);
+	    $email = FormSanitizer::sanitizeFormEmail($_POST["email"]);
+	    $email2 = FormSanitizer::sanitizeFormEmail($_POST["email2"]);
+        $gender = FormSanitizer::sanitizeGender($_POST["gender"] ?? "");
+	    $password = FormSanitizer::sanitizeFormPassword($_POST["password"]);
+	    $password2 = FormSanitizer::sanitizeFormPassword($_POST["password2"]);
 
-    $success = $account->register($firstName, $lastName, $username, $email, $email2,$password, $password2);
+	    $success = $account->register($firstName, $lastName, $username, $email, $email2, $gender, $password, $password2);
 
     if($success) {
 
@@ -90,10 +91,20 @@ function getInputValue($name) {
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Email" value="<?php getInputValue("email") ?>" required>
 
-                <label for="email2">Confirm email</label>
-                <input type="email" id="email2" name="email2" placeholder="Confirm email" value="<?php getInputValue("email2") ?>" required>
+	                <label for="email2">Confirm email</label>
+	                <input type="email" id="email2" name="email2" placeholder="Confirm email" value="<?php getInputValue("email2") ?>" required>
 
-                <?php echo $account->getError(Constants::$passwordsDontMatch)?>
+                    <?php echo $account->getError(Constants::$genderInvalid)?>
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Select gender</option>
+                        <option value="male" <?php echo (isset($_POST["gender"]) && $_POST["gender"] === "male") ? "selected" : ""; ?>>Male</option>
+                        <option value="female" <?php echo (isset($_POST["gender"]) && $_POST["gender"] === "female") ? "selected" : ""; ?>>Female</option>
+                        <option value="other" <?php echo (isset($_POST["gender"]) && $_POST["gender"] === "other") ? "selected" : ""; ?>>Other</option>
+                        <option value="prefer_not_to_say" <?php echo (isset($_POST["gender"]) && $_POST["gender"] === "prefer_not_to_say") ? "selected" : ""; ?>>Prefer not to say</option>
+                    </select>
+
+	                <?php echo $account->getError(Constants::$passwordsDontMatch)?>
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="Password" required>
 
