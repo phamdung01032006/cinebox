@@ -125,6 +125,50 @@ class EntityProvider {
         return self::getFallbackRecommendedEntities($con, $username, $limit, $movies, $tvShows);
     }
 
+    public static function getBecauseYouWatchedRecommendation($con, $username, $limit = 30, $movies = true, $tvShows = true) {
+
+        if(!$username) {
+            return null;
+        }
+
+        RecommendationProvider::ensureSchema($con);
+
+        $seedEntities = self::getRecentFiveStarSeedData($con, $username, 3, $movies, $tvShows);
+        if(empty($seedEntities)) {
+            return null;
+        }
+
+        shuffle($seedEntities);
+
+        foreach($seedEntities as $seedEntity) {
+            $seedEntityId = (int)$seedEntity["id"];
+            $seedName = $seedEntity["name"] ?? "";
+            $seedIsMovie = isset($seedEntity["isMovie"]) ? (int)$seedEntity["isMovie"] : null;
+
+            $entityIds = self::getRandomSimilarEntityIdsForSeed(
+                $con,
+                $username,
+                $seedEntityId,
+                $limit,
+                $movies,
+                $tvShows,
+                $seedIsMovie
+            );
+
+            if(empty($entityIds)) {
+                continue;
+            }
+
+            return [
+                "title" => "Because you watched " . $seedName,
+                "seedEntityId" => $seedEntityId,
+                "entities" => self::getEntitiesByIds($con, $entityIds, true, true)
+            ];
+        }
+
+        return null;
+    }
+
     public static function getSimilarEntities($con, $entityId, $limit = 10, $isMovie = null) {
 
         RecommendationProvider::ensureSchema($con);
@@ -284,6 +328,42 @@ class EntityProvider {
         return self::getEntitiesByIds($con, $entityIds, $movies, $tvShows);
     }
 
+    private static function getRecentFiveStarSeedData($con, $username, $limit, $movies, $tvShows) {
+
+        $typeSql = "";
+        if($movies xor $tvShows) {
+            $typeSql = "AND EXISTS (
+                            SELECT 1
+                            FROM videos typeVideos
+                            WHERE typeVideos.entityId = e.id
+                            AND typeVideos.isMovie = " . ($movies ? "1" : "0") . "
+                        )";
+        }
+
+        $query = $con->prepare("
+            SELECT
+                e.id,
+                e.name,
+                (
+                    SELECT MAX(seedVideos.isMovie)
+                    FROM videos seedVideos
+                    WHERE seedVideos.entityId = e.id
+                ) AS isMovie
+            FROM entityRatings r
+            INNER JOIN entities e ON e.id = r.entityId
+            WHERE r.username = :username
+            AND r.rating = 5
+            $typeSql
+            ORDER BY r.updatedAt DESC, r.id DESC
+            LIMIT :limit
+        ");
+        $query->bindValue(":username", $username);
+        $query->bindValue(":limit", (int)$limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     private static function getLastWatchedCategoryData($con, $username) {
 
         $query = $con->prepare("
@@ -310,6 +390,72 @@ class EntityProvider {
 
         $userId = $query->fetchColumn();
         return $userId === false ? 0 : (int)$userId;
+    }
+
+    private static function getRandomSimilarEntityIdsForSeed($con, $username, $seedEntityId, $limit, $movies, $tvShows, $seedIsMovie = null) {
+
+        $entityType = null;
+        if($movies xor $tvShows) {
+            $entityType = $movies ? 1 : 0;
+        }
+        elseif($seedIsMovie !== null) {
+            $entityType = (int)$seedIsMovie;
+        }
+
+        $typeSql = "";
+        if($entityType !== null) {
+            $typeSql = "AND EXISTS (
+                            SELECT 1
+                            FROM videos typeVideos
+                            WHERE typeVideos.entityId = e.id
+                            AND typeVideos.isMovie = :entityType
+                        )";
+        }
+
+        $query = $con->prepare("
+            SELECT DISTINCT e.id
+            FROM entities e
+            INNER JOIN entityCategories ec ON ec.entityId = e.id
+            WHERE e.id <> :seedEntityId
+            AND ec.categoryId IN (
+                SELECT seedCategories.categoryId
+                FROM entityCategories seedCategories
+                WHERE seedCategories.entityId = :seedCategoryEntityId
+            )
+            AND e.id NOT IN (
+                SELECT rated.entityId
+                FROM entityRatings rated
+                WHERE rated.username = :ratedUsername
+            )
+            AND e.id NOT IN (
+                SELECT wishlist.entityId
+                FROM wishlist wishlist
+                WHERE wishlist.username = :wishlistUsername
+            )
+            AND e.id NOT IN (
+                SELECT DISTINCT watchedVideos.entityId
+                FROM videoprogress watchedProgress
+                INNER JOIN videos watchedVideos ON watchedVideos.id = watchedProgress.videoId
+                WHERE watchedProgress.username = :watchedUsername
+                AND watchedProgress.finished = 1
+            )
+            $typeSql
+            ORDER BY RAND()
+            LIMIT :limit
+        ");
+
+        $query->bindValue(":seedEntityId", (int)$seedEntityId, PDO::PARAM_INT);
+        $query->bindValue(":seedCategoryEntityId", (int)$seedEntityId, PDO::PARAM_INT);
+        $query->bindValue(":ratedUsername", $username);
+        $query->bindValue(":wishlistUsername", $username);
+        $query->bindValue(":watchedUsername", $username);
+        if($entityType !== null) {
+            $query->bindValue(":entityType", (int)$entityType, PDO::PARAM_INT);
+        }
+        $query->bindValue(":limit", (int)$limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return array_map("intval", $query->fetchAll(PDO::FETCH_COLUMN));
     }
 
     private static function getUnseenTopRatedEntityIds($con, $username, $categoryId, $limit, $movies, $tvShows) {

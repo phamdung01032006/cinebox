@@ -19,7 +19,7 @@ class CategoryContainers {
         $html = "<div class='previewCategories'>";
 
         if($this->username) {
-            $html .= $this->getRecommendedCategoryHtml("Recommended for you", true, true);
+            $html .= $this->getBecauseYouWatchedCategoryHtml(true, true);
         }
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -37,7 +37,7 @@ class CategoryContainers {
                     <h1>TV Shows</h1>";
 
         if($this->username) {
-            $html .= $this->getRecommendedCategoryHtml("Recommended TV Shows", true, false);
+            $html .= $this->getBecauseYouWatchedCategoryHtml(true, false);
         }
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -55,7 +55,7 @@ class CategoryContainers {
                     <h1>Movies</h1>";
 
         if($this->username) {
-            $html .= $this->getRecommendedCategoryHtml("Recommended Movies", false, true);
+            $html .= $this->getBecauseYouWatchedCategoryHtml(false, true);
         }
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -119,16 +119,17 @@ class CategoryContainers {
 	        </div>";
     }
 
-    private function getRecommendedCategoryHtml($title, $tvShows, $movies) {
-        $entities = EntityProvider::getRecommendedEntitiesForUser($this->con, $this->username, 30, $movies, $tvShows);
+    private function getBecauseYouWatchedCategoryHtml($tvShows, $movies) {
+        $recommendation = EntityProvider::getBecauseYouWatchedRecommendation($this->con, $this->username, 30, $movies, $tvShows);
 
-        if(empty($entities)) {
+        if(!$recommendation || empty($recommendation["entities"])) {
             return "";
         }
 
+        $title = htmlspecialchars($recommendation["title"] ?? "Because you watched", ENT_QUOTES, "UTF-8");
         $entitiesHtml = "";
         $previewProvider = new PreviewProvider($this->con, $this->username);
-        foreach($entities as $entity) {
+        foreach($recommendation["entities"] as $entity) {
             $entitiesHtml .= $previewProvider->createEntityPreviewSquare($entity);
         }
 
