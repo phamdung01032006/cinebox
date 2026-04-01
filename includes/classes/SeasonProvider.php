@@ -3,10 +3,12 @@
 class SeasonProvider {
 
     private $con, $username;
+    private $user;
 
     public function __construct($con, $username) {
         $this->con = $con;
         $this->username = $username;
+        $this->user = $username ? new User($con, $username) : null;
     }
 
     public function create($entity) {
@@ -49,18 +51,28 @@ class SeasonProvider {
         $description = $video->getDescription();
         $episodeNumber = $video->getEpisodeNumber();
         $episodeLabel = htmlspecialchars(t("season.episode", ["episode" => $episodeNumber]), ENT_QUOTES, "UTF-8");
-        $hasSeen = $video->hasSeen($this->username) ? "<button class='watchedButton'><i class='fa-solid fa-circle-check seen'></i> " . htmlspecialchars(t("season.watched"), ENT_QUOTES, "UTF-8") . "</button>": "";
+        $isLocked = $this->user && !$this->user->canWatchVideo($video);
+        $linkUrl = $isLocked ? "paypal.php" : "watch.php?id=$id";
+        $linkClass = $isLocked ? "episodeLink locked" : "episodeLink";
+        $accessMessage = "";
+        $statusButton = $video->hasSeen($this->username) ? "<button class='watchedButton'><i class='fa-solid fa-circle-check seen'></i> " . htmlspecialchars(t("season.watched"), ENT_QUOTES, "UTF-8") . "</button>" : "";
 
-        return "<a href='watch.php?id=$id'>
+        if($isLocked) {
+            $statusButton = "<button class='watchedButton lockedButton'><i class='fa-solid fa-lock'></i> " . htmlspecialchars(t("access.subscribe_to_watch"), ENT_QUOTES, "UTF-8") . "</button>";
+            $accessMessage = "<span class='episodeAccessNotice'>" . htmlspecialchars($this->user->getVideoAccessMessage($video), ENT_QUOTES, "UTF-8") . "</span>";
+        }
+
+        return "<a href='$linkUrl' class='$linkClass'>
                 <div class='episodeContainer'>
                     <div class='contents'>
                         <img src='$thumbnail'>
                         <div class='videoInfo'>
                             <h4>$episodeLabel. $name</h4>
                             <span>$description</span>
+                            $accessMessage
                         </div>
 
-                        $hasSeen
+                        $statusButton
 
                     </div>
                 </div>

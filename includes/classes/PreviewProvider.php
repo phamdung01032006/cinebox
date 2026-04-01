@@ -57,16 +57,34 @@ class PreviewProvider {
         $safePreview = htmlspecialchars($preview, ENT_QUOTES, 'UTF-8');
         $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
         $wishlistButton = $this->createWishlistButton($id);
-        
 
-	        $videoId = VideoProvider::getEntityVideoForUser($this->con, $id, $this->username);
-	        $video = new Video($this->con, $videoId);
+        $videoId = VideoProvider::getPlayableEntityVideoForUser($this->con, $id, $this->username);
+        if(!$videoId) {
+            $videoId = VideoProvider::getEntityVideoForUser($this->con, $id, $this->username);
+        }
+
+        $video = new Video($this->con, $videoId);
+        $user = $this->username ? new User($this->con, $this->username) : null;
+        $canWatchVideo = !$user || $user->canWatchVideo($video);
 
         $inProgress = $video->isInProgress($this->username);
-	        $playButtonText = $inProgress ? t("preview.continue_watching") : t("preview.play");
-	        $seasonEpisode = $video->getSeasonAndEpisode();
-	        $title = $video->getTitle();
-	        $subHeading = $video->isMovie() ? "": "<h4>$seasonEpisode</h4>";
+        $playButtonText = $inProgress ? t("preview.continue_watching") : t("preview.play");
+        $playButtonIcon = "fa-solid fa-play";
+        $playButtonAction = "watchVideo($videoId)";
+        $playButtonClass = "playBtn";
+        $accessNotice = "";
+
+        if($user && !$canWatchVideo) {
+            $playButtonText = t("access.subscribe_to_watch");
+            $playButtonIcon = "fa-solid fa-lock";
+            $playButtonAction = "window.location.href='paypal.php'";
+            $playButtonClass .= " locked";
+            $accessNotice = "<p class='previewAccessNotice'>" . htmlspecialchars($user->getVideoAccessMessage($video), ENT_QUOTES, "UTF-8") . "</p>";
+        }
+
+        $seasonEpisode = $video->getSeasonAndEpisode();
+        $title = htmlspecialchars($video->getTitle(), ENT_QUOTES, 'UTF-8');
+        $subHeading = $video->isMovie() ? "" : "<h4>" . htmlspecialchars($seasonEpisode, ENT_QUOTES, "UTF-8") . "</h4>";
 
 	        return "<div class='previewContainer'>
 	            <img src='$thumbnail' class='previewImage' hidden>
@@ -82,9 +100,10 @@ class PreviewProvider {
                     <h3>$name</h3>
                     <h4>$title</h4>
                     $subHeading
+                    $accessNotice
 	                    <div class='button'>
 	                    
-		                        <button class='playBtn' onclick='watchVideo($videoId)'><i class='fa-solid fa-play'></i> $playButtonText</button>
+		                        <button class='$playButtonClass' onclick=\"$playButtonAction\"><i class='$playButtonIcon'></i> $playButtonText</button>
 		                        <button onclick='volumeToggle(this)'><i class='fa-solid fa-volume-xmark'></i></button>
 		                        <button class='openPopupBtn' onclick='openVideoPopup(this)' data-src = '$safePreview' data-title='$safeName'><i class='fa-solid fa-expand'></i></button>
                                 $wishlistButton
@@ -112,6 +131,36 @@ class PreviewProvider {
                         </a>
 	        </div>";
 	    }
+
+    public function createContinueWatchingSquare($video, $progressSeconds) {
+        $entity = $video->getEntity();
+        $entityName = htmlspecialchars($entity->getName(), ENT_QUOTES, 'UTF-8');
+        $thumbnail = htmlspecialchars($entity->getThumbnail(), ENT_QUOTES, 'UTF-8');
+        $videoId = (int)$video->getId();
+        $detailText = $video->isMovie()
+            ? htmlspecialchars($video->getTitle(), ENT_QUOTES, 'UTF-8')
+            : htmlspecialchars($video->getSeasonAndEpisode(), ENT_QUOTES, 'UTF-8');
+
+        $durationSeconds = $video->getDurationInSeconds();
+        $progressPercent = $durationSeconds > 0
+            ? max(0, min(100, (int)round(($progressSeconds / $durationSeconds) * 100)))
+            : 0;
+        $progressStyle = "style='width: " . $progressPercent . "%;'";
+
+        return "<div class='continueWatchCard'>
+                    <a href='watch.php?id=$videoId' class='continueWatchLink'>
+                        <div class='continueWatchThumbWrap'>
+                            <img src='$thumbnail' alt='$entityName' class='continueWatchThumb'>
+                            <span class='continueWatchBadge'>" . htmlspecialchars(t("preview.resume_now"), ENT_QUOTES, 'UTF-8') . "</span>
+                            <div class='continueWatchProgress'>
+                                <span $progressStyle></span>
+                            </div>
+                        </div>
+                        <div class='continueWatchTitle'>$entityName</div>
+                        <div class='continueWatchSubtitle'>$detailText</div>
+                    </a>
+                </div>";
+    }
 
     public function createWishlistDropdownItem($entity) {
         $id = $entity->getId();

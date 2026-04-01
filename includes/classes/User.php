@@ -2,7 +2,12 @@
 require_once(__DIR__ . "/RecommendationProvider.php");
 
 class User {
+    private const FREE_EPISODE_LIMIT = 3;
+    private const PROFILE_IMAGE_DIRECTORY = "assets/images/profiles";
+    private const MAX_PROFILE_IMAGE_SIZE = 5242880;
+
     private $con, $sqlData;
+    private $freeEpisodeIdsByEntity = [];
 
     public function __construct($con, $username) {
         $this->con = $con;
@@ -29,8 +34,131 @@ class User {
         return $this->sqlData["email"] ?? "";
     }
 
+    public function getAvatarPath() {
+        return $this->getStoredProfileImagePath("avatarPath");
+    }
+
+    public function getCoverPath() {
+        return $this->getStoredProfileImagePath("coverPath");
+    }
+
     public function getIsSubscribed() {
         return $this->sqlData["isSubscribed"] ?? "";
+    }
+
+    public function isSubscribed() {
+        return !empty($this->sqlData["isSubscribed"]);
+    }
+
+    public function activateTrialMembership() {
+        if(empty($this->sqlData["username"])) {
+            return false;
+        }
+
+        $query = $this->con->prepare("
+            UPDATE users
+            SET isSubscribed = 1
+            WHERE username = :username
+        ");
+        $query->bindValue(":username", $this->sqlData["username"]);
+        $executed = $query->execute();
+
+        if($executed) {
+            $this->sqlData["isSubscribed"] = 1;
+        }
+
+        return $executed;
+    }
+
+    public function updateProfileImages($avatarFile, $coverFile) {
+        $hasAvatarUpload = $this->hasUploadedFile($avatarFile);
+        $hasCoverUpload = $this->hasUploadedFile($coverFile);
+
+        if(!$hasAvatarUpload && !$hasCoverUpload) {
+            return [
+                "success" => false,
+                "message" => t("profile.media_select_prompt")
+            ];
+        }
+
+        try {
+            if($hasAvatarUpload) {
+                $this->storeUploadedProfileImage($avatarFile, "avatar");
+            }
+
+            if($hasCoverUpload) {
+                $this->storeUploadedProfileImage($coverFile, "cover");
+            }
+        }
+        catch(Exception $exception) {
+            return [
+                "success" => false,
+                "message" => $exception->getMessage()
+            ];
+        }
+
+        return [
+            "success" => true,
+            "message" => t("profile.media_saved")
+        ];
+    }
+
+    public function cancelMembership() {
+        if(empty($this->sqlData["username"])) {
+            return false;
+        }
+
+        $query = $this->con->prepare("
+            UPDATE users
+            SET isSubscribed = 0
+            WHERE username = :username
+        ");
+        $query->bindValue(":username", $this->sqlData["username"]);
+        $executed = $query->execute();
+
+        if($executed) {
+            $this->sqlData["isSubscribed"] = 0;
+        }
+
+        return $executed;
+    }
+
+    public function getFreeEpisodeLimit() {
+        return self::FREE_EPISODE_LIMIT;
+    }
+
+    public function canWatchVideo($video) {
+        if(!$video instanceof Video) {
+            $video = new Video($this->con, $video);
+        }
+
+        if($this->isSubscribed()) {
+            return true;
+        }
+
+        if($video->isMovie()) {
+            return false;
+        }
+
+        return $this->isVideoInFreeEpisodeWindow($video);
+    }
+
+    public function getVideoAccessMessage($video) {
+        if(!$video instanceof Video) {
+            $video = new Video($this->con, $video);
+        }
+
+        if($this->canWatchVideo($video)) {
+            return "";
+        }
+
+        if($video->isMovie()) {
+            return t("access.movie_subscription_required");
+        }
+
+        return t("access.tv_episode_limit", [
+            "count" => $this->getFreeEpisodeLimit()
+        ]);
     }
 
     public function getGender() {
@@ -251,6 +379,130 @@ class User {
         $updateQuery->execute();
     }
 
+    private function isVideoInFreeEpisodeWindow($video) {
+        $entityId = (int)$video->getEntityId();
+
+        if(!isset($this->freeEpisodeIdsByEntity[$entityId])) {
+            $query = $this->con->prepare("
+                SELECT id
+                FROM videos
+                WHERE entityId = :entityId
+                AND isMovie = 0
+                ORDER BY season ASC, episode ASC
+                LIMIT " . self::FREE_EPISODE_LIMIT
+            );
+            $query->bindValue(":entityId", $entityId, PDO::PARAM_INT);
+            $query->execute();
+
+            $this->freeEpisodeIdsByEntity[$entityId] = array_map("intval", $query->fetchAll(PDO::FETCH_COLUMN));
+        }
+
+        return in_array((int)$video->getId(), $this->freeEpisodeIdsByEntity[$entityId], true);
+    }
+
+    private function hasUploadedFile($file) {
+        return is_array($file)
+            && isset($file["error"])
+            && (int)$file["error"] !== UPLOAD_ERR_NO_FILE;
+    }
+
+    private function storeUploadedProfileImage($file, $type) {
+        if(!is_array($file) || !isset($file["error"])) {
+            throw new Exception(t("profile.image_upload_error"));
+        }
+
+        if((int)$file["error"] !== UPLOAD_ERR_OK) {
+            throw new Exception(t("profile.image_upload_error"));
+        }
+
+        if(empty($file["tmp_name"]) || !is_uploaded_file($file["tmp_name"])) {
+            throw new Exception(t("profile.image_upload_error"));
+        }
+
+        if((int)$file["size"] <= 0 || (int)$file["size"] > self::MAX_PROFILE_IMAGE_SIZE) {
+            throw new Exception(t("profile.image_size_error"));
+        }
+
+        $imageInfo = @getimagesize($file["tmp_name"]);
+        $mimeType = $imageInfo["mime"] ?? "";
+        $allowedTypes = [
+            "image/jpeg" => "jpg",
+            "image/png" => "png",
+            "image/webp" => "webp",
+            "image/gif" => "gif"
+        ];
+
+        if(!isset($allowedTypes[$mimeType])) {
+            throw new Exception(t("profile.image_type_error"));
+        }
+
+        $column = $type === "cover" ? "coverPath" : "avatarPath";
+        $extension = $allowedTypes[$mimeType];
+        $relativeDirectory = $this->getProfileImageRelativeDirectory();
+        $absoluteDirectory = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . str_replace("/", DIRECTORY_SEPARATOR, $relativeDirectory);
+
+        if(!is_dir($absoluteDirectory) && !mkdir($absoluteDirectory, 0777, true) && !is_dir($absoluteDirectory)) {
+            throw new Exception(t("profile.image_upload_error"));
+        }
+
+        $fileName = $type . "_" . time() . "_" . bin2hex(random_bytes(4)) . "." . $extension;
+        $relativePath = $relativeDirectory . "/" . $fileName;
+        $absolutePath = $absoluteDirectory . DIRECTORY_SEPARATOR . $fileName;
+
+        if(!move_uploaded_file($file["tmp_name"], $absolutePath)) {
+            throw new Exception(t("profile.image_upload_error"));
+        }
+
+        $previousPath = $this->sqlData[$column] ?? "";
+        $query = $this->con->prepare("
+            UPDATE users
+            SET $column = :path
+            WHERE username = :username
+        ");
+        $query->bindValue(":path", $relativePath);
+        $query->bindValue(":username", $this->sqlData["username"]);
+
+        if(!$query->execute()) {
+            @unlink($absolutePath);
+            throw new Exception(t("profile.image_upload_error"));
+        }
+
+        $this->sqlData[$column] = $relativePath;
+        $this->deleteProfileImageFile($previousPath);
+    }
+
+    private function getStoredProfileImagePath($column) {
+        $storedPath = $this->sqlData[$column] ?? "";
+        if(!$storedPath) {
+            return "";
+        }
+
+        $absolutePath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . str_replace("/", DIRECTORY_SEPARATOR, $storedPath);
+        return file_exists($absolutePath) ? $storedPath : "";
+    }
+
+    private function getProfileImageRelativeDirectory() {
+        $safeUsername = preg_replace("/[^A-Za-z0-9_-]/", "_", $this->sqlData["username"] ?? "user");
+        return self::PROFILE_IMAGE_DIRECTORY . "/" . $safeUsername;
+    }
+
+    private function deleteProfileImageFile($relativePath) {
+        if(!$relativePath) {
+            return;
+        }
+
+        $normalizedPath = str_replace("\\", "/", $relativePath);
+        $allowedPrefix = $this->getProfileImageRelativeDirectory() . "/";
+        if(strpos($normalizedPath, $allowedPrefix) !== 0) {
+            return;
+        }
+
+        $absolutePath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . str_replace("/", DIRECTORY_SEPARATOR, $normalizedPath);
+        if(file_exists($absolutePath)) {
+            @unlink($absolutePath);
+        }
+    }
+
     private function ensureWishlistTable() {
         static $isReady = false;
 
@@ -280,12 +532,18 @@ class User {
             return;
         }
 
-        $query = $this->con->query("SHOW COLUMNS FROM users LIKE 'gender'");
-        if(!$query->fetch(PDO::FETCH_ASSOC)) {
-            $this->con->exec("ALTER TABLE users ADD COLUMN gender VARCHAR(32) NOT NULL DEFAULT 'prefer_not_to_say'");
-        }
+        $this->ensureUserColumn("gender", "ALTER TABLE users ADD COLUMN gender VARCHAR(32) NOT NULL DEFAULT 'prefer_not_to_say'");
+        $this->ensureUserColumn("avatarPath", "ALTER TABLE users ADD COLUMN avatarPath VARCHAR(255) DEFAULT NULL");
+        $this->ensureUserColumn("coverPath", "ALTER TABLE users ADD COLUMN coverPath VARCHAR(255) DEFAULT NULL");
 
         $schemaReady = true;
+    }
+
+    private function ensureUserColumn($columnName, $alterSql) {
+        $query = $this->con->query("SHOW COLUMNS FROM users LIKE " . $this->con->quote($columnName));
+        if(!$query->fetch(PDO::FETCH_ASSOC)) {
+            $this->con->exec($alterSql);
+        }
     }
 }
 ?>

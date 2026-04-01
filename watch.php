@@ -11,6 +11,13 @@ if(!isset($_GET["id"])) {
 }
 
 $video = new Video($con, $_GET["id"]);
+$user = new User($con, $userLoggedIn);
+
+if(!$user->canWatchVideo($video)) {
+    header("Location: paypal.php");
+    exit();
+}
+
 $video->incrementView();
 
 $entity = $video->getEntity();
@@ -32,6 +39,9 @@ foreach($relatedEntities as $relatedEntity) {
 }
 
 $upNextVideo = VideoProvider::getUpNext($con, $video);
+$showUpNext = $upNextVideo && $upNextVideo->getId() !== $video->getId();
+$upNextLocked = $showUpNext && !$user->canWatchVideo($upNextVideo);
+$upNextNotice = $upNextLocked ? htmlspecialchars($user->getVideoAccessMessage($upNextVideo), ENT_QUOTES, "UTF-8") : "";
 ?>
 <link rel="stylesheet" href="assets/style/watch.css">
 <div class="watchPage">
@@ -56,6 +66,7 @@ $upNextVideo = VideoProvider::getUpNext($con, $video);
         </div>
 
         <!-- các nút chuyển tập sau khi xem xong-->
+        <?php if($showUpNext): ?>
         <div class="videoControls upNext">
 
             <div class="upNextContainer">
@@ -63,10 +74,13 @@ $upNextVideo = VideoProvider::getUpNext($con, $video);
                     <h2><?php echo htmlspecialchars(t("watch.up_next")); ?></h2>
                     <h3><?php echo $upNextVideo->getTitle(); ?></h3>
                     <h3><?php echo $upNextVideo->getSeasonAndEpisode(); ?></h3>
+                    <?php if($upNextLocked): ?>
+                        <p class="upNextNotice"><?php echo $upNextNotice; ?></p>
+                    <?php endif; ?>
                 </div>
                 <div class="upNextAction">
-                    <button class="cssbuttons-io-button" onclick="watchVideo(<?php echo $upNextVideo->getId(); ?>)">
-                        <?php echo htmlspecialchars(t("watch.next")); ?>
+                    <button class="cssbuttons-io-button" onclick="<?php echo $upNextLocked ? "window.location.href='paypal.php'" : "watchVideo(" . (int)$upNextVideo->getId() . ")"; ?>">
+                        <?php echo htmlspecialchars($upNextLocked ? t("access.subscribe_to_watch") : t("watch.next")); ?>
                         <div class="icon">
                             <svg
                             height="24"
@@ -85,6 +99,7 @@ $upNextVideo = VideoProvider::getUpNext($con, $video);
                 </div>
             </div>
         </div>
+        <?php endif; ?>
 
         <video id="watchPlayer" playsinline preload="metadata" onended="showUpNext()" onplaying="hideUpNext()">
             <source src="<?php echo htmlspecialchars($video->getFilePath()); ?>" type="video/mp4">

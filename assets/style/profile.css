@@ -15,6 +15,8 @@
     height: 10vh;
     border-radius: 10px;
     background: linear-gradient(135deg, rgba(255,170,84,0.8), rgba(167, 167, 167, 0.8));
+    background-size: cover;
+    background-position: center;
     margin-bottom: 14px;
 }
 
@@ -37,6 +39,14 @@
     font-size: 24px;
 }
 
+.profileAvatar img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    display: block;
+}
+
 .profileIdentityText h2{
     margin: 0;
     color: #ffffff;
@@ -48,6 +58,242 @@
     margin: 3px 0 0;
     color: #ffffff;
     font-size: 14px;
+}
+
+.profileMediaForm{
+    margin-top: 14px;
+    display: grid;
+    gap: 14px;
+}
+
+.profileMediaGrid{
+    display: grid;
+    gap: 14px;
+}
+
+.profileMediaCard{
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 14px;
+    padding: 14px;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(10px);
+}
+
+.profileMediaPreview{
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: 700;
+    text-align: center;
+}
+
+.profileMediaPreview.avatarPreview{
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255,170,84,1), rgba(167, 167, 167, 1));
+    font-size: 28px;
+}
+
+.profileMediaPreview.coverPreview{
+    width: 96px;
+    min-height: 96px;
+    border-radius: 18px;
+    padding: 10px;
+    background: linear-gradient(135deg, rgba(255,170,84,0.55), rgba(85, 85, 85, 0.72));
+    background-size: cover;
+    background-position: center;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.profileMediaPreview img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.profileMediaMeta{
+    display: grid;
+    align-content: center;
+    gap: 10px;
+}
+
+.profileMediaMeta strong{
+    color: #ffffff;
+    font-size: 15px;
+}
+
+.profileUploadButton{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.profileUploadButton:hover{
+    background: rgba(255, 170, 84, 0.16);
+    border-color: rgba(255, 214, 170, 0.4);
+    transform: translateY(-1px);
+}
+
+.profileFileInput{
+    display: block;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 12px;
+}
+
+.profileMediaHint{
+    margin: 0;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.profileMediaSave{
+    width: max-content;
+}
+
+.subscriptionButtons{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 280px;
+    margin-right: 24px;
+}
+
+.subscriptionButtons h3{
+    margin: 10px 0 0;
+}
+
+.membershipStatus{
+    margin: 0;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.membershipStatus.active{
+    background: rgba(255, 170, 84, 0.22);
+    border-color: rgba(255, 214, 170, 0.35);
+}
+
+.membershipStatus.inactive{
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.membershipMenu{
+    position: relative;
+    width: 100%;
+}
+
+.membershipTrigger{
+    width: 100%;
+    justify-content: center;
+}
+
+.membershipOptions{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+    z-index: 20;
+}
+
+.membershipMenu:hover .membershipOptions,
+.membershipMenu:focus-within .membershipOptions{
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.membershipOption,
+.membershipOptionButton{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 12px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(14, 14, 14, 0.92);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    backdrop-filter: blur(14px);
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.membershipOption:hover,
+.membershipOptionButton:hover{
+    background: rgba(255, 170, 84, 0.18);
+    border-color: rgba(255, 214, 170, 0.35);
+    transform: translateY(-1px);
+}
+
+.membershipTrialForm{
+    margin: 0;
+    width: 100%;
+}
+
+.membershipCancelForm{
+    margin: 0;
+    width: 100%;
+}
+
+.membershipOptionButton{
+    cursor: pointer;
+}
+
+.membershipCancelButton{
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 121, 121, 0.32);
+    background: rgba(52, 14, 14, 0.9);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.membershipCancelButton:hover{
+    background: rgba(126, 28, 28, 0.92);
+    border-color: rgba(255, 170, 170, 0.45);
+    transform: translateY(-1px);
 }
 
 .profileGridForm{
@@ -124,6 +370,15 @@
     display: inline;
     grid-template-columns: 1fr 1fr;
     gap: 36px;
+    }
+
+    .profileMediaCard{
+        grid-template-columns: 1fr;
+    }
+
+    .profileMediaPreview.avatarPreview,
+    .profileMediaPreview.coverPreview{
+        width: 100%;
     }
 }
 
@@ -315,4 +570,11 @@ button[name="savePasswordButton"] {
     width: 220px;
     height: 220px;
     opacity: 1;
+}
+
+@media (max-width: 900px){
+    .subscriptionButtons{
+        width: 100%;
+        margin: 0 0 24px;
+    }
 }

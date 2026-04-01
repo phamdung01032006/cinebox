@@ -6,6 +6,8 @@
 
     $detailsMessage="";
     $passwordMessage="";
+    $membershipMessage = "";
+    $mediaMessage = "";
     $loggedInUserID = $userLoggedIn;
 
     // Get logged-in user ID from sesion 
@@ -62,6 +64,63 @@
 
     $user = new User($con, $userLoggedIn);
 
+    if(isset($_POST["saveMediaButton"])) {
+        $mediaResult = $user->updateProfileImages($_FILES["avatarImage"] ?? null, $_FILES["coverImage"] ?? null);
+        $mediaMessageClass = !empty($mediaResult["success"]) ? "successMessage" : "errorMessage";
+        $mediaMessageText = $mediaResult["message"] ?? t("profile.image_upload_error");
+        $mediaMessage = "<div class='$mediaMessageClass'>" . htmlspecialchars($mediaMessageText, ENT_QUOTES, "UTF-8") . "</div>";
+    }
+
+    if(isset($_POST["activateTrialMembership"])) {
+        if($user->isSubscribed()) {
+            header("Location: profile.php?membership=already_active");
+            exit();
+        }
+
+        if($user->activateTrialMembership()) {
+            header("Location: profile.php?membership=trial_success");
+            exit();
+        }
+
+        header("Location: profile.php?membership=trial_error");
+        exit();
+    }
+
+    if(isset($_POST["cancelMembership"])) {
+        if(!$user->isSubscribed()) {
+            header("Location: profile.php?membership=already_inactive");
+            exit();
+        }
+
+        if($user->cancelMembership()) {
+            header("Location: profile.php?membership=cancelled");
+            exit();
+        }
+
+        header("Location: profile.php?membership=cancel_error");
+        exit();
+    }
+
+    $membershipState = $_GET["membership"] ?? "";
+    if($membershipState === "trial_success") {
+        $membershipMessage = "<div class='successMessage'>" . htmlspecialchars(t("profile.trial_success"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+    else if($membershipState === "already_active") {
+        $membershipMessage = "<div class='successMessage'>" . htmlspecialchars(t("profile.membership_active"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+    else if($membershipState === "trial_error") {
+        $membershipMessage = "<div class='errorMessage'>" . htmlspecialchars(t("profile.trial_error"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+    else if($membershipState === "cancelled") {
+        $membershipMessage = "<div class='successMessage'>" . htmlspecialchars(t("profile.cancel_success"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+    else if($membershipState === "already_inactive") {
+        $membershipMessage = "<div class='successMessage'>" . htmlspecialchars(t("profile.membership_inactive"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+    else if($membershipState === "cancel_error") {
+        $membershipMessage = "<div class='errorMessage'>" . htmlspecialchars(t("profile.cancel_error"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+
 	    $firstName = isset($_POST["firstName"]) ? $_POST["firstName"] : $user->getFirstName();
 	    $lastName = isset($_POST["lastName"]) ? $_POST["lastName"] : $user->getLastName();
 	    $email= isset($_POST["email"]) ? $_POST["email"] : $user->getEmail();
@@ -71,68 +130,111 @@
     $displayName = trim($firstName . " " . $lastName);
     if($displayName === "") $displayName = $userLoggedIn;
     $initial = strtoupper(substr($displayName, 0, 1));
+    $membershipStatusClass = $user->isSubscribed() ? " active" : " inactive";
+    $membershipStatusText = $user->isSubscribed() ? t("profile.membership_active") : t("profile.membership_inactive");
+    $avatarPath = $user->getAvatarPath();
+    $coverPath = $user->getCoverPath();
+    $safeAvatarPath = htmlspecialchars($avatarPath, ENT_QUOTES, "UTF-8");
+    $safeCoverPath = htmlspecialchars($coverPath, ENT_QUOTES, "UTF-8");
+    $coverStyle = $coverPath
+        ? " style=\"background-image: linear-gradient(135deg, rgba(15, 15, 15, 0.18), rgba(15, 15, 15, 0.5)), url('" . $safeCoverPath . "');\""
+        : "";
 ?>
 <link rel="stylesheet" href="assets/style/profile.css">
 <div class="profilePage">
     <div class="profileLayout">
         <aside class="profileLeft">
         <p class="profileWelcome"><?php echo htmlspecialchars(t("profile.welcome", ["name" => $displayName])); ?></p>
-        <div class="profileHero"></div>
+        <div class="profileHero"<?php echo $coverStyle; ?>></div>
 
         <div class="profileIdentity">
-            <div class="profileAvatar"><?php echo htmlspecialchars($initial); ?></div>
+            <div class="profileAvatar">
+                <?php if($avatarPath): ?>
+                    <img src="<?php echo $safeAvatarPath; ?>" alt="<?php echo htmlspecialchars($displayName, ENT_QUOTES, "UTF-8"); ?>">
+                <?php else: ?>
+                    <?php echo htmlspecialchars($initial); ?>
+                <?php endif; ?>
+            </div>
             <div class="profileIdentityText">
                 <h2><?php echo htmlspecialchars($displayName); ?></h2>
                 <p><?php echo htmlspecialchars($email); ?></p>
             </div>
         </div>
+
+        <form class="profileMediaForm" method="POST" enctype="multipart/form-data">
+            <h3 class="updateProfile"><?php echo htmlspecialchars(t("profile.media_heading"), ENT_QUOTES, "UTF-8"); ?></h3>
+
+            <div class="profileMediaGrid">
+                <div class="profileMediaCard">
+                    <div class="profileMediaPreview avatarPreview">
+                        <?php if($avatarPath): ?>
+                            <img src="<?php echo $safeAvatarPath; ?>" alt="<?php echo htmlspecialchars($displayName, ENT_QUOTES, "UTF-8"); ?>">
+                        <?php else: ?>
+                            <span><?php echo htmlspecialchars($initial); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="profileMediaMeta">
+                        <strong><?php echo htmlspecialchars(t("profile.avatar_label"), ENT_QUOTES, "UTF-8"); ?></strong>
+                        <label class="profileUploadButton" for="avatarImage"><?php echo htmlspecialchars(t("profile.choose_avatar"), ENT_QUOTES, "UTF-8"); ?></label>
+                        <input type="file" id="avatarImage" name="avatarImage" class="profileFileInput" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="profileMediaCard">
+                    <div class="profileMediaPreview coverPreview"<?php echo $coverStyle; ?>>
+                        <?php if(!$coverPath): ?>
+                            <span><?php echo htmlspecialchars(t("profile.cover_placeholder"), ENT_QUOTES, "UTF-8"); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="profileMediaMeta">
+                        <strong><?php echo htmlspecialchars(t("profile.cover_label"), ENT_QUOTES, "UTF-8"); ?></strong>
+                        <label class="profileUploadButton" for="coverImage"><?php echo htmlspecialchars(t("profile.choose_cover"), ENT_QUOTES, "UTF-8"); ?></label>
+                        <input type="file" id="coverImage" name="coverImage" class="profileFileInput" accept="image/*">
+                    </div>
+                </div>
+            </div>
+
+            <p class="profileMediaHint"><?php echo htmlspecialchars(t("profile.media_hint"), ENT_QUOTES, "UTF-8"); ?></p>
+            <div class="message"><?php echo $mediaMessage; ?></div>
+            <button type="submit" name="saveMediaButton" class="button type1 profileMediaSave"><span class="btn-txt"><?php echo htmlspecialchars(t("profile.save_media"), ENT_QUOTES, "UTF-8"); ?></span></button>
+        </form>
         </aside>
 
 	        <div class="subscriptionButtons">
 	            <h3><?php echo htmlspecialchars(t("profile.subscription")); ?></h3>
-                <button type="button" class="animatedSubscriptionButton" onclick="window.location.href='wishlist.php'">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
-                        <path
-                        d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                        ></path>
-                    </svg>
-                    <span class="text"><?php echo htmlspecialchars(t("nav.wishlist")); ?></span>
-                    <span class="circle"></span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
-                        <path
-                        d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                        ></path>
-                    </svg>
-                </button>
-	            <button type="button" class="animatedSubscriptionButton" onclick="window.location.href='paypal.php'">
-	                <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
-	                    <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                    ></path>
-                </svg>
-                <span class="text">PayPal</span>
-                <span class="circle"></span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
-                    <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                    ></path>
-                </svg>
-            </button>
+                <p class="membershipStatus<?php echo $membershipStatusClass; ?>"><?php echo htmlspecialchars($membershipStatusText, ENT_QUOTES, "UTF-8"); ?></p>
+                <?php echo $membershipMessage; ?>
 
-            <button type="button" class="animatedSubscriptionButton" onclick="window.location.href='momo.php'">
-                <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
-                    <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                    ></path>
-                </svg>
-                <span class="text">MoMo</span>
-                <span class="circle"></span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
-                    <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                    ></path>
-                </svg>
-            </button>
+                <div class="membershipMenu">
+                    <button type="button" class="animatedSubscriptionButton membershipTrigger">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
+                            <path
+                            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+                            ></path>
+                        </svg>
+                        <span class="text"><?php echo htmlspecialchars(t("profile.membership_cta"), ENT_QUOTES, "UTF-8"); ?></span>
+                        <span class="circle"></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
+                            <path
+                            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+                            ></path>
+                        </svg>
+                    </button>
+
+                    <div class="membershipOptions">
+                        <a href="paypal.php" class="membershipOption"><?php echo htmlspecialchars(t("profile.paypal_option"), ENT_QUOTES, "UTF-8"); ?></a>
+                        <a href="momo.php" class="membershipOption"><?php echo htmlspecialchars(t("profile.momo_option"), ENT_QUOTES, "UTF-8"); ?></a>
+                        <form method="POST" class="membershipTrialForm">
+                            <button type="submit" name="activateTrialMembership" class="membershipOption membershipOptionButton"><?php echo htmlspecialchars(t("profile.trial_option"), ENT_QUOTES, "UTF-8"); ?></button>
+                        </form>
+                    </div>
+                </div>
+
+                <?php if($user->isSubscribed()): ?>
+                    <form method="POST" class="membershipCancelForm">
+                        <button type="submit" name="cancelMembership" class="membershipCancelButton"><?php echo htmlspecialchars(t("profile.cancel_membership"), ENT_QUOTES, "UTF-8"); ?></button>
+                    </form>
+                <?php endif; ?>
         </div>
 
         <section class="profileRight">

@@ -98,6 +98,13 @@
     font-size: 16px;
 }
 
+.upNextNotice {
+    margin: 0;
+    color: rgba(255, 227, 194, 0.88);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
 @media (max-width: 650px) {
 
     .upNextContainer .upNextText h2 {
@@ -106,6 +113,10 @@
 
     .upNextContainer .upNextText h3 {
         font-size: 12px;
+    }
+
+    .upNextNotice {
+        font-size: 11px;
     }
     .videoControls.upNext {
         display: none;

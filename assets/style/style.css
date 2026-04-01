@@ -535,9 +535,22 @@ a {
     background: linear-gradient(135deg, rgba(255,170,84,0.5), rgba(51, 51, 51, 0.5));
 }
 
+.mainDetails .playBtn.locked {
+    background: linear-gradient(135deg, rgba(37, 37, 37, 0.92), rgba(114, 114, 114, 0.72));
+    border-color: rgba(255, 225, 190, 0.36);
+}
+
 .mainDetails .wishlistBtn.active {
     background: linear-gradient(135deg, rgba(255,170,84,0.78), rgba(51, 51, 51, 0.72));
     border-color: rgba(255, 232, 203, 0.75);
+}
+
+.previewAccessNotice {
+    margin: 10px 0 0;
+    max-width: 460px;
+    color: rgba(255, 239, 220, 0.9);
+    font-size: 14px;
+    line-height: 1.45;
 }
 
 button i {
@@ -592,9 +605,19 @@ button i {
         background: linear-gradient(135deg, rgba(255, 186, 117, 0.5), rgba(51, 51, 51, 0.5));
     }
 
+    .mainDetails .playBtn.locked {
+        background: linear-gradient(135deg, rgba(37, 37, 37, 0.92), rgba(114, 114, 114, 0.72));
+    }
+
     .mainDetails .wishlistBtn.active {
         background: linear-gradient(135deg, rgba(255,170,84,0.78), rgba(51, 51, 51, 0.72));
         border-color: rgba(255, 232, 203, 0.75);
+    }
+
+    .previewAccessNotice {
+        max-width: 240px;
+        font-size: 11px;
+        margin-top: 8px;
     }
 
     button i {
@@ -1015,6 +1038,14 @@ button i {
     margin-bottom: 20px;
 }
 
+.episodeLink {
+    display: inline-flex;
+}
+
+.episodeLink.locked .episodeContainer img {
+    filter: grayscale(0.18) brightness(0.72);
+}
+
 .episodeContainer .contents {
     display: flex;
     flex-direction: column;
@@ -1067,6 +1098,15 @@ button i {
 .episodeContainer .videoInfo {
     max-height: 200px;
     overflow-y: auto;
+}
+
+.episodeAccessNotice {
+    display: block;
+    margin-top: 8px;
+    color: rgba(255, 230, 198, 0.82);
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: normal;
 }
 
 @media (max-width: 650px) {
@@ -1130,6 +1170,91 @@ button i {
     text-align: center;
 }
 
+.continueWatchCard{
+    width: 220px;
+    margin-left: 10px;
+    margin-right: 6px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.continueWatchLink{
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.continueWatchThumbWrap{
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    background: rgba(0, 0, 0, 0.32);
+}
+
+.continueWatchThumb{
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s ease;
+}
+
+.continueWatchLink:hover .continueWatchThumb{
+    transform: scale(1.04);
+}
+
+.continueWatchBadge{
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.62);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    backdrop-filter: blur(8px);
+}
+
+.continueWatchProgress{
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.22);
+    overflow: hidden;
+}
+
+.continueWatchProgress span{
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgba(255,170,84,0.96), rgba(255,220,182,0.96));
+}
+
+.continueWatchTitle{
+    margin-top: 10px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.continueWatchSubtitle{
+    margin-top: 4px;
+    color: rgba(255,255,255,0.72);
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .entityWishlistBtn {
     position: absolute;
     top: 10px;
@@ -1186,6 +1311,31 @@ button i {
     .ratingStar {
         width: 36px;
         height: 36px;
+    }
+
+    .continueWatchCard{
+        width: 180px;
+    }
+
+    .continueWatchBadge{
+        left: 8px;
+        top: 8px;
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+
+    .continueWatchProgress{
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+    }
+
+    .continueWatchTitle{
+        font-size: 13px;
+    }
+
+    .continueWatchSubtitle{
+        font-size: 12px;
     }
 }
 
@@ -1406,6 +1556,12 @@ button i {
     border-radius: 100px;
     margin-top: 4px;
     width: 50%;
+}
+
+.episodeContainer .contents .watchedButton.lockedButton {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(35, 35, 35, 0.92), rgba(109, 109, 109, 0.78));
+    border-color: rgba(255, 225, 190, 0.32);
 }
 
 /* Style cho chữ TV Shows và Movies */

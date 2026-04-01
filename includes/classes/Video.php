@@ -39,6 +39,9 @@ class Video {
     public function getFilePath() {
         return $this->sqlData["filePath"];
     }
+    public function getDuration() {
+        return $this->sqlData["duration"];
+    }
     public function getThumbnail() {
         return $this->entity->getThumbnail();
     }
@@ -79,6 +82,29 @@ class Video {
 
     public function isMovie() {
         return $this->sqlData["isMovie"] == 1;
+    }
+
+    public function getDurationInSeconds() {
+        $duration = trim((string)$this->getDuration());
+
+        if($duration === "") {
+            return 0;
+        }
+
+        $parts = array_map("intval", explode(":", $duration));
+        if(count($parts) === 3) {
+            return ($parts[0] * 3600) + ($parts[1] * 60) + $parts[2];
+        }
+
+        if(count($parts) === 2) {
+            return ($parts[0] * 60) + $parts[1];
+        }
+
+        if(count($parts) === 1) {
+            return $parts[0];
+        }
+
+        return 0;
     }
 
     public function isInProgress($username) {
