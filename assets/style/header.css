@@ -171,6 +171,181 @@
     gap: 10px;
 }
 
+.wishlistMenu {
+    position: relative;
+}
+
+.wishlistToggle {
+    position: relative;
+}
+
+.wishlistCountBadge {
+    position: absolute;
+    top: -6px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(255, 170, 84, 0.95), rgba(169, 88, 12, 0.95));
+    color: #120700;
+    font-size: 11px;
+    font-weight: 700;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24);
+}
+
+.wishlistCountBadge.show {
+    display: inline-flex;
+}
+
+.wishlistDropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: min(360px, 86vw);
+    max-height: min(70vh, 520px);
+    padding: 14px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: linear-gradient(180deg, rgba(23, 12, 3, 0.96), rgba(8, 8, 8, 0.96));
+    backdrop-filter: blur(16px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.36);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.wishlistMenu.open .wishlistDropdown {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.wishlistDropdownHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.wishlistDropdownHeader h4 {
+    margin: 0;
+    color: #fff;
+    font-size: 17px;
+}
+
+.wishlistDropdownHeader a {
+    color: rgba(255, 211, 165, 0.95);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.wishlistDropdownBody {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: min(56vh, 430px);
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.wishlistDropdownBody::-webkit-scrollbar {
+    width: 6px;
+}
+
+.wishlistDropdownBody::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+}
+
+.wishlistDropdownItem {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.wishlistDropdownItemLink {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    text-decoration: none;
+    min-width: 0;
+}
+
+.wishlistDropdownThumb {
+    width: 64px;
+    height: 38px;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+}
+
+.wishlistDropdownTitle {
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wishlistDropdownAction {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    border: 2px solid rgba(255, 255, 255, 0.24);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.42);
+    color: #fff;
+    cursor: pointer;
+    transition: all 180ms ease;
+}
+
+.wishlistDropdownAction:hover {
+    background: rgba(255, 170, 84, 0.72);
+    border-color: rgba(255, 232, 203, 0.85);
+}
+
+.wishlistDropdownAction.active {
+    background: linear-gradient(135deg, rgba(255, 170, 84, 0.92), rgba(91, 91, 91, 0.72));
+    border-color: rgba(255, 232, 203, 0.85);
+}
+
+.wishlistDropdownEmpty {
+    padding: 18px 14px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.86);
+}
+
+.wishlistDropdownEmpty p,
+.wishlistDropdownEmpty span {
+    margin: 0;
+    display: block;
+    line-height: 1.6;
+}
+
+.wishlistDropdownEmpty span {
+    margin-top: 6px;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 13px;
+}
+
 /* Nút Log out */
 .logOutButton {
     position: relative;
@@ -201,6 +376,43 @@
 }
 
 @media (max-width: 650px) {
+.wishlistDropdown {
+    width: min(320px, 92vw);
+    right: -8px;
+    padding: 12px;
+    border-radius: 20px;
+}
+
+.wishlistDropdownHeader h4 {
+    font-size: 15px;
+}
+
+.wishlistDropdownHeader a,
+.wishlistDropdownTitle {
+    font-size: 12px;
+}
+
+.wishlistDropdownItem {
+    grid-template-columns: 1fr auto;
+    padding: 8px;
+}
+
+.wishlistDropdownItemLink {
+    grid-template-columns: 56px 1fr;
+}
+
+.wishlistDropdownThumb {
+    width: 56px;
+    height: 34px;
+}
+
+.wishlistDropdownAction {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    font-size: 11px;
+}
+
 .logOutButton {
     position: relative;
     display: inline-flex;

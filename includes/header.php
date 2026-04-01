@@ -11,8 +11,10 @@ require_once("includes/classes/Season.php");
 require_once("includes/classes/Video.php");
 require_once("includes/classes/VideoProvider.php");
 require_once("includes/classes/User.php");
+require_once("includes/wishlist_panel.php");
 $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
 $wishlistUrl = $userLoggedIn ? "wishlist.php" : "login.php?returnUrl=" . urlencode("wishlist.php");
+$wishlistPanel = buildWishlistPanelData($con, $userLoggedIn);
 
 ?>
 
@@ -80,7 +82,35 @@ $wishlistUrl = $userLoggedIn ? "wishlist.php" : "login.php?returnUrl=" . urlenco
 
         <div class="rightItems">
             <button class="iconButtons" onclick="window.location.href='search.php'"><i class="fa-solid fa-magnifying-glass"></i></button>
-            <button class="iconButtons" onclick="window.location.href='<?php echo $wishlistUrl; ?>'" title="Wishlist" aria-label="Wishlist"><i class="fa-regular fa-bookmark"></i></button>
+            <?php if($userLoggedIn): ?>
+                <div class="wishlistMenu">
+                    <button
+                        type="button"
+                        class="iconButtons wishlistToggle"
+                        title="Wishlist"
+                        aria-label="Wishlist"
+                        aria-expanded="false"
+                        aria-controls="wishlistDropdown"
+                    >
+                        <i class="fa-regular fa-bookmark"></i>
+                        <span id="wishlistCountBadge" class="wishlistCountBadge<?php echo $wishlistPanel["count"] > 0 ? " show" : ""; ?>">
+                            <?php echo (int)$wishlistPanel["count"]; ?>
+                        </span>
+                    </button>
+
+                    <div id="wishlistDropdown" class="wishlistDropdown" aria-hidden="true">
+                        <div class="wishlistDropdownHeader">
+                            <h4>My Wishlist</h4>
+                            <a href="wishlist.php">Open page</a>
+                        </div>
+                        <div id="wishlistDropdownBody" class="wishlistDropdownBody">
+                            <?php echo $wishlistPanel["itemsHtml"]; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php else: ?>
+                <button class="iconButtons" onclick="window.location.href='<?php echo $wishlistUrl; ?>'" title="Wishlist" aria-label="Wishlist"><i class="fa-regular fa-bookmark"></i></button>
+            <?php endif; ?>
             <button class="iconButtons" onclick="window.location.href='profile.php'"><i class="fa-regular fa-user"></i></button>
             <button type="button" class="logOutButton" onclick="window.location.href='logout.php'">
                 <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">

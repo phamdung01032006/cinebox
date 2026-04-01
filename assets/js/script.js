@@ -157,9 +157,51 @@ function syncWishlistButtons(entityId, isActive) {
     });
 }
 
+function setWishlistMenuOpen(isOpen) {
+    const $menu = $(".wishlistMenu");
+    if (!$menu.length) {
+        return;
+    }
+
+    $menu.toggleClass("open", isOpen);
+    $menu.find(".wishlistToggle").attr("aria-expanded", isOpen ? "true" : "false");
+    $menu.find(".wishlistDropdown").attr("aria-hidden", isOpen ? "false" : "true");
+}
+
+function updateWishlistCount(count) {
+    const $badge = $("#wishlistCountBadge");
+    if (!$badge.length) {
+        return;
+    }
+
+    $badge.text(count);
+    $badge.toggleClass("show", count > 0);
+}
+
+function refreshWishlistPanel(options) {
+    const $body = $("#wishlistDropdownBody");
+    if (!$body.length) {
+        return;
+    }
+
+    const settings = options || {};
+
+    $.get("ajax/getWishlistPanel.php", function(response) {
+        if (!response || response.status !== "success") {
+            return;
+        }
+
+        $body.html(response.itemsHtml || "");
+        updateWishlistCount(parseInt(response.count, 10) || 0);
+
+        if (settings.openMenu) {
+            setWishlistMenuOpen(true);
+        }
+    }, "json");
+}
+
 function addToWishlist(entityId, button) {
     const $button = $(button);
-    const isEntityCardButton = $button.hasClass("entityWishlistBtn");
 
     if ($button.hasClass("active")) {
         $.post("ajax/removeFromWishlist.php", { entityId: entityId }, function(response) {
@@ -169,13 +211,14 @@ function addToWishlist(entityId, button) {
             }
 
             syncWishlistButtons(entityId, false);
+            refreshWishlistPanel({ openMenu: $(".wishlistMenu").hasClass("open") });
 
-            if ($(".wishlistPage").length && isEntityCardButton) {
-                $button.closest(".entityCard").fadeOut(180, function() {
+            if ($(".wishlistPage").length) {
+                $(".wishlistPage .entityCard[data-entity-id='" + entityId + "']").fadeOut(180, function() {
                     $(this).remove();
 
                     if (!$(".wishlistPage .entityCard").length) {
-                        $(".wishlistPage .wishlistEntities").replaceWith(
+                        $(".wishlistPage .wishlistEntities, .wishlistPage .category .entities").first().replaceWith(
                             "<div class='wishlistEmptyState'><p>You haven't added any movies to your wishlist yet.</p></div>"
                         );
                     }
@@ -199,10 +242,22 @@ function addToWishlist(entityId, button) {
         }
 
         syncWishlistButtons(entityId, true);
+        refreshWishlistPanel({ openMenu: true });
     }, "json").fail(function() {
         alert("Unable to add this movie to your wishlist right now.");
     });
 }
+
+$(document).on("click", ".wishlistToggle", function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const shouldOpen = !$(this).closest(".wishlistMenu").hasClass("open");
+    setWishlistMenuOpen(shouldOpen);
+});
+
+$(document).on("click", ".wishlistDropdown", function(event) {
+    event.stopPropagation();
+});
 
 $(document).on("click", ".ratingStar", function() {
     const $button = $(this);
@@ -394,4 +449,8 @@ document.addEventListener('click', function (e) {
       detail.removeAttribute('open');
     }
   });
+
+  if (!e.target.closest('.wishlistMenu')) {
+    setWishlistMenuOpen(false);
+  }
 });

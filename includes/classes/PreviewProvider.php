@@ -103,7 +103,7 @@ class PreviewProvider {
 	        $name = $entity->getName();
 	        $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
 
-	        return "<div class='entityCard'>
+	        return "<div class='entityCard' data-entity-id='$id'>
                         <a href='entity.php?id=$id' class='entityCardLink'>
     	                    <div class='previewContainer small'>
     	                        <img src='$thumbnail' title='$safeName' alt='$safeName'>
@@ -113,7 +113,22 @@ class PreviewProvider {
 	        </div>";
 	    }
 
-    private function createWishlistButton($entityId) {
+    public function createWishlistDropdownItem($entity) {
+        $id = $entity->getId();
+        $thumbnail = htmlspecialchars($entity->getThumbnail(), ENT_QUOTES, 'UTF-8');
+        $safeName = htmlspecialchars($entity->getName(), ENT_QUOTES, 'UTF-8');
+        $wishlistButton = $this->createWishlistButton($id, "wishlistDropdownAction");
+
+        return "<div class='wishlistDropdownItem' data-entity-id='$id'>
+                    <a href='entity.php?id=$id' class='wishlistDropdownItemLink'>
+                        <img src='$thumbnail' alt='$safeName' class='wishlistDropdownThumb'>
+                        <span class='wishlistDropdownTitle'>$safeName</span>
+                    </a>
+                    $wishlistButton
+                </div>";
+    }
+
+    private function createWishlistButton($entityId, $extraClass = "") {
         if(!$this->username) {
             return "";
         }
@@ -124,8 +139,9 @@ class PreviewProvider {
         $wishlistIconClass = $isInWishlist ? "fa-solid fa-check" : "fa-regular fa-bookmark";
         $wishlistTitle = $isInWishlist ? "Remove from wishlist" : "Add to wishlist";
         $ariaPressed = $isInWishlist ? "true" : "false";
+        $buttonClass = trim("wishlistBtn$wishlistStateClass $extraClass");
 
-        return "<button class='wishlistBtn$wishlistStateClass' type='button' data-entity-id='$entityId' data-icon-default='fa-regular fa-bookmark' data-icon-active='fa-solid fa-check' onclick='addToWishlist($entityId, this)' title='$wishlistTitle' aria-label='$wishlistTitle' aria-pressed='$ariaPressed'>
+        return "<button class='$buttonClass' type='button' data-entity-id='$entityId' data-icon-default='fa-regular fa-bookmark' data-icon-active='fa-solid fa-check' onclick='addToWishlist($entityId, this)' title='$wishlistTitle' aria-label='$wishlistTitle' aria-pressed='$ariaPressed'>
                     <i class='$wishlistIconClass'></i>
                 </button>";
     }
