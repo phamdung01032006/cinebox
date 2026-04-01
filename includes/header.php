@@ -12,6 +12,7 @@ require_once("includes/classes/Video.php");
 require_once("includes/classes/VideoProvider.php");
 require_once("includes/classes/User.php");
 $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
+$wishlistUrl = $userLoggedIn ? "wishlist.php" : "login.php?returnUrl=" . urlencode("wishlist.php");
 
 ?>
 
@@ -79,6 +80,7 @@ $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
 
         <div class="rightItems">
             <button class="iconButtons" onclick="window.location.href='search.php'"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <button class="iconButtons" onclick="window.location.href='<?php echo $wishlistUrl; ?>'" title="Wishlist" aria-label="Wishlist"><i class="fa-regular fa-bookmark"></i></button>
             <button class="iconButtons" onclick="window.location.href='profile.php'"><i class="fa-regular fa-user"></i></button>
             <button type="button" class="logOutButton" onclick="window.location.href='logout.php'">
                 <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">

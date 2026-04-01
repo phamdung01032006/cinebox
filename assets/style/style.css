@@ -500,6 +500,14 @@ a {
     flex-direction: column;
 }
 
+.mainDetails .button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
 .mainDetails button {
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(6px);
@@ -555,6 +563,11 @@ button i {
 
 /* Responsive */
 @media (max-width: 650px){
+    .mainDetails .button {
+        gap: 8px;
+        margin-top: 10px;
+    }
+
     .mainDetails button {
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(6px);

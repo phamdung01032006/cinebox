@@ -138,6 +138,25 @@ function openVideoPopup(button) {
     popupPlayer.play();
 }
 
+function setWishlistButtonState($button, isActive) {
+    const defaultIcon = $button.attr("data-icon-default") || "fa-solid fa-plus";
+    const activeIcon = $button.attr("data-icon-active") || "fa-solid fa-check";
+    const nextTitle = isActive ? "Remove from wishlist" : "Add to wishlist";
+    const nextIcon = isActive ? activeIcon : defaultIcon;
+
+    $button.toggleClass("active", isActive);
+    $button.attr("title", nextTitle);
+    $button.attr("aria-label", nextTitle);
+    $button.attr("aria-pressed", isActive ? "true" : "false");
+    $button.find("i").attr("class", nextIcon);
+}
+
+function syncWishlistButtons(entityId, isActive) {
+    $(".wishlistBtn[data-entity-id='" + entityId + "'], .entityWishlistBtn[data-entity-id='" + entityId + "']").each(function() {
+        setWishlistButtonState($(this), isActive);
+    });
+}
+
 function addToWishlist(entityId, button) {
     const $button = $(button);
     const isEntityCardButton = $button.hasClass("entityWishlistBtn");
@@ -149,12 +168,7 @@ function addToWishlist(entityId, button) {
                 return;
             }
 
-            $button.removeClass("active");
-            $button.attr("title", "Add to wishlist");
-            $button.attr("aria-label", "Add to wishlist");
-            $button.find("i")
-                .removeClass("fa-check")
-                .addClass("fa-plus");
+            syncWishlistButtons(entityId, false);
 
             if ($(".wishlistPage").length && isEntityCardButton) {
                 $button.closest(".entityCard").fadeOut(180, function() {
@@ -184,12 +198,7 @@ function addToWishlist(entityId, button) {
             return;
         }
 
-        $button.addClass("active");
-        $button.attr("title", "Added to wishlist");
-        $button.attr("aria-label", "Added to wishlist");
-        $button.find("i")
-            .removeClass("fa-plus")
-            .addClass("fa-check");
+        syncWishlistButtons(entityId, true);
     }, "json").fail(function() {
         alert("Unable to add this movie to your wishlist right now.");
     });

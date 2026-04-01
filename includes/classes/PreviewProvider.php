@@ -56,6 +56,7 @@ class PreviewProvider {
 
         $safePreview = htmlspecialchars($preview, ENT_QUOTES, 'UTF-8');
         $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+        $wishlistButton = $this->createWishlistButton($id);
         
 
 	        $videoId = VideoProvider::getEntityVideoForUser($this->con, $id, $this->username);
@@ -86,6 +87,7 @@ class PreviewProvider {
 		                        <button class='playBtn' onclick='watchVideo($videoId)'><i class='fa-solid fa-play'></i> $playButtonText</button>
 		                        <button onclick='volumeToggle(this)'><i class='fa-solid fa-volume-xmark'></i></button>
 		                        <button class='openPopupBtn' onclick='openVideoPopup(this)' data-src = '$safePreview' data-title='$safeName'><i class='fa-solid fa-expand'></i></button>
+                                $wishlistButton
 		                    </div>
 
                 </div>
@@ -100,19 +102,6 @@ class PreviewProvider {
 	        $thumbnail = $entity->getThumbnail();
 	        $name = $entity->getName();
 	        $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
-            $wishlistButton = "";
-
-            if($this->username) {
-                $user = new User($this->con, $this->username);
-                $isInWishlist = $user->hasEntityInWishlist($id);
-                $wishlistStateClass = $isInWishlist ? " active" : "";
-                $wishlistIcon = $isInWishlist ? "fa-check" : "fa-plus";
-                $wishlistTitle = $isInWishlist ? "Added to wishlist" : "Add to wishlist";
-
-                $wishlistButton = "<button class='entityWishlistBtn$wishlistStateClass' type='button' onclick='event.preventDefault(); event.stopPropagation(); addToWishlist($id, this)' title='$wishlistTitle' aria-label='$wishlistTitle'>
-                                        <i class='fa-solid $wishlistIcon'></i>
-                                   </button>";
-            }
 
 	        return "<div class='entityCard'>
                         <a href='entity.php?id=$id' class='entityCardLink'>
@@ -121,9 +110,25 @@ class PreviewProvider {
     	                    </div>
     	                    <div class='entityTitle'>$safeName</div>
                         </a>
-                        $wishlistButton
 	        </div>";
 	    }
+
+    private function createWishlistButton($entityId) {
+        if(!$this->username) {
+            return "";
+        }
+
+        $user = new User($this->con, $this->username);
+        $isInWishlist = $user->hasEntityInWishlist($entityId);
+        $wishlistStateClass = $isInWishlist ? " active" : "";
+        $wishlistIconClass = $isInWishlist ? "fa-solid fa-check" : "fa-regular fa-bookmark";
+        $wishlistTitle = $isInWishlist ? "Remove from wishlist" : "Add to wishlist";
+        $ariaPressed = $isInWishlist ? "true" : "false";
+
+        return "<button class='wishlistBtn$wishlistStateClass' type='button' data-entity-id='$entityId' data-icon-default='fa-regular fa-bookmark' data-icon-active='fa-solid fa-check' onclick='addToWishlist($entityId, this)' title='$wishlistTitle' aria-label='$wishlistTitle' aria-pressed='$ariaPressed'>
+                    <i class='$wishlistIconClass'></i>
+                </button>";
+    }
 
 
     // chọn film ngẫu nhiên để chiếu preview
