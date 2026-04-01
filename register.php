@@ -40,11 +40,11 @@ function getInputValue($name) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?php echo htmlspecialchars(getCurrentLanguage()); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineBox</title>
+    <title><?php echo htmlspecialchars(t("site.title")); ?></title>
     <link rel="stylesheet" type="text/css" href="assets/style/style.css"/>
 </head>
 <body>
@@ -54,66 +54,66 @@ function getInputValue($name) {
         <div class="authSide">
             <div class="authOverlay">
                 <!-- <img src="assets\images\cinebox.png" title="CineBox Logo" alt="CineBox Logo"> -->
-                <h2>STEP INTO THE WORLD OF <div>
+                <h2><?php echo htmlspecialchars(t("auth.step_world")); ?> <div>
                 <button class="btn"><i class="animation"></i>CINEBOX<i class="animation"></i>
                 </button>
                 </div>
                 </h2>
-                <p>Watch trailers, movies and series in one place.</p>
+                <p><?php echo htmlspecialchars(t("auth.watch_all_in_one")); ?></p>
             </div>
         </div>
 
         <div class="column">
 
             <div class="header">
-                <h3>Sign Up</h3>
-                <span>to continue to CineBox</span>
+                <h3><?php echo htmlspecialchars(t("auth.signup")); ?></h3>
+                <span><?php echo htmlspecialchars(t("auth.continue_to_cinebox")); ?></span>
             </div>
 
             <form method="POST">
 
                 <?php echo $account->getError(Constants::$firstNameCharacters)?>
-                <label for="firstName">First name</label>
-                <input type="text" id="firstName" name="firstName" placeholder="First name" value="<?php getInputValue("firstName") ?>" required>
+                <label for="firstName"><?php echo htmlspecialchars(t("auth.first_name")); ?></label>
+                <input type="text" id="firstName" name="firstName" placeholder="<?php echo htmlspecialchars(t("auth.first_name")); ?>" value="<?php getInputValue("firstName") ?>" required>
 
                 <?php echo $account->getError(Constants::$lastNameCharacters)?>
-                <label for="lastName">Last name</label>
-                <input type="text" id="lastName" name="lastName" placeholder="Last name" value="<?php getInputValue("lastName") ?>" required>
+                <label for="lastName"><?php echo htmlspecialchars(t("auth.last_name")); ?></label>
+                <input type="text" id="lastName" name="lastName" placeholder="<?php echo htmlspecialchars(t("auth.last_name")); ?>" value="<?php getInputValue("lastName") ?>" required>
                 
                 <?php echo $account->getError(Constants::$usernameCharacters)?>
                 <?php echo $account->getError(Constants::$usernameTaken)?>
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Username" value="<?php getInputValue("username") ?>" required>
+                <label for="username"><?php echo htmlspecialchars(t("auth.username")); ?></label>
+                <input type="text" id="username" name="username" placeholder="<?php echo htmlspecialchars(t("auth.username")); ?>" value="<?php getInputValue("username") ?>" required>
                 
                 <?php echo $account->getError(Constants::$emailsDontMatch)?>
                 <?php echo $account->getError(Constants::$emailInvalid)?>
                 <?php echo $account->getError(Constants::$emailTaken)?>
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Email" value="<?php getInputValue("email") ?>" required>
+                <label for="email"><?php echo htmlspecialchars(t("profile.email")); ?></label>
+                <input type="email" id="email" name="email" placeholder="<?php echo htmlspecialchars(t("profile.email")); ?>" value="<?php getInputValue("email") ?>" required>
 
-	                <label for="email2">Confirm email</label>
-	                <input type="email" id="email2" name="email2" placeholder="Confirm email" value="<?php getInputValue("email2") ?>" required>
+	                <label for="email2"><?php echo htmlspecialchars(t("auth.confirm_email")); ?></label>
+	                <input type="email" id="email2" name="email2" placeholder="<?php echo htmlspecialchars(t("auth.confirm_email")); ?>" value="<?php getInputValue("email2") ?>" required>
 
                     <?php echo $account->getError(Constants::$genderInvalid)?>
-                    <label for="gender">Gender</label>
+                    <label for="gender"><?php echo htmlspecialchars(t("profile.gender")); ?></label>
                     <select id="gender" name="gender" required>
-                        <option value="">Select gender</option>
-                        <option value="male" <?php echo (isset($_POST["gender"]) && $_POST["gender"] === "male") ? "selected" : ""; ?>>Male</option>
-                        <option value="female" <?php echo (isset($_POST["gender"]) && $_POST["gender"] === "female") ? "selected" : ""; ?>>Female</option>
-                        <option value="other" <?php echo (isset($_POST["gender"]) && $_POST["gender"] === "other") ? "selected" : ""; ?>>Other</option>
-                        <option value="prefer_not_to_say" <?php echo (isset($_POST["gender"]) && $_POST["gender"] === "prefer_not_to_say") ? "selected" : ""; ?>>Prefer not to say</option>
+                        <option value=""><?php echo htmlspecialchars(t("auth.select_gender")); ?></option>
+                        <option value="male" <?php echo (isset($_POST["gender"]) && $_POST["gender"] === "male") ? "selected" : ""; ?>><?php echo htmlspecialchars(t("auth.male")); ?></option>
+                        <option value="female" <?php echo (isset($_POST["gender"]) && $_POST["gender"] === "female") ? "selected" : ""; ?>><?php echo htmlspecialchars(t("auth.female")); ?></option>
+                        <option value="other" <?php echo (isset($_POST["gender"]) && $_POST["gender"] === "other") ? "selected" : ""; ?>><?php echo htmlspecialchars(t("auth.other")); ?></option>
+                        <option value="prefer_not_to_say" <?php echo (isset($_POST["gender"]) && $_POST["gender"] === "prefer_not_to_say") ? "selected" : ""; ?>><?php echo htmlspecialchars(t("auth.prefer_not_to_say")); ?></option>
                     </select>
 
 	                <?php echo $account->getError(Constants::$passwordsDontMatch)?>
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Password" required>
+                <label for="password"><?php echo htmlspecialchars(t("auth.password")); ?></label>
+                <input type="password" id="password" name="password" placeholder="<?php echo htmlspecialchars(t("auth.password")); ?>" required>
 
-                <label for="password2">Confirm password</label>
-                <input type="password" id="password2" name="password2" placeholder="Confirm password" required>
+                <label for="password2"><?php echo htmlspecialchars(t("auth.confirm_password")); ?></label>
+                <input type="password" id="password2" name="password2" placeholder="<?php echo htmlspecialchars(t("auth.confirm_password")); ?>" required>
                 
-                <a href="login.php" class="signInMessage">Already have an account? <span>Log in here!</span></a>
+                <a href="login.php" class="signInMessage"><?php echo htmlspecialchars(t("auth.already_have_account")); ?> <span><?php echo htmlspecialchars(t("auth.log_in_here")); ?></span></a>
 
-                <button type="submit" name="submitButton">SIGN UP</button>
+                <button type="submit" name="submitButton"><?php echo htmlspecialchars(t("auth.sign_up_button")); ?></button>
                 
 
             </form>

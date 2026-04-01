@@ -3,7 +3,7 @@
 require_once("includes/header.php");
 
 if(!isset($_GET["id"])) {
-    ErrorMessage::show("No id passed to page");
+    ErrorMessage::show(t("error.no_category_id"));
 }
 
 $preview = new PreviewProvider($con, $userLoggedIn);
@@ -15,11 +15,11 @@ echo $containers->showCategory($_GET["id"]);
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?php echo htmlspecialchars(getCurrentLanguage()); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineBox</title>
+    <title><?php echo htmlspecialchars(t("site.title")); ?></title>
     <link rel="stylesheet" type="text/css" href="assets/style/style.css"/>
 </head>
 <body>

@@ -19,7 +19,8 @@ class CategoryContainers {
         $html = "<div class='previewCategories'>";
 
         if($this->username) {
-            $html .= $this->getRecommendedCategoryHtml("Recommended for you", true, true);
+            $html .= $this->getContinueWatchingCategoryHtml(true, true);
+            $html .= $this->getBecauseYouWatchedCategoryHtml(true, true);
         }
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -34,10 +35,11 @@ class CategoryContainers {
         $query->execute();
 
         $html = "<div class='previewCategories'>
-                    <h1>TV Shows</h1>";
+                    <h1>" . htmlspecialchars(t("category.tv_shows_heading"), ENT_QUOTES, "UTF-8") . "</h1>";
 
         if($this->username) {
-            $html .= $this->getRecommendedCategoryHtml("Recommended TV Shows", true, false);
+            $html .= $this->getContinueWatchingCategoryHtml(true, false);
+            $html .= $this->getBecauseYouWatchedCategoryHtml(true, false);
         }
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -52,10 +54,11 @@ class CategoryContainers {
         $query->execute();
 
         $html = "<div class='previewCategories'>
-                    <h1>Movies</h1>";
+                    <h1>" . htmlspecialchars(t("category.movies_heading"), ENT_QUOTES, "UTF-8") . "</h1>";
 
         if($this->username) {
-            $html .= $this->getRecommendedCategoryHtml("Recommended Movies", false, true);
+            $html .= $this->getContinueWatchingCategoryHtml(false, true);
+            $html .= $this->getBecauseYouWatchedCategoryHtml(false, true);
         }
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -119,16 +122,18 @@ class CategoryContainers {
 	        </div>";
     }
 
-    private function getRecommendedCategoryHtml($title, $tvShows, $movies) {
-        $entities = EntityProvider::getRecommendedEntitiesForUser($this->con, $this->username, 30, $movies, $tvShows);
+    private function getBecauseYouWatchedCategoryHtml($tvShows, $movies) {
+        $recommendation = EntityProvider::getBecauseYouWatchedRecommendation($this->con, $this->username, 30, $movies, $tvShows);
 
-        if(empty($entities)) {
+        if(!$recommendation || empty($recommendation["entities"])) {
             return "";
         }
 
+        $seedTitle = $recommendation["seedTitle"] ?? "";
+        $title = htmlspecialchars(t("category.because_you_watched", ["title" => $seedTitle]), ENT_QUOTES, "UTF-8");
         $entitiesHtml = "";
         $previewProvider = new PreviewProvider($this->con, $this->username);
-        foreach($entities as $entity) {
+        foreach($recommendation["entities"] as $entity) {
             $entitiesHtml .= $previewProvider->createEntityPreviewSquare($entity);
         }
 
@@ -142,6 +147,35 @@ class CategoryContainers {
                 </div>
                 <div class='entities'>
                     $entitiesHtml
+                </div>
+        </div>";
+    }
+
+    private function getContinueWatchingCategoryHtml($tvShows, $movies) {
+        $items = VideoProvider::getContinueWatchingVideos($this->con, $this->username, 30, $movies, $tvShows);
+
+        if(empty($items)) {
+            return "";
+        }
+
+        $itemsHtml = "";
+        $previewProvider = new PreviewProvider($this->con, $this->username);
+        foreach($items as $item) {
+            $itemsHtml .= $previewProvider->createContinueWatchingSquare($item["video"], (int)$item["progress"]);
+        }
+
+        $title = htmlspecialchars(t("category.continue_watching"), ENT_QUOTES, "UTF-8");
+
+        return "<div class='category continueWatchingCategory'>
+                <div class='category-header'>
+                    <h3>$title</h3>
+                    <div class='category-arrows'>
+                        <button class='scroll-arrow left'><i class='fa-solid fa-chevron-left'></i></button>
+                        <button class='scroll-arrow right'><i class='fa-solid fa-chevron-right'></i></button>
+                    </div>
+                </div>
+                <div class='entities continueWatchingRow'>
+                    $itemsHtml
                 </div>
         </div>";
     }

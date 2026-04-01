@@ -3,7 +3,7 @@ include_once("includes/header.php");
 ?>
 
 <div class="textboxContainer">
-    <input type="text" class="searchInput" placeholder="Search for something">
+    <input type="text" class="searchInput" placeholder="<?php echo htmlspecialchars(t("search.placeholder")); ?>">
 </div>
 
 <div class="results"></div>

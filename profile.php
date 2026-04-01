@@ -6,6 +6,8 @@
 
     $detailsMessage="";
     $passwordMessage="";
+    $membershipMessage = "";
+    $mediaMessage = "";
     $loggedInUserID = $userLoggedIn;
 
     // Get logged-in user ID from sesion 
@@ -22,7 +24,7 @@
 	        
 	        if($account->updateDetails($firstName, $lastName, $email, $gender, $userLoggedIn)) {
             $detailsMessage = "<div class='successMessage'> 
-                                    Details saved
+                                    " . htmlspecialchars(t("profile.details_saved"), ENT_QUOTES, "UTF-8") . "
                                 </div>";
         }
         else {
@@ -43,7 +45,7 @@
         
         if($account->updatePassword($oldPassword, $newPassword, $newPassword2, $userLoggedIn)) {
             $passwordMessage = "<div class='successMessage'> 
-                                    Password changed
+                                    " . htmlspecialchars(t("profile.password_changed"), ENT_QUOTES, "UTF-8") . "
                                 </div>";
         }
         else {
@@ -62,6 +64,63 @@
 
     $user = new User($con, $userLoggedIn);
 
+    if(isset($_POST["saveMediaButton"])) {
+        $mediaResult = $user->updateProfileImages($_FILES["avatarImage"] ?? null, $_FILES["coverImage"] ?? null);
+        $mediaMessageClass = !empty($mediaResult["success"]) ? "successMessage" : "errorMessage";
+        $mediaMessageText = $mediaResult["message"] ?? t("profile.image_upload_error");
+        $mediaMessage = "<div class='$mediaMessageClass'>" . htmlspecialchars($mediaMessageText, ENT_QUOTES, "UTF-8") . "</div>";
+    }
+
+    if(isset($_POST["activateTrialMembership"])) {
+        if($user->isSubscribed()) {
+            header("Location: profile.php?membership=already_active");
+            exit();
+        }
+
+        if($user->activateTrialMembership()) {
+            header("Location: profile.php?membership=trial_success");
+            exit();
+        }
+
+        header("Location: profile.php?membership=trial_error");
+        exit();
+    }
+
+    if(isset($_POST["cancelMembership"])) {
+        if(!$user->isSubscribed()) {
+            header("Location: profile.php?membership=already_inactive");
+            exit();
+        }
+
+        if($user->cancelMembership()) {
+            header("Location: profile.php?membership=cancelled");
+            exit();
+        }
+
+        header("Location: profile.php?membership=cancel_error");
+        exit();
+    }
+
+    $membershipState = $_GET["membership"] ?? "";
+    if($membershipState === "trial_success") {
+        $membershipMessage = "<div class='successMessage'>" . htmlspecialchars(t("profile.trial_success"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+    else if($membershipState === "already_active") {
+        $membershipMessage = "<div class='successMessage'>" . htmlspecialchars(t("profile.membership_active"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+    else if($membershipState === "trial_error") {
+        $membershipMessage = "<div class='errorMessage'>" . htmlspecialchars(t("profile.trial_error"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+    else if($membershipState === "cancelled") {
+        $membershipMessage = "<div class='successMessage'>" . htmlspecialchars(t("profile.cancel_success"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+    else if($membershipState === "already_inactive") {
+        $membershipMessage = "<div class='successMessage'>" . htmlspecialchars(t("profile.membership_inactive"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+    else if($membershipState === "cancel_error") {
+        $membershipMessage = "<div class='errorMessage'>" . htmlspecialchars(t("profile.cancel_error"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+
 	    $firstName = isset($_POST["firstName"]) ? $_POST["firstName"] : $user->getFirstName();
 	    $lastName = isset($_POST["lastName"]) ? $_POST["lastName"] : $user->getLastName();
 	    $email= isset($_POST["email"]) ? $_POST["email"] : $user->getEmail();
@@ -71,102 +130,145 @@
     $displayName = trim($firstName . " " . $lastName);
     if($displayName === "") $displayName = $userLoggedIn;
     $initial = strtoupper(substr($displayName, 0, 1));
+    $membershipStatusClass = $user->isSubscribed() ? " active" : " inactive";
+    $membershipStatusText = $user->isSubscribed() ? t("profile.membership_active") : t("profile.membership_inactive");
+    $avatarPath = $user->getAvatarPath();
+    $coverPath = $user->getCoverPath();
+    $safeAvatarPath = htmlspecialchars($avatarPath, ENT_QUOTES, "UTF-8");
+    $safeCoverPath = htmlspecialchars($coverPath, ENT_QUOTES, "UTF-8");
+    $coverStyle = $coverPath
+        ? " style=\"background-image: linear-gradient(135deg, rgba(15, 15, 15, 0.18), rgba(15, 15, 15, 0.5)), url('" . $safeCoverPath . "');\""
+        : "";
 ?>
 <link rel="stylesheet" href="assets/style/profile.css">
 <div class="profilePage">
     <div class="profileLayout">
         <aside class="profileLeft">
-        <p class="profileWelcome">Welcome, <?php echo htmlspecialchars($displayName); ?></p>
-        <div class="profileHero"></div>
+        <p class="profileWelcome"><?php echo htmlspecialchars(t("profile.welcome", ["name" => $displayName])); ?></p>
+        <div class="profileHero"<?php echo $coverStyle; ?>></div>
 
         <div class="profileIdentity">
-            <div class="profileAvatar"><?php echo htmlspecialchars($initial); ?></div>
+            <div class="profileAvatar">
+                <?php if($avatarPath): ?>
+                    <img src="<?php echo $safeAvatarPath; ?>" alt="<?php echo htmlspecialchars($displayName, ENT_QUOTES, "UTF-8"); ?>">
+                <?php else: ?>
+                    <?php echo htmlspecialchars($initial); ?>
+                <?php endif; ?>
+            </div>
             <div class="profileIdentityText">
                 <h2><?php echo htmlspecialchars($displayName); ?></h2>
                 <p><?php echo htmlspecialchars($email); ?></p>
             </div>
         </div>
+
+        <form class="profileMediaForm" method="POST" enctype="multipart/form-data">
+            <h3 class="updateProfile"><?php echo htmlspecialchars(t("profile.media_heading"), ENT_QUOTES, "UTF-8"); ?></h3>
+
+            <div class="profileMediaGrid">
+                <div class="profileMediaCard">
+                    <div class="profileMediaPreview avatarPreview">
+                        <?php if($avatarPath): ?>
+                            <img src="<?php echo $safeAvatarPath; ?>" alt="<?php echo htmlspecialchars($displayName, ENT_QUOTES, "UTF-8"); ?>">
+                        <?php else: ?>
+                            <span><?php echo htmlspecialchars($initial); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="profileMediaMeta">
+                        <strong><?php echo htmlspecialchars(t("profile.avatar_label"), ENT_QUOTES, "UTF-8"); ?></strong>
+                        <label class="profileUploadButton" for="avatarImage"><?php echo htmlspecialchars(t("profile.choose_avatar"), ENT_QUOTES, "UTF-8"); ?></label>
+                        <input type="file" id="avatarImage" name="avatarImage" class="profileFileInput" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="profileMediaCard">
+                    <div class="profileMediaPreview coverPreview"<?php echo $coverStyle; ?>>
+                        <?php if(!$coverPath): ?>
+                            <span><?php echo htmlspecialchars(t("profile.cover_placeholder"), ENT_QUOTES, "UTF-8"); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="profileMediaMeta">
+                        <strong><?php echo htmlspecialchars(t("profile.cover_label"), ENT_QUOTES, "UTF-8"); ?></strong>
+                        <label class="profileUploadButton" for="coverImage"><?php echo htmlspecialchars(t("profile.choose_cover"), ENT_QUOTES, "UTF-8"); ?></label>
+                        <input type="file" id="coverImage" name="coverImage" class="profileFileInput" accept="image/*">
+                    </div>
+                </div>
+            </div>
+
+            <p class="profileMediaHint"><?php echo htmlspecialchars(t("profile.media_hint"), ENT_QUOTES, "UTF-8"); ?></p>
+            <div class="message"><?php echo $mediaMessage; ?></div>
+            <button type="submit" name="saveMediaButton" class="button type1 profileMediaSave"><span class="btn-txt"><?php echo htmlspecialchars(t("profile.save_media"), ENT_QUOTES, "UTF-8"); ?></span></button>
+        </form>
         </aside>
 
 	        <div class="subscriptionButtons">
-	            <h3>Subscription</h3>
-                <button type="button" class="animatedSubscriptionButton" onclick="window.location.href='wishlist.php'">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
-                        <path
-                        d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                        ></path>
-                    </svg>
-                    <span class="text">Wishlist</span>
-                    <span class="circle"></span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
-                        <path
-                        d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                        ></path>
-                    </svg>
-                </button>
-	            <button type="button" class="animatedSubscriptionButton" onclick="window.location.href='paypal.php'">
-	                <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
-	                    <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                    ></path>
-                </svg>
-                <span class="text">PayPal</span>
-                <span class="circle"></span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
-                    <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                    ></path>
-                </svg>
-            </button>
+	            <h3><?php echo htmlspecialchars(t("profile.subscription")); ?></h3>
+                <p class="membershipStatus<?php echo $membershipStatusClass; ?>"><?php echo htmlspecialchars($membershipStatusText, ENT_QUOTES, "UTF-8"); ?></p>
+                <?php echo $membershipMessage; ?>
 
-            <button type="button" class="animatedSubscriptionButton" onclick="window.location.href='momo.php'">
-                <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
-                    <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                    ></path>
-                </svg>
-                <span class="text">MoMo</span>
-                <span class="circle"></span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
-                    <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                    ></path>
-                </svg>
-            </button>
+                <div class="membershipMenu">
+                    <button type="button" class="animatedSubscriptionButton membershipTrigger">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
+                            <path
+                            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+                            ></path>
+                        </svg>
+                        <span class="text"><?php echo htmlspecialchars(t("profile.membership_cta"), ENT_QUOTES, "UTF-8"); ?></span>
+                        <span class="circle"></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
+                            <path
+                            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+                            ></path>
+                        </svg>
+                    </button>
+
+                    <div class="membershipOptions">
+                        <a href="paypal.php" class="membershipOption"><?php echo htmlspecialchars(t("profile.paypal_option"), ENT_QUOTES, "UTF-8"); ?></a>
+                        <a href="momo.php" class="membershipOption"><?php echo htmlspecialchars(t("profile.momo_option"), ENT_QUOTES, "UTF-8"); ?></a>
+                        <form method="POST" class="membershipTrialForm">
+                            <button type="submit" name="activateTrialMembership" class="membershipOption membershipOptionButton"><?php echo htmlspecialchars(t("profile.trial_option"), ENT_QUOTES, "UTF-8"); ?></button>
+                        </form>
+                    </div>
+                </div>
+
+                <?php if($user->isSubscribed()): ?>
+                    <form method="POST" class="membershipCancelForm">
+                        <button type="submit" name="cancelMembership" class="membershipCancelButton"><?php echo htmlspecialchars(t("profile.cancel_membership"), ENT_QUOTES, "UTF-8"); ?></button>
+                    </form>
+                <?php endif; ?>
         </div>
 
         <section class="profileRight">
             <form class="profileForm" method="POST">
                 <div class="profileCol left">
-                    <h3 class="updateProfile">User details</h3>
+                    <h3 class="updateProfile"><?php echo htmlspecialchars(t("profile.user_details")); ?></h3>
 
                     <div class="profileField">
-                    <label for="firstName">First name</label>
-                    <input type="text" id="firstName" name="firstName" placeholder="Your first name" value="<?php echo $firstName; ?>">
+                    <label for="firstName"><?php echo htmlspecialchars(t("profile.first_name")); ?></label>
+                    <input type="text" id="firstName" name="firstName" placeholder="<?php echo htmlspecialchars(t("profile.your_first_name")); ?>" value="<?php echo $firstName; ?>">
                     </div>
 
                     <div class="profileField">
-                    <label for="lastName">Last name</label>
-                    <input type="text" id="lastName" name="lastName" placeholder="Your last name" value="<?php echo $lastName; ?>">
+                    <label for="lastName"><?php echo htmlspecialchars(t("profile.last_name")); ?></label>
+                    <input type="text" id="lastName" name="lastName" placeholder="<?php echo htmlspecialchars(t("profile.your_last_name")); ?>" value="<?php echo $lastName; ?>">
                     </div>
 
 	                    <div class="profileField">
-	                    <label for="email">Email</label>
-	                    <input type="email" id="email" name="email" placeholder="Your email" value="<?php echo $email; ?>">
+	                    <label for="email"><?php echo htmlspecialchars(t("profile.email")); ?></label>
+	                    <input type="email" id="email" name="email" placeholder="<?php echo htmlspecialchars(t("profile.your_email")); ?>" value="<?php echo $email; ?>">
 	                    </div>
 
                         <div class="profileField">
-                        <label for="gender">Gender</label>
+                        <label for="gender"><?php echo htmlspecialchars(t("profile.gender")); ?></label>
                         <select id="gender" name="gender">
-                            <option value="male" <?php echo $gender === "male" ? "selected" : ""; ?>>Male</option>
-                            <option value="female" <?php echo $gender === "female" ? "selected" : ""; ?>>Female</option>
-                            <option value="other" <?php echo $gender === "other" ? "selected" : ""; ?>>Other</option>
-                            <option value="prefer_not_to_say" <?php echo $gender === "prefer_not_to_say" ? "selected" : ""; ?>>Prefer not to say</option>
+                            <option value="male" <?php echo $gender === "male" ? "selected" : ""; ?>><?php echo htmlspecialchars(t("auth.male")); ?></option>
+                            <option value="female" <?php echo $gender === "female" ? "selected" : ""; ?>><?php echo htmlspecialchars(t("auth.female")); ?></option>
+                            <option value="other" <?php echo $gender === "other" ? "selected" : ""; ?>><?php echo htmlspecialchars(t("auth.other")); ?></option>
+                            <option value="prefer_not_to_say" <?php echo $gender === "prefer_not_to_say" ? "selected" : ""; ?>><?php echo htmlspecialchars(t("auth.prefer_not_to_say")); ?></option>
                         </select>
                         </div>
 
                     <div class="profileField">
-                    <label for="username">Username</label>
+                    <label for="username"><?php echo htmlspecialchars(t("profile.username")); ?></label>
                     <input type="text" id="username" name="username" placeholder=<?php echo htmlspecialchars($userLoggedIn); ?> disabled>
                     </div>
                     
@@ -174,34 +276,34 @@
                     <div class="message">
                         <?php echo $detailsMessage; ?>
                     </div>
-                    <button type="submit" name="saveDetailsButton" class="button type1"><span class="btn-txt">Save details</span></button>
+                    <button type="submit" name="saveDetailsButton" class="button type1"><span class="btn-txt"><?php echo htmlspecialchars(t("profile.save_details")); ?></span></button>
                     </div>
                 </div>
                 </form>
                 <form class="profileForm" method="POST">
                 <div class="profileCol right">
-                    <h3 class="updateProfile">Update password</h3>
+                    <h3 class="updateProfile"><?php echo htmlspecialchars(t("profile.update_password")); ?></h3>
 
                     <div class="profileField">
-                    <label for="oldPassword">Old password</label>
-                    <input type="password" id="oldPassword" name="oldPassword" placeholder="Old password">
+                    <label for="oldPassword"><?php echo htmlspecialchars(t("profile.old_password")); ?></label>
+                    <input type="password" id="oldPassword" name="oldPassword" placeholder="<?php echo htmlspecialchars(t("profile.old_password")); ?>">
                     </div>
 
                     <div class="profileField">
-                    <label for="newPassword">New password</label>
-                    <input type="password" id="newPassword" name="newPassword" placeholder="New password">
+                    <label for="newPassword"><?php echo htmlspecialchars(t("profile.new_password")); ?></label>
+                    <input type="password" id="newPassword" name="newPassword" placeholder="<?php echo htmlspecialchars(t("profile.new_password")); ?>">
                     </div>
 
                     <div class="profileField full">
-                    <label for="newPassword2">Confirm new password</label>
-                    <input type="password" id="newPassword2" name="newPassword2" placeholder="Confirm new password">
+                    <label for="newPassword2"><?php echo htmlspecialchars(t("profile.confirm_new_password")); ?></label>
+                    <input type="password" id="newPassword2" name="newPassword2" placeholder="<?php echo htmlspecialchars(t("profile.confirm_new_password")); ?>">
                     </div>
 
                     <div class="profileActions full">
                     <div class="message">
                         <?php echo $passwordMessage; ?>
                     </div>
-                    <button type="submit" name="savePasswordButton" class="button type1"><span class="btn-txt">Change password</span></button>
+                    <button type="submit" name="savePasswordButton" class="button type1"><span class="btn-txt"><?php echo htmlspecialchars(t("profile.change_password")); ?></span></button>
                     </div>
                 </div>
             </form>

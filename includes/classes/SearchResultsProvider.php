@@ -30,7 +30,7 @@ class SearchResultsProvider {
 
         return "<div class='category'>
                     <div class='category-header'>
-                        <h1>Search results</h1>
+                        <h1>" . htmlspecialchars(t("search.results"), ENT_QUOTES, "UTF-8") . "</h1>
                     </div>
                     <div class='searchEntities'>
                         $entitiesHtml

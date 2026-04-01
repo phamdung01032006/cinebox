@@ -20,6 +20,14 @@ function previewEnded() {
     $(".previewImage").toggle();
 }
 
+function getClientText(key, fallback) {
+    if (window.cineboxI18n && window.cineboxI18n[key]) {
+        return window.cineboxI18n[key];
+    }
+
+    return fallback;
+}
+
 
 // Scroll arrows for entities/videos
 $(document).ready(function() {
@@ -138,37 +146,96 @@ function openVideoPopup(button) {
     popupPlayer.play();
 }
 
+function setWishlistButtonState($button, isActive) {
+    const defaultIcon = $button.attr("data-icon-default") || "fa-solid fa-plus";
+    const activeIcon = $button.attr("data-icon-active") || "fa-solid fa-check";
+    const addTitle = $button.attr("data-title-add") || "Add to wishlist";
+    const removeTitle = $button.attr("data-title-remove") || "Remove from wishlist";
+    const nextTitle = isActive ? removeTitle : addTitle;
+    const nextIcon = isActive ? activeIcon : defaultIcon;
+
+    $button.toggleClass("active", isActive);
+    $button.attr("title", nextTitle);
+    $button.attr("aria-label", nextTitle);
+    $button.attr("aria-pressed", isActive ? "true" : "false");
+    $button.find("i").attr("class", nextIcon);
+}
+
+function syncWishlistButtons(entityId, isActive) {
+    $(".wishlistBtn[data-entity-id='" + entityId + "'], .entityWishlistBtn[data-entity-id='" + entityId + "']").each(function() {
+        setWishlistButtonState($(this), isActive);
+    });
+}
+
+function setWishlistMenuOpen(isOpen) {
+    const $menu = $(".wishlistMenu");
+    if (!$menu.length) {
+        return;
+    }
+
+    $menu.toggleClass("open", isOpen);
+    $menu.find(".wishlistToggle").attr("aria-expanded", isOpen ? "true" : "false");
+    $menu.find(".wishlistDropdown").attr("aria-hidden", isOpen ? "false" : "true");
+}
+
+function updateWishlistCount(count) {
+    const $badge = $("#wishlistCountBadge");
+    if (!$badge.length) {
+        return;
+    }
+
+    $badge.text(count);
+    $badge.toggleClass("show", count > 0);
+}
+
+function refreshWishlistPanel(options) {
+    const $body = $("#wishlistDropdownBody");
+    if (!$body.length) {
+        return;
+    }
+
+    const settings = options || {};
+
+    $.get("ajax/getWishlistPanel.php", function(response) {
+        if (!response || response.status !== "success") {
+            return;
+        }
+
+        $body.html(response.itemsHtml || "");
+        updateWishlistCount(parseInt(response.count, 10) || 0);
+
+        if (settings.openMenu) {
+            setWishlistMenuOpen(true);
+        }
+    }, "json");
+}
+
 function addToWishlist(entityId, button) {
     const $button = $(button);
-    const isEntityCardButton = $button.hasClass("entityWishlistBtn");
 
     if ($button.hasClass("active")) {
         $.post("ajax/removeFromWishlist.php", { entityId: entityId }, function(response) {
             if (!response || response.status !== "success") {
-                alert("Unable to remove this movie from your wishlist right now.");
+                alert(getClientText("wishlistRemoveError", "Unable to remove this movie from your wishlist right now."));
                 return;
             }
 
-            $button.removeClass("active");
-            $button.attr("title", "Add to wishlist");
-            $button.attr("aria-label", "Add to wishlist");
-            $button.find("i")
-                .removeClass("fa-check")
-                .addClass("fa-plus");
+            syncWishlistButtons(entityId, false);
+            refreshWishlistPanel({ openMenu: $(".wishlistMenu").hasClass("open") });
 
-            if ($(".wishlistPage").length && isEntityCardButton) {
-                $button.closest(".entityCard").fadeOut(180, function() {
+            if ($(".wishlistPage").length) {
+                $(".wishlistPage .entityCard[data-entity-id='" + entityId + "']").fadeOut(180, function() {
                     $(this).remove();
 
                     if (!$(".wishlistPage .entityCard").length) {
-                        $(".wishlistPage .wishlistEntities").replaceWith(
-                            "<div class='wishlistEmptyState'><p>You haven't added any movies to your wishlist yet.</p></div>"
+                        $(".wishlistPage .wishlistEntities, .wishlistPage .category .entities").first().replaceWith(
+                            "<div class='wishlistEmptyState'><p>" + getClientText("wishlistEmpty", "You haven't added any movies to your wishlist yet.") + "</p></div>"
                         );
                     }
                 });
             }
         }, "json").fail(function() {
-            alert("Unable to remove this movie from your wishlist right now.");
+            alert(getClientText("wishlistRemoveError", "Unable to remove this movie from your wishlist right now."));
         });
         return;
     }
@@ -180,20 +247,27 @@ function addToWishlist(entityId, button) {
                 return;
             }
 
-            alert("Unable to add this movie to your wishlist right now.");
+            alert(getClientText("wishlistAddError", "Unable to add this movie to your wishlist right now."));
             return;
         }
 
-        $button.addClass("active");
-        $button.attr("title", "Added to wishlist");
-        $button.attr("aria-label", "Added to wishlist");
-        $button.find("i")
-            .removeClass("fa-plus")
-            .addClass("fa-check");
+        syncWishlistButtons(entityId, true);
+        refreshWishlistPanel({ openMenu: true });
     }, "json").fail(function() {
-        alert("Unable to add this movie to your wishlist right now.");
+        alert(getClientText("wishlistAddError", "Unable to add this movie to your wishlist right now."));
     });
 }
+
+$(document).on("click", ".wishlistToggle", function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const shouldOpen = !$(this).closest(".wishlistMenu").hasClass("open");
+    setWishlistMenuOpen(shouldOpen);
+});
+
+$(document).on("click", ".wishlistDropdown", function(event) {
+    event.stopPropagation();
+});
 
 $(document).on("click", ".ratingStar", function() {
     const $button = $(this);
@@ -212,7 +286,7 @@ $(document).on("click", ".ratingStar", function() {
                 return;
             }
 
-            alert("Unable to save your rating right now.");
+            alert(getClientText("ratingSaveError", "Unable to save your rating right now."));
             return;
         }
 
@@ -227,7 +301,7 @@ $(document).on("click", ".ratingStar", function() {
             $(".entityAverageRatingValue").text(parseFloat(response.averageRating).toFixed(1) + "/5");
         }
     }, "json").fail(function() {
-        alert("Unable to save your rating right now.");
+        alert(getClientText("ratingSaveError", "Unable to save your rating right now."));
     });
 });
 
@@ -385,4 +459,8 @@ document.addEventListener('click', function (e) {
       detail.removeAttribute('open');
     }
   });
+
+  if (!e.target.closest('.wishlistMenu')) {
+    setWishlistMenuOpen(false);
+  }
 });
