@@ -1311,6 +1311,19 @@ button i {
     margin-bottom:28px;
 }
 
+.footerLangMenu{
+    position: relative;
+    display: inline-block;
+}
+
+.footerLangMenu summary{
+    list-style: none;
+}
+
+.footerLangMenu summary::-webkit-details-marker{
+    display: none;
+}
+
 .footerLangBtn{
     border:1px solid #555;
     background:transparent;
@@ -1322,6 +1335,35 @@ button i {
     gap:10px;
     font-size:16px;
     cursor:pointer;
+}
+
+.footerLangOptions{
+    position: absolute;
+    left: 0;
+    bottom: calc(100% + 10px);
+    min-width: 180px;
+    padding: 8px;
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 14px;
+    background: rgba(17, 17, 17, 0.94);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 16px 30px rgba(0,0,0,0.28);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.footerLangOptions a{
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 12px;
+    border-radius: 10px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.footerLangOptions a:hover{
+    background: rgba(255,255,255,0.08);
+    color: rgba(255, 201, 151, 0.95);
 }
 
 .footerCountry{

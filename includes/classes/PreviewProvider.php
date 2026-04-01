@@ -16,7 +16,7 @@ class PreviewProvider {
         $entitiesArray = EntityProvider::getEntities($this->con, $categoryId, 1);
 
         if(sizeof($entitiesArray) == 0) {
-            ErrorMessage::show("No TV shows to display");
+            ErrorMessage::show(t("preview.no_tv_shows"));
         }
 
         return $this->createPreviewVideo($entitiesArray[0]);
@@ -27,7 +27,7 @@ class PreviewProvider {
         $entitiesArray = EntityProvider::getTVShowEntities($this->con, null, 1);
 
         if(sizeof($entitiesArray) == 0) {
-            ErrorMessage::show("No TV shows to display");
+            ErrorMessage::show(t("preview.no_tv_shows"));
         }
 
         return $this->createPreviewVideo($entitiesArray[0]);
@@ -37,7 +37,7 @@ class PreviewProvider {
     $entitiesArray = EntityProvider::getMoviesEntities($this->con, null, 1);
 
     if(sizeof($entitiesArray) == 0) {
-        ErrorMessage::show("No movies to display");
+        ErrorMessage::show(t("preview.no_movies"));
     }
 
     return $this->createPreviewVideo($entitiesArray[0]);
@@ -63,7 +63,7 @@ class PreviewProvider {
 	        $video = new Video($this->con, $videoId);
 
         $inProgress = $video->isInProgress($this->username);
-	        $playButtonText = $inProgress ? "We continue" : "Play";
+	        $playButtonText = $inProgress ? t("preview.continue_watching") : t("preview.play");
 	        $seasonEpisode = $video->getSeasonAndEpisode();
 	        $title = $video->getTitle();
 	        $subHeading = $video->isMovie() ? "": "<h4>$seasonEpisode</h4>";
@@ -137,11 +137,13 @@ class PreviewProvider {
         $isInWishlist = $user->hasEntityInWishlist($entityId);
         $wishlistStateClass = $isInWishlist ? " active" : "";
         $wishlistIconClass = $isInWishlist ? "fa-solid fa-check" : "fa-regular fa-bookmark";
-        $wishlistTitle = $isInWishlist ? "Remove from wishlist" : "Add to wishlist";
+        $addWishlistTitle = t("preview.add_to_wishlist");
+        $removeWishlistTitle = t("preview.remove_from_wishlist");
+        $wishlistTitle = $isInWishlist ? $removeWishlistTitle : $addWishlistTitle;
         $ariaPressed = $isInWishlist ? "true" : "false";
         $buttonClass = trim("wishlistBtn$wishlistStateClass $extraClass");
 
-        return "<button class='$buttonClass' type='button' data-entity-id='$entityId' data-icon-default='fa-regular fa-bookmark' data-icon-active='fa-solid fa-check' onclick='addToWishlist($entityId, this)' title='$wishlistTitle' aria-label='$wishlistTitle' aria-pressed='$ariaPressed'>
+        return "<button class='$buttonClass' type='button' data-entity-id='$entityId' data-icon-default='fa-regular fa-bookmark' data-icon-active='fa-solid fa-check' data-title-add='$addWishlistTitle' data-title-remove='$removeWishlistTitle' onclick='addToWishlist($entityId, this)' title='$wishlistTitle' aria-label='$wishlistTitle' aria-pressed='$ariaPressed'>
                     <i class='$wishlistIconClass'></i>
                 </button>";
     }

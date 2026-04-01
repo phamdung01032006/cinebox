@@ -14,12 +14,12 @@ $previewProvider = new PreviewProvider($con, $userLoggedIn);
 <div class="previewCategories wishlistPage">
     <div class="category">
         <div class="category-header">
-            <h3>My Wishlist</h3>
+            <h3><?php echo htmlspecialchars(t("wishlist.my")); ?></h3>
         </div>
 
         <?php if(empty($wishlistEntities)): ?>
             <div class="wishlistEmptyState">
-                <p>You haven't added any movies to your wishlist yet.</p>
+                <p><?php echo htmlspecialchars(t("wishlist.empty_page")); ?></p>
             </div>
         <?php else: ?>
             <div class="entities wishlistEntities">

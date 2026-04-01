@@ -12,18 +12,26 @@ require_once("includes/classes/Video.php");
 require_once("includes/classes/VideoProvider.php");
 require_once("includes/classes/User.php");
 require_once("includes/wishlist_panel.php");
+
 $userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
 $wishlistUrl = $userLoggedIn ? "wishlist.php" : "login.php?returnUrl=" . urlencode("wishlist.php");
 $wishlistPanel = buildWishlistPanelData($con, $userLoggedIn);
+$currentLanguage = getCurrentLanguage();
+$clientTranslations = [
+    "wishlistRemoveError" => t("js.wishlist_remove_error"),
+    "wishlistAddError" => t("js.wishlist_add_error"),
+    "ratingSaveError" => t("js.rating_save_error"),
+    "wishlistEmpty" => t("js.wishlist_empty")
+];
 
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?php echo htmlspecialchars($currentLanguage); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineBox</title>
+    <title><?php echo htmlspecialchars(t("site.title")); ?></title>
 
     <link rel="stylesheet" href="assets/style/plyr.css" />
     <link rel="stylesheet" type="text/css" href="assets/style/style.css"/>
@@ -32,16 +40,18 @@ $wishlistPanel = buildWishlistPanelData($con, $userLoggedIn);
     <link rel="stylesheet" href="assets/style/background.css">
 
     <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
-	    <script src="https://kit.fontawesome.com/eeaac7bcf0.js" crossorigin="anonymous"></script>
-	    <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.min.js"></script>
-	    <script src="assets/js/script.js"></script>
-	    <script src="assets/js/background.js" defer></script>
-    <!-- Chỉnh lại cho màn hình điện thoại -->
+    <script src="https://kit.fontawesome.com/eeaac7bcf0.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.min.js"></script>
+    <script>
+        window.cineboxI18n = <?php echo json_encode($clientTranslations, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    </script>
+    <script src="assets/js/script.js"></script>
+    <script src="assets/js/background.js" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-		<body>
-            <?php require_once(__DIR__ . "/background.php"); ?>
-		    <div class='wrapper'>
+<body>
+    <?php require_once(__DIR__ . "/background.php"); ?>
+    <div class='wrapper'>
 
     <div class="topBar">
         <div class="logoContainer">
@@ -50,45 +60,43 @@ $wishlistPanel = buildWishlistPanelData($con, $userLoggedIn);
             </a>
         </div>
 
-        <!-- Menu khi thu nhỏ màn hình -->
         <details class="dropdown">
-        <summary>Menu</summary>
-        <ul>
-            <li><a href="index.php">Home</a></li>
-            <li><a href="shows.php">TV Shows</a></li>
-            <li><a href="movies.php">Movies</a></li>
-        </ul>
+            <summary><?php echo htmlspecialchars(t("nav.menu")); ?></summary>
+            <ul>
+                <li><a href="index.php"><?php echo htmlspecialchars(t("nav.home")); ?></a></li>
+                <li><a href="shows.php"><?php echo htmlspecialchars(t("nav.tv_shows")); ?></a></li>
+                <li><a href="movies.php"><?php echo htmlspecialchars(t("nav.movies")); ?></a></li>
+            </ul>
         </details>
-        <!--  -->
 
         <a class="navButton" href="index.php">
             <span class="top-key"></span>
-            <span class="text">Home</span>
+            <span class="text"><?php echo htmlspecialchars(t("nav.home")); ?></span>
             <span class="bottom-key-1"></span>
             <span class="bottom-key-2"></span>
         </a>
         <a class="navButton" href="shows.php">
             <span class="top-key"></span>
-            <span class="text">TV Shows</span>
+            <span class="text"><?php echo htmlspecialchars(t("nav.tv_shows")); ?></span>
             <span class="bottom-key-1"></span>
             <span class="bottom-key-2"></span>
         </a>
         <a class="navButton" href="movies.php">
             <span class="top-key"></span>
-            <span class="text">Movies</span>
+            <span class="text"><?php echo htmlspecialchars(t("nav.movies")); ?></span>
             <span class="bottom-key-1"></span>
             <span class="bottom-key-2"></span>
         </a>
 
         <div class="rightItems">
-            <button class="iconButtons" onclick="window.location.href='search.php'"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <button class="iconButtons" onclick="window.location.href='search.php'" title="<?php echo htmlspecialchars(t("nav.search")); ?>" aria-label="<?php echo htmlspecialchars(t("nav.search")); ?>"><i class="fa-solid fa-magnifying-glass"></i></button>
             <?php if($userLoggedIn): ?>
                 <div class="wishlistMenu">
                     <button
                         type="button"
                         class="iconButtons wishlistToggle"
-                        title="Wishlist"
-                        aria-label="Wishlist"
+                        title="<?php echo htmlspecialchars(t("nav.wishlist")); ?>"
+                        aria-label="<?php echo htmlspecialchars(t("nav.wishlist")); ?>"
                         aria-expanded="false"
                         aria-controls="wishlistDropdown"
                     >
@@ -100,8 +108,8 @@ $wishlistPanel = buildWishlistPanelData($con, $userLoggedIn);
 
                     <div id="wishlistDropdown" class="wishlistDropdown" aria-hidden="true">
                         <div class="wishlistDropdownHeader">
-                            <h4>My Wishlist</h4>
-                            <a href="wishlist.php">Open page</a>
+                            <h4><?php echo htmlspecialchars(t("wishlist.my")); ?></h4>
+                            <a href="wishlist.php"><?php echo htmlspecialchars(t("wishlist.open_page")); ?></a>
                         </div>
                         <div id="wishlistDropdownBody" class="wishlistDropdownBody">
                             <?php echo $wishlistPanel["itemsHtml"]; ?>
@@ -109,21 +117,17 @@ $wishlistPanel = buildWishlistPanelData($con, $userLoggedIn);
                     </div>
                 </div>
             <?php else: ?>
-                <button class="iconButtons" onclick="window.location.href='<?php echo $wishlistUrl; ?>'" title="Wishlist" aria-label="Wishlist"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="iconButtons" onclick="window.location.href='<?php echo $wishlistUrl; ?>'" title="<?php echo htmlspecialchars(t("nav.wishlist")); ?>" aria-label="<?php echo htmlspecialchars(t("nav.wishlist")); ?>"><i class="fa-regular fa-bookmark"></i></button>
             <?php endif; ?>
-            <button class="iconButtons" onclick="window.location.href='profile.php'"><i class="fa-regular fa-user"></i></button>
+            <button class="iconButtons" onclick="window.location.href='profile.php'" title="<?php echo htmlspecialchars(t("nav.profile")); ?>" aria-label="<?php echo htmlspecialchars(t("nav.profile")); ?>"><i class="fa-regular fa-user"></i></button>
             <button type="button" class="logOutButton" onclick="window.location.href='logout.php'">
                 <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
-                    <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                    ></path>
+                    <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
                 </svg>
-                <span class="text">Log out</span>
+                <span class="text"><?php echo htmlspecialchars(t("nav.logout")); ?></span>
                 <span class="circle"></span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
-                    <path
-                    d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                    ></path>
+                    <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
                 </svg>
             </button>
         </div>

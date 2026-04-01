@@ -17,7 +17,7 @@ class Video {
 
             $this->sqlData = $query->fetch(PDO::FETCH_ASSOC);
             if(!$this->sqlData) {
-                ErrorMessage::show("Video not found");
+                ErrorMessage::show(t("error.video_not_found"));
                 exit();
             }
             
@@ -71,7 +71,10 @@ class Video {
         $season = $this->getSeasonNumber();
         $episode = $this->getEpisodeNumber();
 
-        return "Season $season, Episode $episode";
+        return t("video.season_episode", [
+            "season" => $season,
+            "episode" => $episode
+        ]);
     }
 
     public function isMovie() {

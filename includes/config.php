@@ -3,6 +3,12 @@
 ob_start(); //turns on output buffering
 session_start();
 
+require_once(__DIR__ . "/language.php");
+
+if(empty($_SESSION["siteLanguage"])) {
+    setCurrentLanguage("en");
+}
+
 date_default_timezone_set("Asia/Ho_Chi_Minh");
 // kết nối đến database có tên là cinebox ở mysql
 try {

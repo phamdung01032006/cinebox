@@ -20,6 +20,14 @@ function previewEnded() {
     $(".previewImage").toggle();
 }
 
+function getClientText(key, fallback) {
+    if (window.cineboxI18n && window.cineboxI18n[key]) {
+        return window.cineboxI18n[key];
+    }
+
+    return fallback;
+}
+
 
 // Scroll arrows for entities/videos
 $(document).ready(function() {
@@ -141,7 +149,9 @@ function openVideoPopup(button) {
 function setWishlistButtonState($button, isActive) {
     const defaultIcon = $button.attr("data-icon-default") || "fa-solid fa-plus";
     const activeIcon = $button.attr("data-icon-active") || "fa-solid fa-check";
-    const nextTitle = isActive ? "Remove from wishlist" : "Add to wishlist";
+    const addTitle = $button.attr("data-title-add") || "Add to wishlist";
+    const removeTitle = $button.attr("data-title-remove") || "Remove from wishlist";
+    const nextTitle = isActive ? removeTitle : addTitle;
     const nextIcon = isActive ? activeIcon : defaultIcon;
 
     $button.toggleClass("active", isActive);
@@ -206,7 +216,7 @@ function addToWishlist(entityId, button) {
     if ($button.hasClass("active")) {
         $.post("ajax/removeFromWishlist.php", { entityId: entityId }, function(response) {
             if (!response || response.status !== "success") {
-                alert("Unable to remove this movie from your wishlist right now.");
+                alert(getClientText("wishlistRemoveError", "Unable to remove this movie from your wishlist right now."));
                 return;
             }
 
@@ -219,13 +229,13 @@ function addToWishlist(entityId, button) {
 
                     if (!$(".wishlistPage .entityCard").length) {
                         $(".wishlistPage .wishlistEntities, .wishlistPage .category .entities").first().replaceWith(
-                            "<div class='wishlistEmptyState'><p>You haven't added any movies to your wishlist yet.</p></div>"
+                            "<div class='wishlistEmptyState'><p>" + getClientText("wishlistEmpty", "You haven't added any movies to your wishlist yet.") + "</p></div>"
                         );
                     }
                 });
             }
         }, "json").fail(function() {
-            alert("Unable to remove this movie from your wishlist right now.");
+            alert(getClientText("wishlistRemoveError", "Unable to remove this movie from your wishlist right now."));
         });
         return;
     }
@@ -237,14 +247,14 @@ function addToWishlist(entityId, button) {
                 return;
             }
 
-            alert("Unable to add this movie to your wishlist right now.");
+            alert(getClientText("wishlistAddError", "Unable to add this movie to your wishlist right now."));
             return;
         }
 
         syncWishlistButtons(entityId, true);
         refreshWishlistPanel({ openMenu: true });
     }, "json").fail(function() {
-        alert("Unable to add this movie to your wishlist right now.");
+        alert(getClientText("wishlistAddError", "Unable to add this movie to your wishlist right now."));
     });
 }
 
@@ -276,7 +286,7 @@ $(document).on("click", ".ratingStar", function() {
                 return;
             }
 
-            alert("Unable to save your rating right now.");
+            alert(getClientText("ratingSaveError", "Unable to save your rating right now."));
             return;
         }
 
@@ -291,7 +301,7 @@ $(document).on("click", ".ratingStar", function() {
             $(".entityAverageRatingValue").text(parseFloat(response.averageRating).toFixed(1) + "/5");
         }
     }, "json").fail(function() {
-        alert("Unable to save your rating right now.");
+        alert(getClientText("ratingSaveError", "Unable to save your rating right now."));
     });
 });
 

@@ -7,7 +7,7 @@ if(!isset($_SESSION["userLoggedIn"])) {
 }
 
 if(!isset($_GET["id"])) {
-    ErrorMessage::show("No ID passed into page");
+    ErrorMessage::show(t("error.no_entity_id"));
 }
 
 $video = new Video($con, $_GET["id"]);
@@ -44,7 +44,7 @@ $upNextVideo = VideoProvider::getUpNext($con, $video);
                     d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
                     ></path>
                 </svg>
-                <span class="text">Back</span>
+                <span class="text"><?php echo htmlspecialchars(t("watch.back")); ?></span>
                 <span class="circle"></span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
                     <path
@@ -60,13 +60,13 @@ $upNextVideo = VideoProvider::getUpNext($con, $video);
 
             <div class="upNextContainer">
                 <div class="upNextText">
-                    <h2>Up next: </h2>
+                    <h2><?php echo htmlspecialchars(t("watch.up_next")); ?></h2>
                     <h3><?php echo $upNextVideo->getTitle(); ?></h3>
                     <h3><?php echo $upNextVideo->getSeasonAndEpisode(); ?></h3>
                 </div>
                 <div class="upNextAction">
                     <button class="cssbuttons-io-button" onclick="watchVideo(<?php echo $upNextVideo->getId(); ?>)">
-                        Next
+                        <?php echo htmlspecialchars(t("watch.next")); ?>
                         <div class="icon">
                             <svg
                             height="24"
@@ -99,7 +99,7 @@ $upNextVideo = VideoProvider::getUpNext($con, $video);
     <div class="watchRelated">
         <div class="category">
             <div class="category-header">
-                <h3>You might also like</h3>
+                <h3><?php echo htmlspecialchars(t("watch.you_might_like")); ?></h3>
                 <div class="category-arrows">
                     <button class="scroll-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
                     <button class="scroll-arrow right"><i class="fa-solid fa-chevron-right"></i></button>

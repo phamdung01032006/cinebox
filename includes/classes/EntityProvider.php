@@ -160,7 +160,8 @@ class EntityProvider {
             }
 
             return [
-                "title" => "Because you watched " . $seedName,
+                "title" => t("category.because_you_watched", ["title" => $seedName]),
+                "seedTitle" => $seedName,
                 "seedEntityId" => $seedEntityId,
                 "entities" => self::getEntitiesByIds($con, $entityIds, true, true)
             ];

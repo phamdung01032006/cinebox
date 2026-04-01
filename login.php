@@ -34,11 +34,11 @@ function getInputValue($name) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?php echo htmlspecialchars(getCurrentLanguage()); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineBox</title>
+    <title><?php echo htmlspecialchars(t("site.title")); ?></title>
     <link rel="stylesheet" type="text/css" href="assets/style/style.css"/>
 
 </head>
@@ -49,34 +49,34 @@ function getInputValue($name) {
         <div class="authSide">
             <div class="authOverlay">
                 <!-- <img src="assets\images\cinebox.png" title="CineBox Logo" alt="CineBox Logo"> -->
-                <h2>RETURN TO THE WORLD OF <div>
+                <h2><?php echo htmlspecialchars(t("auth.return_world")); ?> <div>
                 <button class="btn"><i class="animation"></i>CINEBOX<i class="animation"></i>
                 </button>
                 </div>
                 </h2>
-                <p>Watch trailers, movies and series in one place.</p>
+                <p><?php echo htmlspecialchars(t("auth.watch_all_in_one")); ?></p>
             </div>
         </div>
 
         <div class="column">
 
             <div class="header">
-                <h3>Log in</h3>
-                <span>to continue to CineBox</span>
+                <h3><?php echo htmlspecialchars(t("auth.login")); ?></h3>
+                <span><?php echo htmlspecialchars(t("auth.continue_to_cinebox")); ?></span>
             </div>
 
             <form method="POST">
                 
                 <?php echo $account->getError(Constants::$loginFailed)?>
-                <label for="username">Username</label>
-                <input type="text" name="username" placeholder="Username" value="<?php getInputValue("username") ?>" required>
+                <label for="username"><?php echo htmlspecialchars(t("auth.username")); ?></label>
+                <input type="text" name="username" placeholder="<?php echo htmlspecialchars(t("auth.username")); ?>" value="<?php getInputValue("username") ?>" required>
                 
-                <label for="password">Password</label>
-                <input type="password" name="password" placeholder="Password" required>
+                <label for="password"><?php echo htmlspecialchars(t("auth.password")); ?></label>
+                <input type="password" name="password" placeholder="<?php echo htmlspecialchars(t("auth.password")); ?>" required>
                 
-                <a href="register.php" class="signInMessage">Need an account? <span>Sign up here!</span></a>
+                <a href="register.php" class="signInMessage"><?php echo htmlspecialchars(t("auth.need_account")); ?> <span><?php echo htmlspecialchars(t("auth.sign_up_here")); ?></span></a>
 
-                <button type="submit" name="submitButton">LOG IN</button>
+                <button type="submit" name="submitButton"><?php echo htmlspecialchars(t("auth.login_button")); ?></button>
                 
 
             </form>

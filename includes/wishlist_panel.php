@@ -7,7 +7,7 @@ function buildWishlistPanelData($con, $username) {
     if(!$username) {
         return [
             "count" => 0,
-            "itemsHtml" => "<div class='wishlistDropdownEmpty'><p>Log in to use your wishlist.</p></div>"
+            "itemsHtml" => "<div class='wishlistDropdownEmpty'><p>" . htmlspecialchars(t("wishlist.login_required"), ENT_QUOTES, "UTF-8") . "</p></div>"
         ];
     }
 
@@ -21,7 +21,7 @@ function buildWishlistPanelData($con, $username) {
     }
 
     if($itemsHtml === "") {
-        $itemsHtml = "<div class='wishlistDropdownEmpty'><p>Your wishlist is empty.</p><span>Add titles from the preview button to see them here.</span></div>";
+        $itemsHtml = "<div class='wishlistDropdownEmpty'><p>" . htmlspecialchars(t("wishlist.empty"), ENT_QUOTES, "UTF-8") . "</p><span>" . htmlspecialchars(t("wishlist.empty_hint"), ENT_QUOTES, "UTF-8") . "</span></div>";
     }
 
     return [

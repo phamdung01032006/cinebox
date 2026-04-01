@@ -34,7 +34,7 @@ class CategoryContainers {
         $query->execute();
 
         $html = "<div class='previewCategories'>
-                    <h1>TV Shows</h1>";
+                    <h1>" . htmlspecialchars(t("category.tv_shows_heading"), ENT_QUOTES, "UTF-8") . "</h1>";
 
         if($this->username) {
             $html .= $this->getBecauseYouWatchedCategoryHtml(true, false);
@@ -52,7 +52,7 @@ class CategoryContainers {
         $query->execute();
 
         $html = "<div class='previewCategories'>
-                    <h1>Movies</h1>";
+                    <h1>" . htmlspecialchars(t("category.movies_heading"), ENT_QUOTES, "UTF-8") . "</h1>";
 
         if($this->username) {
             $html .= $this->getBecauseYouWatchedCategoryHtml(false, true);
@@ -126,7 +126,8 @@ class CategoryContainers {
             return "";
         }
 
-        $title = htmlspecialchars($recommendation["title"] ?? "Because you watched", ENT_QUOTES, "UTF-8");
+        $seedTitle = $recommendation["seedTitle"] ?? "";
+        $title = htmlspecialchars(t("category.because_you_watched", ["title" => $seedTitle]), ENT_QUOTES, "UTF-8");
         $entitiesHtml = "";
         $previewProvider = new PreviewProvider($this->con, $this->username);
         foreach($recommendation["entities"] as $entity) {
