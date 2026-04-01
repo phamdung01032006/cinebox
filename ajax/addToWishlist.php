@@ -37,6 +37,14 @@ if(!$entityQuery->fetchColumn()) {
 $user = new User($con, $_SESSION["userLoggedIn"]);
 $result = $user->addToWishlist($entityId);
 
+if($result === false) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "wishlist_save_failed"
+    ]);
+    exit();
+}
+
 echo json_encode([
     "status" => "success",
     "action" => $result

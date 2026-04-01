@@ -14,6 +14,7 @@ class User {
         $query->execute();
 
         $this->sqlData = $query->fetch(PDO::FETCH_ASSOC);
+        $this->syncLegacyWishlist();
     }
 
     public function getFirstName() {
@@ -71,7 +72,9 @@ class User {
         ");
         $query->bindValue(":username", $this->sqlData["username"]);
         $query->bindValue(":entityId", $entityId, PDO::PARAM_INT);
-        $query->execute();
+        if(!$query->execute()) {
+            return false;
+        }
 
         $this->updateLatestWishlistId($entityId);
         return "added";
@@ -123,7 +126,12 @@ class User {
         $query->bindValue(":entityId", (int)$entityId, PDO::PARAM_INT);
         $query->execute();
 
-        return $query->rowCount() > 0;
+        $removed = $query->rowCount() > 0;
+        if($removed) {
+            $this->refreshLatestWishlistId();
+        }
+
+        return $removed;
     }
 
     public function rateEntity($entityId, $rating) {
@@ -190,6 +198,57 @@ class User {
         $query->execute();
 
         $this->sqlData["wishList"] = (int)$entityId;
+    }
+
+    private function syncLegacyWishlist() {
+        $this->ensureWishlistTable();
+
+        if(empty($this->sqlData["username"])) {
+            return;
+        }
+
+        $legacyEntityId = isset($this->sqlData["wishList"]) ? (int)$this->sqlData["wishList"] : 0;
+        if($legacyEntityId <= 0) {
+            return;
+        }
+
+        $query = $this->con->prepare("
+            INSERT IGNORE INTO wishlist(username, entityId)
+            VALUES(:username, :entityId)
+        ");
+        $query->bindValue(":username", $this->sqlData["username"]);
+        $query->bindValue(":entityId", $legacyEntityId, PDO::PARAM_INT);
+        $query->execute();
+    }
+
+    private function refreshLatestWishlistId() {
+        $query = $this->con->prepare("
+            SELECT entityId
+            FROM wishlist
+            WHERE username = :username
+            ORDER BY createdAt DESC, id DESC
+            LIMIT 1
+        ");
+        $query->bindValue(":username", $this->sqlData["username"]);
+        $query->execute();
+
+        $latestEntityId = $query->fetchColumn();
+
+        $updateQuery = $this->con->prepare("
+            UPDATE users
+            SET wishList = :entityId
+            WHERE username = :username
+        ");
+        if($latestEntityId === false) {
+            $updateQuery->bindValue(":entityId", null, PDO::PARAM_NULL);
+            $this->sqlData["wishList"] = null;
+        }
+        else {
+            $updateQuery->bindValue(":entityId", (int)$latestEntityId, PDO::PARAM_INT);
+            $this->sqlData["wishList"] = (int)$latestEntityId;
+        }
+        $updateQuery->bindValue(":username", $this->sqlData["username"]);
+        $updateQuery->execute();
     }
 
     private function ensureWishlistTable() {
