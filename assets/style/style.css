@@ -426,7 +426,9 @@ a {
 }
 
 /* Hiệu ứng hover phóng to */
-.previewContainer.small:hover {
+.previewContainer.small:hover,
+.entityCard:hover .previewContainer.small,
+.entityCard:focus-within .previewContainer.small {
     transform: scale(1.05);
     box-shadow: 2px 2px 5px 2px rgba(5, 5, 5, 0.2);
 }
@@ -542,6 +544,11 @@ a {
 
 .mainDetails .wishlistBtn.active {
     background: linear-gradient(135deg, rgba(255,170,84,0.78), rgba(51, 51, 51, 0.72));
+    border-color: rgba(255, 232, 203, 0.75);
+}
+
+.mainDetails .featuredWishlistBtn.active {
+    background: linear-gradient(135deg, rgba(255,170,84,0.85), rgba(51, 51, 51, 0.72));
     border-color: rgba(255, 232, 203, 0.75);
 }
 
@@ -1272,7 +1279,18 @@ button i {
     justify-content: center;
     cursor: pointer;
     z-index: 3;
-    transition: all 0.25s ease;
+    transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px) scale(0.92);
+}
+
+.entityCard:hover .entityWishlistBtn,
+.entityCard:focus-within .entityWishlistBtn,
+.entityWishlistBtn.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
 }
 
 .entityWishlistBtn:hover {
@@ -1294,6 +1312,9 @@ button i {
         height: 30px;
         min-width: 30px;
         font-size: 12px;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0) scale(1);
     }
 
     .entityRatingSection {

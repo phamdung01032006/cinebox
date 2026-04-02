@@ -56,7 +56,7 @@ class PreviewProvider {
 
         $safePreview = htmlspecialchars($preview, ENT_QUOTES, 'UTF-8');
         $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
-        $wishlistButton = $this->createWishlistButton($id);
+        $wishlistButton = $this->createWishlistButton($id, "featuredWishlistBtn");
 
         $videoId = VideoProvider::getPlayableEntityVideoForUser($this->con, $id, $this->username);
         if(!$videoId) {
@@ -122,10 +122,13 @@ class PreviewProvider {
 	        $name = $entity->getName();
 	        $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
 
-	        return "<div class='entityCard' data-entity-id='$id'>
-                        <a href='entity.php?id=$id' class='entityCardLink'>
-    	                    <div class='previewContainer small'>
-    	                        <img src='$thumbnail' title='$safeName' alt='$safeName'>
+        $wishlistButton = $this->createWishlistButton($id, "entityWishlistBtn");
+
+		        return "<div class='entityCard' data-entity-id='$id'>
+                            $wishlistButton
+	                        <a href='entity.php?id=$id' class='entityCardLink'>
+	    	                    <div class='previewContainer small'>
+	    	                        <img src='$thumbnail' title='$safeName' alt='$safeName'>
     	                    </div>
     	                    <div class='entityTitle'>$safeName</div>
                         </a>
@@ -177,7 +180,7 @@ class PreviewProvider {
                 </div>";
     }
 
-    private function createWishlistButton($entityId, $extraClass = "") {
+    private function createWishlistButton($entityId, $extraClass = "", $showLabel = false) {
         if(!$this->username) {
             return "";
         }
@@ -185,15 +188,19 @@ class PreviewProvider {
         $user = new User($this->con, $this->username);
         $isInWishlist = $user->hasEntityInWishlist($entityId);
         $wishlistStateClass = $isInWishlist ? " active" : "";
-        $wishlistIconClass = $isInWishlist ? "fa-solid fa-check" : "fa-regular fa-bookmark";
+        $wishlistIconClass = $isInWishlist ? "fa-solid fa-check" : "fa-solid fa-plus";
         $addWishlistTitle = t("preview.add_to_wishlist");
         $removeWishlistTitle = t("preview.remove_from_wishlist");
         $wishlistTitle = $isInWishlist ? $removeWishlistTitle : $addWishlistTitle;
         $ariaPressed = $isInWishlist ? "true" : "false";
         $buttonClass = trim("wishlistBtn$wishlistStateClass $extraClass");
+        $labelHtml = $showLabel
+            ? "<span class='wishlistBtnLabel'>" . htmlspecialchars(t("preview.my_list"), ENT_QUOTES, 'UTF-8') . "</span>"
+            : "";
 
-        return "<button class='$buttonClass' type='button' data-entity-id='$entityId' data-icon-default='fa-regular fa-bookmark' data-icon-active='fa-solid fa-check' data-title-add='$addWishlistTitle' data-title-remove='$removeWishlistTitle' onclick='addToWishlist($entityId, this)' title='$wishlistTitle' aria-label='$wishlistTitle' aria-pressed='$ariaPressed'>
+        return "<button class='$buttonClass' type='button' data-entity-id='$entityId' data-icon-default='fa-solid fa-plus' data-icon-active='fa-solid fa-check' data-title-add='$addWishlistTitle' data-title-remove='$removeWishlistTitle' onclick='addToWishlist($entityId, this)' title='$wishlistTitle' aria-label='$wishlistTitle' aria-pressed='$ariaPressed'>
                     <i class='$wishlistIconClass'></i>
+                    $labelHtml
                 </button>";
     }
 

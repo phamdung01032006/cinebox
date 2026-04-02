@@ -91,11 +91,26 @@ class EntityProvider {
 
     public static function getSearchEntities($con, $term) {
 
-        $sql = "SELECT * FROM entities WHERE name LIKE CONCAT('%', :term, '%') LIMIT 30";
+        $sql = "SELECT DISTINCT e.*
+                FROM entities e
+                LEFT JOIN categories c ON c.id = e.categoryId
+                WHERE e.name LIKE CONCAT('%', :entityTerm, '%')
+                OR c.name LIKE CONCAT('%', :categoryTerm, '%')
+                ORDER BY
+                    CASE
+                        WHEN e.name LIKE CONCAT(:entityPrefix, '%') THEN 0
+                        WHEN c.name LIKE CONCAT(:categoryPrefix, '%') THEN 1
+                        ELSE 2
+                    END,
+                    e.name ASC
+                LIMIT 30";
 
         $query = $con->prepare($sql);
 
-        $query->bindValue(":term", $term);
+        $query->bindValue(":entityTerm", $term);
+        $query->bindValue(":categoryTerm", $term);
+        $query->bindValue(":entityPrefix", $term);
+        $query->bindValue(":categoryPrefix", $term);
         $query->execute();
 
         $result = array();
