@@ -1,38 +1,37 @@
 <?php
-    require_once("includes/header.php");
-    require_once("includes/classes/Account.php");
-    require_once("includes/classes/FormSanitizer.php");
-    require_once("includes/classes/Constants.php");
+	require_once("includes/config.php");
+	require_once("includes/classes/Account.php");
+	require_once("includes/classes/FormSanitizer.php");
+	require_once("includes/classes/Constants.php");
+	require_once("includes/classes/User.php");
 
-    $detailsMessage="";
-    $passwordMessage="";
-    $membershipMessage = "";
-    $mediaMessage = "";
-    $loggedInUserID = $userLoggedIn;
+	$userLoggedIn = $_SESSION["userLoggedIn"] ?? null;
+	$detailsMessage="";
+	$passwordMessage="";
+	$membershipMessage = "";
+	$mediaMessage = "";
 
-    // Get logged-in user ID from sesion 
-    // Session name need to be changed as per your system 
-    $loggedInUserID = !empty($_SESSION['userID'])?$_SESSION['userID']:0; 
+	if(!$userLoggedIn){
+	    header("Location: login.php");
+	    exit();
+    }
 
     if(isset($_POST["saveDetailsButton"])) {
         $account = new Account($con);
 
-	        $firstName = FormSanitizer::sanitizeFormString($_POST["firstName"]);
-	        $lastName = FormSanitizer::sanitizeFormString($_POST["lastName"]);
-	        $email = FormSanitizer::sanitizeFormEmail($_POST["email"]);
-            $gender = FormSanitizer::sanitizeGender($_POST["gender"] ?? "");
-	        
-	        if($account->updateDetails($firstName, $lastName, $email, $gender, $userLoggedIn)) {
-            $detailsMessage = "<div class='successMessage'> 
-                                    " . htmlspecialchars(t("profile.details_saved"), ENT_QUOTES, "UTF-8") . "
-                                </div>";
+		        $firstName = FormSanitizer::sanitizeFormString($_POST["firstName"]);
+		        $lastName = FormSanitizer::sanitizeFormString($_POST["lastName"]);
+		        $email = FormSanitizer::sanitizeFormEmail($_POST["email"]);
+	            $gender = FormSanitizer::sanitizeGender($_POST["gender"] ?? "");
+		        
+		        if($account->updateDetails($firstName, $lastName, $email, $gender, $userLoggedIn)) {
+            header("Location: profile.php?details=success");
+            exit();
         }
         else {
             $errorMessage = $account->getFirstError();
-            
-            $detailsMessage = "<div class='errorMessage'> 
-                                    $errorMessage
-                                </div>";
+            header("Location: profile.php?details=error&details_message=" . urlencode($errorMessage));
+            exit();
     }
 }
     
@@ -41,34 +40,27 @@
 
         $oldPassword = FormSanitizer::sanitizeFormPassword($_POST["oldPassword"]);
         $newPassword = FormSanitizer::sanitizeFormPassword($_POST["newPassword"]);
-        $newPassword2 = FormSanitizer::sanitizeFormPassword($_POST["newPassword2"]);
-        
-        if($account->updatePassword($oldPassword, $newPassword, $newPassword2, $userLoggedIn)) {
-            $passwordMessage = "<div class='successMessage'> 
-                                    " . htmlspecialchars(t("profile.password_changed"), ENT_QUOTES, "UTF-8") . "
-                                </div>";
-        }
-        else {
-            $errorMessage = $account->getFirstError();
-            
-            $passwordMessage = "<div class='errorMessage'> 
-                                    $errorMessage
-                                </div>";
-    }
+	        $newPassword2 = FormSanitizer::sanitizeFormPassword($_POST["newPassword2"]);
+	        
+	        if($account->updatePassword($oldPassword, $newPassword, $newPassword2, $userLoggedIn)) {
+	            header("Location: profile.php?password=success");
+	            exit();
+	        }
+	        else {
+	            $errorMessage = $account->getFirstError();
+	            header("Location: profile.php?password=error&password_message=" . urlencode($errorMessage));
+	            exit();
+	    }
 }
-
-    if(!$userLoggedIn){
-        header("Location: login.php");
-        exit();
-    }
 
     $user = new User($con, $userLoggedIn);
 
     if(isset($_POST["saveMediaButton"])) {
         $mediaResult = $user->updateProfileImages($_FILES["avatarImage"] ?? null, $_FILES["coverImage"] ?? null);
-        $mediaMessageClass = !empty($mediaResult["success"]) ? "successMessage" : "errorMessage";
+        $mediaQuery = !empty($mediaResult["success"]) ? "success" : "error";
         $mediaMessageText = $mediaResult["message"] ?? t("profile.image_upload_error");
-        $mediaMessage = "<div class='$mediaMessageClass'>" . htmlspecialchars($mediaMessageText, ENT_QUOTES, "UTF-8") . "</div>";
+        header("Location: profile.php?media=$mediaQuery&media_message=" . urlencode($mediaMessageText));
+        exit();
     }
 
     if(isset($_POST["activateTrialMembership"])) {
@@ -121,10 +113,41 @@
         $membershipMessage = "<div class='errorMessage'>" . htmlspecialchars(t("profile.cancel_error"), ENT_QUOTES, "UTF-8") . "</div>";
     }
 
-	    $firstName = isset($_POST["firstName"]) ? $_POST["firstName"] : $user->getFirstName();
-	    $lastName = isset($_POST["lastName"]) ? $_POST["lastName"] : $user->getLastName();
-	    $email= isset($_POST["email"]) ? $_POST["email"] : $user->getEmail();
-        $gender = isset($_POST["gender"]) ? $_POST["gender"] : $user->getGender();
+    $detailsState = $_GET["details"] ?? "";
+    if($detailsState === "success") {
+        $detailsMessage = "<div class='successMessage'>" . htmlspecialchars(t("profile.details_saved"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+    else if($detailsState === "error") {
+        $detailsMessageText = $_GET["details_message"] ?? "";
+        if($detailsMessageText !== "") {
+            $detailsMessage = "<div class='errorMessage'>" . htmlspecialchars($detailsMessageText, ENT_QUOTES, "UTF-8") . "</div>";
+        }
+    }
+
+    $passwordState = $_GET["password"] ?? "";
+    if($passwordState === "success") {
+        $passwordMessage = "<div class='successMessage'>" . htmlspecialchars(t("profile.password_changed"), ENT_QUOTES, "UTF-8") . "</div>";
+    }
+    else if($passwordState === "error") {
+        $passwordMessageText = $_GET["password_message"] ?? "";
+        if($passwordMessageText !== "") {
+            $passwordMessage = "<div class='errorMessage'>" . htmlspecialchars($passwordMessageText, ENT_QUOTES, "UTF-8") . "</div>";
+        }
+    }
+
+    $mediaState = $_GET["media"] ?? "";
+    if($mediaState === "success" || $mediaState === "error") {
+        $mediaMessageText = $_GET["media_message"] ?? "";
+        if($mediaMessageText !== "") {
+            $mediaMessageClass = $mediaState === "success" ? "successMessage" : "errorMessage";
+            $mediaMessage = "<div class='$mediaMessageClass'>" . htmlspecialchars($mediaMessageText, ENT_QUOTES, "UTF-8") . "</div>";
+        }
+    }
+
+		    $firstName = $user->getFirstName();
+		    $lastName = $user->getLastName();
+		    $email= $user->getEmail();
+	        $gender = $user->getGender();
             
 
     $displayName = trim($firstName . " " . $lastName);
@@ -136,9 +159,11 @@
     $coverPath = $user->getCoverPath();
     $safeAvatarPath = htmlspecialchars($avatarPath, ENT_QUOTES, "UTF-8");
     $safeCoverPath = htmlspecialchars($coverPath, ENT_QUOTES, "UTF-8");
-    $coverStyle = $coverPath
-        ? " style=\"background-image: linear-gradient(135deg, rgba(15, 15, 15, 0.18), rgba(15, 15, 15, 0.5)), url('" . $safeCoverPath . "');\""
-        : "";
+	    $coverStyle = $coverPath
+	        ? " style=\"background-image: linear-gradient(135deg, rgba(15, 15, 15, 0.18), rgba(15, 15, 15, 0.5)), url('" . $safeCoverPath . "');\""
+	        : "";
+
+    require_once("includes/header.php");
 ?>
 <link rel="stylesheet" href="assets/style/profile.css">
 <div class="profilePage">
@@ -205,23 +230,15 @@
                 <p class="membershipStatus<?php echo $membershipStatusClass; ?>"><?php echo htmlspecialchars($membershipStatusText, ENT_QUOTES, "UTF-8"); ?></p>
                 <?php echo $membershipMessage; ?>
 
-                <div class="membershipMenu">
-                    <button type="button" class="animatedSubscriptionButton membershipTrigger">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
-                            <path
-                            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                            ></path>
-                        </svg>
-                        <span class="text"><?php echo htmlspecialchars(t("profile.membership_cta"), ENT_QUOTES, "UTF-8"); ?></span>
-                        <span class="circle"></span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
-                            <path
-                            d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
-                            ></path>
-                        </svg>
-                    </button>
+	                <div class="membershipMenu">
+	                    <button type="button" class="navButton membershipTriggerButton membershipTrigger" aria-expanded="false" aria-controls="membershipOptions">
+	                        <span class="top-key"></span>
+	                        <span class="text"><?php echo htmlspecialchars(t("profile.membership_cta"), ENT_QUOTES, "UTF-8"); ?></span>
+	                        <span class="bottom-key-1"></span>
+	                        <span class="bottom-key-2"></span>
+	                    </button>
 
-                    <div class="membershipOptions">
+	                    <div id="membershipOptions" class="membershipOptions" aria-hidden="true">
                         <a href="paypal.php" class="membershipOption"><?php echo htmlspecialchars(t("profile.paypal_option"), ENT_QUOTES, "UTF-8"); ?></a>
                         <a href="momo.php" class="membershipOption"><?php echo htmlspecialchars(t("profile.momo_option"), ENT_QUOTES, "UTF-8"); ?></a>
                         <form method="POST" class="membershipTrialForm">

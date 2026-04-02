@@ -41,7 +41,7 @@ def load_interactions() -> pd.DataFrame:
         INNER JOIN users u ON u.username = w.username
         LEFT JOIN entityRatings r
             ON r.username = w.username
-           AND r.entityId = w.entityId
+        AND r.entityId = w.entityId
         WHERE r.id IS NULL
     """
 
@@ -70,7 +70,7 @@ def load_seen_entity_ids(user_id: int) -> set[int]:
         FROM videoprogress vp
         INNER JOIN videos v ON v.id = vp.videoId
         WHERE vp.username = (SELECT username FROM users WHERE id = :user_id)
-          AND vp.finished = 1
+        AND vp.finished = 1
     """
 
     wishlist_query = """

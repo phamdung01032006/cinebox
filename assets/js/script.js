@@ -178,6 +178,28 @@ function setWishlistMenuOpen(isOpen) {
     $menu.find(".wishlistDropdown").attr("aria-hidden", isOpen ? "false" : "true");
 }
 
+function setMembershipMenuOpen(isOpen) {
+    const $menu = $(".membershipMenu");
+    if (!$menu.length) {
+        return;
+    }
+
+    $menu.toggleClass("open", isOpen);
+    $menu.find(".membershipTrigger").attr("aria-expanded", isOpen ? "true" : "false");
+    $menu.find(".membershipOptions").attr("aria-hidden", isOpen ? "false" : "true");
+}
+
+function setMobileNavMenuOpen(isOpen) {
+    const $menu = $(".mobileNavMenu");
+    if (!$menu.length) {
+        return;
+    }
+
+    $menu.toggleClass("open", isOpen);
+    $menu.find(".mobileNavToggle").attr("aria-expanded", isOpen ? "true" : "false");
+    $menu.find(".mobileNavDropdown").attr("aria-hidden", isOpen ? "false" : "true");
+}
+
 function updateWishlistCount(count) {
     const $badge = $("#wishlistCountBadge");
     if (!$badge.length) {
@@ -266,6 +288,28 @@ $(document).on("click", ".wishlistToggle", function(event) {
 });
 
 $(document).on("click", ".wishlistDropdown", function(event) {
+    event.stopPropagation();
+});
+
+$(document).on("click", ".membershipTrigger", function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const shouldOpen = !$(this).closest(".membershipMenu").hasClass("open");
+    setMembershipMenuOpen(shouldOpen);
+});
+
+$(document).on("click", ".membershipOptions", function(event) {
+    event.stopPropagation();
+});
+
+$(document).on("click", ".mobileNavToggle", function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const shouldOpen = !$(this).closest(".mobileNavMenu").hasClass("open");
+    setMobileNavMenuOpen(shouldOpen);
+});
+
+$(document).on("click", ".mobileNavDropdown", function(event) {
     event.stopPropagation();
 });
 
@@ -450,17 +494,15 @@ function showNavBar() { $(".topBar").removeClass("isHidden"); }
 
 // Tắt dropdown menu khi bấm ra ngoài cửa sổ dropdown
 document.addEventListener('click', function (e) {
-  // Tìm tất cả các thẻ details đang mở
-  const details = document.querySelectorAll('details[open]');
-  
-  details.forEach(detail => {
-    // Nếu vị trí click KHÔNG nằm bên trong thẻ details đó
-    if (!detail.contains(e.target)) {
-      detail.removeAttribute('open');
-    }
-  });
-
   if (!e.target.closest('.wishlistMenu')) {
     setWishlistMenuOpen(false);
+  }
+
+  if (!e.target.closest('.membershipMenu')) {
+    setMembershipMenuOpen(false);
+  }
+
+  if (!e.target.closest('.mobileNavMenu')) {
+    setMobileNavMenuOpen(false);
   }
 });

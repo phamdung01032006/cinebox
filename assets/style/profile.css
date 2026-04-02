@@ -206,6 +206,33 @@
 .membershipMenu{
     position: relative;
     width: 100%;
+    --dropdown-accent: rgba(255, 170, 84, 0.95);
+    --dropdown-border: rgba(255, 228, 196, 0.18);
+    --dropdown-surface: linear-gradient(180deg, rgba(27, 13, 3, 0.96), rgba(10, 10, 10, 0.96));
+    --dropdown-surface-soft: rgba(255, 255, 255, 0.06);
+    --dropdown-shadow: 0 22px 48px rgba(0, 0, 0, 0.38);
+    --dropdown-cubic: cubic-bezier(0.33, 1, 0.68, 1);
+    --dropdown-spring: linear(
+        0,
+        0.008 1.1%,
+        0.034 2.3%,
+        0.134 4.9%,
+        0.264 7.3%,
+        0.683 14.3%,
+        0.797 16.5%,
+        0.89 18.6%,
+        0.967 20.7%,
+        1.027 22.8%,
+        1.073 25%,
+        1.104 27.3%,
+        1.123 30.6%,
+        1.119 34.3%,
+        1.018 49.5%,
+        0.988 58.6%,
+        0.985 65.2%,
+        1 84.5%,
+        1
+    );
 }
 
 .membershipTrigger{
@@ -213,27 +240,99 @@
     justify-content: center;
 }
 
+.membershipTriggerButton {
+    width: 100%;
+    float: none;
+    display: block;
+    margin-right: 0;
+    padding: 0.7em 1.5em;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+}
+
+.membershipTriggerButton .text {
+    text-align: center;
+    padding-left: 1.8em;
+}
+
+.membershipTriggerButton::before {
+    left: 1.2em;
+}
+
+.membershipTriggerButton:hover,
+.membershipMenu.open .membershipTriggerButton {
+    background: rgba(255, 170, 84, 0.12);
+    border-color: rgba(255, 198, 138, 0.72);
+    box-shadow: 0 0 0 2px rgba(255, 232, 203, 0.18);
+}
+
+.membershipMenu.open .membershipTriggerButton::before,
+.membershipTriggerButton:hover::before {
+    width: 0.9rem;
+    background: rgba(255, 226, 194, 0.96);
+}
+
+.membershipMenu.open .membershipTriggerButton .text,
+.membershipTriggerButton:hover .text {
+    color: rgba(255, 245, 234, 0.98);
+}
+
+.membershipMenu.open .membershipTriggerButton .top-key,
+.membershipTriggerButton:hover .top-key {
+    left: 1.1rem;
+    width: 0.7rem;
+}
+
+.membershipMenu.open .membershipTriggerButton .bottom-key-1,
+.membershipMenu.open .membershipTriggerButton .bottom-key-2,
+.membershipTriggerButton:hover .bottom-key-1,
+.membershipTriggerButton:hover .bottom-key-2 {
+    width: 0.7rem;
+    right: 1rem;
+}
+
 .membershipOptions{
     position: absolute;
     top: 100%;
     left: 0;
     width: 100%;
-    padding-top: 12px;
+    padding-top: 14px;
     display: flex;
     flex-direction: column;
     gap: 8px;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(8px);
-    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+    transform: translateY(-16px) scaleY(0.84);
+    transform-origin: top center;
+    transition: opacity 320ms var(--dropdown-cubic), transform 520ms var(--dropdown-spring), visibility 0.2s ease;
     z-index: 20;
+    padding-inline: 8px;
+    border-radius: 22px;
+    border: 1px solid var(--dropdown-border);
+    background: var(--dropdown-surface);
+    box-shadow: var(--dropdown-shadow);
+    backdrop-filter: blur(18px);
 }
 
-.membershipMenu:hover .membershipOptions,
-.membershipMenu:focus-within .membershipOptions{
+.membershipMenu.open .membershipOptions{
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: translateY(0) scaleY(1);
+    animation: profileDropdownPanelIn 0.52s var(--dropdown-spring);
+    padding: 14px;
+}
+
+.membershipOptions::before{
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 28px;
+    width: 14px;
+    height: 14px;
+    background: rgba(28, 15, 5, 0.96);
+    border-left: 1px solid var(--dropdown-border);
+    border-top: 1px solid var(--dropdown-border);
+    transform: rotate(45deg);
 }
 
 .membershipOption,
@@ -245,21 +344,42 @@
     min-height: 46px;
     padding: 12px 18px;
     border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: rgba(14, 14, 14, 0.92);
+    border: 1px solid transparent;
+    background: var(--dropdown-surface-soft);
     color: #ffffff;
     text-decoration: none;
     font-size: 14px;
     font-weight: 700;
     backdrop-filter: blur(14px);
-    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    transition: background 0.2s ease, transform 420ms var(--dropdown-spring), border-color 0.2s ease, opacity 260ms ease;
+    opacity: 0;
+    transform: translateY(12px);
+}
+
+.membershipMenu.open .membershipOption,
+.membershipMenu.open .membershipOptionButton {
+    opacity: 1;
+    transform: translateY(0);
+    animation: profileDropdownItemIn 0.42s ease forwards;
+}
+
+.membershipMenu.open .membershipOption:nth-child(2),
+.membershipMenu.open .membershipOptionButton:nth-child(2) {
+    transition-delay: 0.04s;
+    animation-delay: 0.04s;
+}
+
+.membershipMenu.open .membershipOption:nth-child(3),
+.membershipMenu.open .membershipOptionButton:nth-child(3) {
+    transition-delay: 0.08s;
+    animation-delay: 0.08s;
 }
 
 .membershipOption:hover,
 .membershipOptionButton:hover{
-    background: rgba(255, 170, 84, 0.18);
-    border-color: rgba(255, 214, 170, 0.35);
-    transform: translateY(-1px);
+    background: rgba(255, 170, 84, 0.12);
+    border-color: rgba(255, 214, 170, 0.24);
+    transform: translateX(2px);
 }
 
 .membershipTrialForm{
@@ -294,6 +414,28 @@
     background: rgba(126, 28, 28, 0.92);
     border-color: rgba(255, 170, 170, 0.45);
     transform: translateY(-1px);
+}
+
+@keyframes profileDropdownItemIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes profileDropdownPanelIn {
+    from {
+        opacity: 0;
+        transform: translateY(-16px) scaleY(0.84);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+    }
 }
 
 .profileGridForm{
@@ -376,7 +518,6 @@
         grid-template-columns: 1fr;
     }
 
-    .profileMediaPreview.avatarPreview,
     .profileMediaPreview.coverPreview{
         width: 100%;
     }
@@ -413,7 +554,8 @@ h3[class="updateProfile"] {
     background: none;
 }
 
-/* 2 nút bấm ở trang User Profile */
+/* 3 nút bấm ở trang User Profile */
+button[name="saveMediaButton"],
 button[name="saveDetailsButton"],
 button[name="savePasswordButton"] {
     background: linear-gradient(135deg, rgba(252, 160, 68, 0.8), rgba(132, 132, 132, 0.8));
@@ -424,7 +566,7 @@ button[name="savePasswordButton"] {
     font-weight: bold;
     margin-top: 10px;
     margin-bottom: 20px;
-    font-size: 16px;
+    font-size: 14px;
     align-self: flex-end;
     cursor: pointer;
     position: relative;
@@ -483,95 +625,6 @@ button[name="savePasswordButton"] {
 }
 
 /* Nút subscription ở profile */
-.animatedSubscriptionButton {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 32px;
-    border: 4px solid;
-    border-color: transparent;
-    font-size: 16px;
-    background-color: inherit;
-    border-radius: 100px;
-    font-weight: 600;
-    color: white;
-    box-shadow: 0 0 0 2px white;
-    cursor: pointer;
-    overflow: hidden;
-    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-    margin-right: 5px;
-    }
-
-.animatedSubscriptionButton svg {
-    position: absolute;
-    width: 24px;
-    fill: white;
-    z-index: 9;
-    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.animatedSubscriptionButton .arr-1 {
-    right: 16px;
-}
-
-.animatedSubscriptionButton .arr-2 {
-    left: -25%;
-}
-
-.animatedSubscriptionButton .circle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 20px;
-    height: 20px;
-    background-color: white;
-    border-radius: 50%;
-    opacity: 0;
-    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.animatedSubscriptionButton .text {
-    position: relative;
-    z-index: 1;
-    transform: translateX(-12px);
-    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.animatedSubscriptionButton:hover {
-    box-shadow: 0 0 0 12px transparent;
-    color: black;
-    border-radius: 12px;
-}
-
-.animatedSubscriptionButton:hover .arr-1 {
-    right: -25%;
-}
-
-.animatedSubscriptionButton:hover .arr-2 {
-    left: 16px;
-}
-
-.animatedSubscriptionButton:hover .text {
-    transform: translateX(12px);
-}
-
-.animatedSubscriptionButton:hover svg {
-    fill: #212121;
-}
-
-.animatedSubscriptionButton:active {
-    scale: 0.95;
-    box-shadow: 0 0 0 4px white;
-}
-
-.animatedSubscriptionButton:hover .circle {
-    width: 220px;
-    height: 220px;
-    opacity: 1;
-}
-
 @media (max-width: 900px){
     .subscriptionButtons{
         width: 100%;

@@ -60,14 +60,25 @@ $clientTranslations = [
             </a>
         </div>
 
-        <details class="dropdown">
-            <summary><?php echo htmlspecialchars(t("nav.menu")); ?></summary>
-            <ul>
-                <li><a href="index.php"><?php echo htmlspecialchars(t("nav.home")); ?></a></li>
-                <li><a href="shows.php"><?php echo htmlspecialchars(t("nav.tv_shows")); ?></a></li>
-                <li><a href="movies.php"><?php echo htmlspecialchars(t("nav.movies")); ?></a></li>
-            </ul>
-        </details>
+        <div class="mobileNavMenu">
+            <button
+                type="button"
+                class="mobileNavToggle"
+                title="<?php echo htmlspecialchars(t("nav.menu")); ?>"
+                aria-label="<?php echo htmlspecialchars(t("nav.menu")); ?>"
+                aria-expanded="false"
+                aria-controls="mobileNavDropdown"
+            >
+                <span><?php echo htmlspecialchars(t("nav.menu")); ?></span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+
+            <div id="mobileNavDropdown" class="mobileNavDropdown" aria-hidden="true">
+                <a href="index.php" class="mobileNavLink"><?php echo htmlspecialchars(t("nav.home")); ?></a>
+                <a href="shows.php" class="mobileNavLink"><?php echo htmlspecialchars(t("nav.tv_shows")); ?></a>
+                <a href="movies.php" class="mobileNavLink"><?php echo htmlspecialchars(t("nav.movies")); ?></a>
+            </div>
+        </div>
 
         <a class="navButton" href="index.php">
             <span class="top-key"></span>
