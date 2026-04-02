@@ -315,7 +315,6 @@
                     <label for="newPassword2"><?php echo htmlspecialchars(t("profile.confirm_new_password")); ?></label>
                     <input type="password" id="newPassword2" name="newPassword2" placeholder="<?php echo htmlspecialchars(t("profile.confirm_new_password")); ?>">
                     </div>
-
                     <div class="profileActions full">
                     <div class="message">
                         <?php echo $passwordMessage; ?>
