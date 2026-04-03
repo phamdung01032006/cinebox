@@ -8,6 +8,8 @@ class RecommendationProvider {
             return;
         }
 
+        self::ensureUtf8ContentTables($con);
+
         $con->exec("
             CREATE TABLE IF NOT EXISTS entityRatings (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -35,11 +37,39 @@ class RecommendationProvider {
         ");
 
         $con->exec("
+            CREATE TABLE IF NOT EXISTS tags (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(120) NOT NULL,
+                slug VARCHAR(140) NOT NULL,
+                tagType VARCHAR(50) NOT NULL,
+                searchTerms TEXT DEFAULT NULL,
+                createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE KEY unique_tag_slug (slug),
+                KEY idx_tags_type (tagType)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        ");
+
+        $con->exec("
+            CREATE TABLE IF NOT EXISTS entityTags (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                entityId INT NOT NULL,
+                tagId INT NOT NULL,
+                createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE KEY unique_entity_tag (entityId, tagId),
+                KEY idx_entity_tags_entity (entityId),
+                KEY idx_entity_tags_tag (tagId)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        ");
+
+        $con->exec("
             INSERT IGNORE INTO entityCategories(entityId, categoryId)
             SELECT id, categoryId
             FROM entities
             WHERE categoryId IS NOT NULL
         ");
+
+        self::seedTags($con);
+        self::syncEntityTags($con);
 
         $isReady = true;
     }
@@ -74,8 +104,8 @@ class RecommendationProvider {
         $placeholders = implode(",", array_fill(0, count($seedIds), "?"));
 
         $tagQuery = $con->prepare("
-            SELECT entityId, categoryId
-            FROM entityCategories
+            SELECT entityId, tagId
+            FROM entityTags
             WHERE entityId IN ($placeholders)
         ");
         foreach($seedIds as $index => $entityId) {
@@ -85,8 +115,8 @@ class RecommendationProvider {
 
         while($row = $tagQuery->fetch(PDO::FETCH_ASSOC)) {
             $entityId = (int)$row["entityId"];
-            $categoryId = (int)$row["categoryId"];
-            $tagWeights[$categoryId] = ($tagWeights[$categoryId] ?? 0) + ($seedScores[$entityId] ?? 0);
+            $tagId = (int)$row["tagId"];
+            $tagWeights[$tagId] = ($tagWeights[$tagId] ?? 0) + ($seedScores[$entityId] ?? 0);
         }
 
         if(empty($tagWeights)) {
@@ -141,8 +171,8 @@ class RecommendationProvider {
 
     private static function scoreEntity($con, $entityId, $tagWeights, $gender) {
         $query = $con->prepare("
-            SELECT categoryId
-            FROM entityCategories
+            SELECT tagId
+            FROM entityTags
             WHERE entityId = :entityId
         ");
         $query->bindValue(":entityId", $entityId, PDO::PARAM_INT);
@@ -150,8 +180,8 @@ class RecommendationProvider {
 
         $score = 0.0;
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
-            $categoryId = (int)$row["categoryId"];
-            $score += $tagWeights[$categoryId] ?? 0;
+            $tagId = (int)$row["tagId"];
+            $score += $tagWeights[$tagId] ?? 0;
         }
 
         $avgQuery = $con->prepare("
@@ -180,6 +210,224 @@ class RecommendationProvider {
         }
 
         return $score;
+    }
+
+    private static function ensureUtf8ContentTables($con) {
+        $tables = ["categories", "entities", "videos"];
+
+        foreach($tables as $table) {
+            $query = $con->prepare("
+                SELECT TABLE_COLLATION
+                FROM information_schema.TABLES
+                WHERE TABLE_SCHEMA = DATABASE()
+                AND TABLE_NAME = :tableName
+                LIMIT 1
+            ");
+            $query->bindValue(":tableName", $table);
+            $query->execute();
+
+            $collation = (string)($query->fetchColumn() ?: "");
+            if(stripos($collation, "utf8mb4_") === 0) {
+                continue;
+            }
+
+            $con->exec("ALTER TABLE `$table` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci");
+        }
+    }
+
+    private static function seedTags($con) {
+        $tags = [
+            ["Action & Adventure", "action-adventure", "genre", "action, adventure, hanh dong, phieu luu, truy duoi"],
+            ["Comedy", "comedy", "genre", "comedy, funny, hai, hai huoc"],
+            ["Drama", "drama", "genre", "drama, chinh kich, tinh cam"],
+            ["Horror", "horror", "genre", "horror, kinh di, supernatural, sieu nhien"],
+            ["Romance", "romance", "genre", "romance, lang man, ngon tinh, tinh cam"],
+            ["Sci-Fi & Fantasy", "sci-fi-fantasy", "genre", "science fiction, fantasy, vien tuong, ky ao, phep thuat"],
+            ["Thriller", "thriller", "genre", "thriller, giat gan, cang thang, tam ly toi pham"],
+            ["Documentary", "documentary", "genre", "documentary, tai lieu, based on true story, su kien co that"],
+            ["Sports", "sports", "genre", "sports, the thao, thi dau"],
+            ["Anime", "anime", "genre", "anime, hoat hinh nhat ban"],
+            ["Cartoon", "cartoon", "genre", "cartoon, hoat hinh"],
+            ["Family", "family", "audience", "family, gia dinh, kids, tre em"],
+            ["Teens", "teens", "audience", "teens, teen, thanh thieu nien, tuoi moi lon"],
+            ["Adults", "adults", "audience", "adults, nguoi lon, 18+"],
+            ["Funny", "funny", "mood", "funny, vui nhon, hai huoc, giai tri"],
+            ["Lighthearted", "lighthearted", "mood", "lighthearted, nhe nhang, de thuong"],
+            ["Heartwarming", "heartwarming", "mood", "heartwarming, healing, chua lanh, am ap"],
+            ["Emotional", "emotional", "mood", "emotional, dau long, cam dong, tearjerker"],
+            ["Suspenseful", "suspenseful", "mood", "suspenseful, cang thang, gay can"],
+            ["Dark", "dark", "mood", "dark, tam toi, am anh"],
+            ["Imaginative", "imaginative", "mood", "imaginative, hack nao, mind-bending, the gioi song song"],
+            ["Nostalgic", "nostalgic", "mood", "nostalgic, hoai co, co dien"],
+            ["Inspiring", "inspiring", "mood", "inspiring, truyen cam hung, vuon len"],
+            ["Friendship", "friendship", "content", "friendship, tinh ban, dong doi"],
+            ["Coming of Age", "coming-of-age", "content", "coming of age, thanh xuan, truong hoc, school life"],
+            ["Adventure", "adventure", "content", "adventure, phieu luu, hanh trinh"],
+            ["Crime", "crime", "content", "crime, toi pham, dieu tra"],
+            ["True Story", "true-story", "content", "true story, chuyen co that, su kien co that"],
+            ["Holiday", "holiday", "content", "holiday, christmas, giang sinh, le hoi"],
+            ["Musical", "musical", "content", "musical, am nhac, ca nhac"],
+            ["Movie", "movie-format", "metadata", "movie, phim le, feature film"],
+            ["Series", "series-format", "metadata", "series, phim bo, tv show"],
+            ["Trending", "trending", "metadata", "trending, xu huong, hot"],
+            ["Most Viewed", "most-viewed", "metadata", "most viewed, xem nhieu, pho bien"],
+            ["New Release", "new-release", "metadata", "new, moi phat hanh, moi nhat"],
+            ["Classic", "classic-tag", "metadata", "classic, co dien, bat hu"],
+            ["Independent", "independent", "metadata", "independent, indie, doc lap"],
+            ["Foreign", "foreign", "metadata", "foreign, quoc te, nuoc ngoai"]
+        ];
+
+        $insert = $con->prepare("
+            INSERT INTO tags(name, slug, tagType, searchTerms)
+            VALUES(:name, :slug, :tagType, :searchTerms)
+            ON DUPLICATE KEY UPDATE
+                name = VALUES(name),
+                tagType = VALUES(tagType),
+                searchTerms = VALUES(searchTerms)
+        ");
+
+        foreach($tags as $tag) {
+            $insert->bindValue(":name", $tag[0]);
+            $insert->bindValue(":slug", $tag[1]);
+            $insert->bindValue(":tagType", $tag[2]);
+            $insert->bindValue(":searchTerms", $tag[3]);
+            $insert->execute();
+        }
+    }
+
+    private static function syncEntityTags($con) {
+        $tagIdMap = [];
+        foreach($con->query("SELECT id, slug FROM tags") as $row) {
+            $tagIdMap[$row["slug"]] = (int)$row["id"];
+        }
+
+        if(empty($tagIdMap)) {
+            return;
+        }
+
+        $topViewedIds = self::getTopEntityIdsByMetric($con, "views", 10);
+        $newestIds = self::getTopEntityIdsByMetric($con, "newest", 10);
+        $topViewedLookup = array_fill_keys($topViewedIds, true);
+        $newestLookup = array_fill_keys($newestIds, true);
+
+        $sql = "
+            SELECT
+                e.id,
+                c.name AS categoryName,
+                COALESCE(MAX(v.isMovie), 0) AS isMovie,
+                MAX(v.releaseDate) AS latestReleaseDate,
+                COALESCE(SUM(v.views), 0) AS totalViews
+            FROM entities e
+            LEFT JOIN categories c ON c.id = e.categoryId
+            LEFT JOIN videos v ON v.entityId = e.id
+            GROUP BY e.id, c.name
+        ";
+
+        $insert = $con->prepare("
+            INSERT IGNORE INTO entityTags(entityId, tagId)
+            VALUES(:entityId, :tagId)
+        ");
+
+        foreach($con->query($sql) as $row) {
+            $entityId = (int)$row["id"];
+            $categoryName = (string)($row["categoryName"] ?? "");
+            $latestReleaseDate = (string)($row["latestReleaseDate"] ?? "");
+            $totalViews = (int)($row["totalViews"] ?? 0);
+
+            $slugs = self::getDefaultTagSlugsForEntity(
+                $categoryName,
+                (int)($row["isMovie"] ?? 0) === 1,
+                $latestReleaseDate,
+                $totalViews,
+                isset($topViewedLookup[$entityId]),
+                isset($newestLookup[$entityId])
+            );
+
+            foreach($slugs as $slug) {
+                if(!isset($tagIdMap[$slug])) {
+                    continue;
+                }
+
+                $insert->bindValue(":entityId", $entityId, PDO::PARAM_INT);
+                $insert->bindValue(":tagId", $tagIdMap[$slug], PDO::PARAM_INT);
+                $insert->execute();
+            }
+        }
+    }
+
+    private static function getDefaultTagSlugsForEntity($categoryName, $isMovie, $latestReleaseDate, $totalViews, $isTopViewed, $isNewest) {
+        $slugs = [$isMovie ? "movie-format" : "series-format"];
+
+        $categoryTagMap = [
+            "Action & adventure" => ["action-adventure", "adventure", "suspenseful", "teens"],
+            "Classic" => ["classic-tag", "nostalgic", "drama", "adults"],
+            "Comedies" => ["comedy", "funny", "lighthearted", "friendship"],
+            "Dramas" => ["drama", "emotional", "adults", "heartwarming"],
+            "Horror" => ["horror", "dark", "suspenseful", "adults"],
+            "Romantic" => ["romance", "emotional", "heartwarming", "adults"],
+            "Sci - Fi & Fantasy" => ["sci-fi-fantasy", "imaginative", "adventure", "teens"],
+            "Sports" => ["sports", "inspiring", "teens", "friendship"],
+            "Thrillers" => ["thriller", "crime", "suspenseful", "dark"],
+            "Documentaries" => ["documentary", "true-story", "adults", "inspiring"],
+            "Teen" => ["teens", "coming-of-age", "friendship", "lighthearted"],
+            "Children & family" => ["family", "heartwarming", "lighthearted", "kids"],
+            "Anime" => ["anime", "imaginative", "friendship", "teens"],
+            "Independent" => ["independent", "drama", "emotional", "adults"],
+            "Foreign" => ["foreign", "drama", "emotional", "adults"],
+            "Music" => ["musical", "heartwarming", "nostalgic", "lighthearted"],
+            "Christmas" => ["holiday", "family", "heartwarming", "lighthearted"],
+            "Others" => ["drama", "adults", "friendship"],
+            "Cartoon" => ["cartoon", "kids", "lighthearted", "friendship"]
+        ];
+
+        if(isset($categoryTagMap[$categoryName])) {
+            $slugs = array_merge($slugs, $categoryTagMap[$categoryName]);
+        }
+
+        if($isTopViewed || $totalViews > 0) {
+            $slugs[] = "most-viewed";
+        }
+
+        if($isTopViewed) {
+            $slugs[] = "trending";
+        }
+
+        if($isNewest) {
+            $slugs[] = "new-release";
+        }
+
+        $releaseYear = (int)substr((string)$latestReleaseDate, 0, 4);
+        if($releaseYear > 0 && $releaseYear <= 2005) {
+            $slugs[] = "nostalgic";
+        }
+        elseif($releaseYear >= 2015) {
+            $slugs[] = "new-release";
+        }
+
+        if(!$isMovie) {
+            $slugs[] = "friendship";
+        }
+
+        return array_values(array_unique($slugs));
+    }
+
+    private static function getTopEntityIdsByMetric($con, $metric, $limit) {
+        $orderSql = $metric === "newest"
+            ? "MAX(v.releaseDate) DESC, MAX(v.uploadDate) DESC, e.id DESC"
+            : "SUM(v.views) DESC, MAX(v.releaseDate) DESC, e.id DESC";
+
+        $query = $con->prepare("
+            SELECT e.id
+            FROM entities e
+            INNER JOIN videos v ON v.entityId = e.id
+            GROUP BY e.id
+            ORDER BY $orderSql
+            LIMIT :limit
+        ");
+        $query->bindValue(":limit", (int)$limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return array_map("intval", $query->fetchAll(PDO::FETCH_COLUMN));
     }
 }
 

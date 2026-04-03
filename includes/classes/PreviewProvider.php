@@ -54,9 +54,11 @@ class PreviewProvider {
         $preview = $entity->getPreview();
         $thumbnail = $entity->getThumbnail();
 
-        $safePreview = htmlspecialchars($preview, ENT_QUOTES, 'UTF-8');
-        $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
-        $wishlistButton = $this->createWishlistButton($id, "featuredWishlistBtn");
+	        $safePreview = htmlspecialchars($preview, ENT_QUOTES, 'UTF-8');
+	        $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+	        $wishlistButton = $this->createWishlistButton($id, "featuredWishlistBtn");
+            $previewTags = $entity->getPreviewTags();
+            $previewTagsHtml = $previewTags !== "" ? "<div class='previewTags' title='" . strip_tags($previewTags) . "'>$previewTags</div>" : "";
 
         $videoId = VideoProvider::getPlayableEntityVideoForUser($this->con, $id, $this->username);
         if(!$videoId) {
@@ -97,10 +99,11 @@ class PreviewProvider {
 
                 <div class='mainDetails'>
 
-                    <h3>$name</h3>
-                    <h4>$title</h4>
-                    $subHeading
-                    $accessNotice
+	                    <h3>$name</h3>
+	                    <h4>$title</h4>
+                        $previewTagsHtml
+	                    $subHeading
+	                    $accessNotice
 	                    <div class='button'>
 	                    
 		                        <button class='$playButtonClass' onclick=\"$playButtonAction\"><i class='$playButtonIcon'></i> $playButtonText</button>

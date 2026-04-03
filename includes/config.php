@@ -12,8 +12,9 @@ if(empty($_SESSION["siteLanguage"])) {
 date_default_timezone_set("Asia/Ho_Chi_Minh");
 // kết nối đến database có tên là cinebox ở mysql
 try {
-    $con = new PDO("mysql:dbname=cinebox;host=localhost", "root","");
+    $con = new PDO("mysql:dbname=cinebox;host=localhost;charset=utf8mb4", "root","");
     $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+    $con->exec("SET NAMES utf8mb4 COLLATE utf8mb4_general_ci");
 } catch(PDOException $e) {
     exit("Connection failed: ". $e->getMessage());
 }

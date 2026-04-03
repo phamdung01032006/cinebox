@@ -91,16 +91,29 @@ class EntityProvider {
 
     public static function getSearchEntities($con, $term) {
 
+        RecommendationProvider::ensureSchema($con);
+
+        $term = trim((string)$term);
+        if($term === "") {
+            return [];
+        }
+
         $sql = "SELECT DISTINCT e.*
                 FROM entities e
                 LEFT JOIN categories c ON c.id = e.categoryId
-                WHERE e.name LIKE CONCAT('%', :entityTerm, '%')
-                OR c.name LIKE CONCAT('%', :categoryTerm, '%')
+                LEFT JOIN entityTags et ON et.entityId = e.id
+                LEFT JOIN tags t ON t.id = et.tagId
+                WHERE CONVERT(e.name USING utf8mb4) COLLATE utf8mb4_general_ci LIKE CONCAT('%', :entityTerm, '%')
+                OR CONVERT(c.name USING utf8mb4) COLLATE utf8mb4_general_ci LIKE CONCAT('%', :categoryTerm, '%')
+                OR t.name COLLATE utf8mb4_general_ci LIKE CONCAT('%', :tagTerm, '%')
+                OR COALESCE(t.searchTerms, '') COLLATE utf8mb4_general_ci LIKE CONCAT('%', :tagSearchTerms, '%')
                 ORDER BY
                     CASE
-                        WHEN e.name LIKE CONCAT(:entityPrefix, '%') THEN 0
-                        WHEN c.name LIKE CONCAT(:categoryPrefix, '%') THEN 1
-                        ELSE 2
+                        WHEN CONVERT(e.name USING utf8mb4) COLLATE utf8mb4_general_ci LIKE CONCAT(:entityPrefix, '%') THEN 0
+                        WHEN CONVERT(c.name USING utf8mb4) COLLATE utf8mb4_general_ci LIKE CONCAT(:categoryPrefix, '%') THEN 1
+                        WHEN t.name COLLATE utf8mb4_general_ci LIKE CONCAT(:tagPrefix, '%') THEN 2
+                        WHEN COALESCE(t.searchTerms, '') COLLATE utf8mb4_general_ci LIKE CONCAT('%', :tagSearchPrefix, '%') THEN 3
+                        ELSE 4
                     END,
                     e.name ASC
                 LIMIT 30";
@@ -109,8 +122,12 @@ class EntityProvider {
 
         $query->bindValue(":entityTerm", $term);
         $query->bindValue(":categoryTerm", $term);
+        $query->bindValue(":tagTerm", $term);
+        $query->bindValue(":tagSearchTerms", $term);
         $query->bindValue(":entityPrefix", $term);
         $query->bindValue(":categoryPrefix", $term);
+        $query->bindValue(":tagPrefix", $term);
+        $query->bindValue(":tagSearchPrefix", $term);
         $query->execute();
 
         $result = array();
@@ -119,6 +136,16 @@ class EntityProvider {
         }
 
         return $result;
+    }
+
+    public static function getMostViewedEntities($con, $limit = 10, $movies = true, $tvShows = true) {
+
+        return self::getEntitiesByAggregateMetric($con, "views", $limit, $movies, $tvShows);
+    }
+
+    public static function getNewestEntities($con, $limit = 10, $movies = true, $tvShows = true) {
+
+        return self::getEntitiesByAggregateMetric($con, "newest", $limit, $movies, $tvShows);
     }
 
     public static function getRecommendedEntitiesForUser($con, $username, $limit = 30, $movies = true, $tvShows = true) {
@@ -209,20 +236,41 @@ class EntityProvider {
         $query = $con->prepare("
             SELECT e.id
             FROM entities e
+            LEFT JOIN entityTags et ON et.entityId = e.id
             LEFT JOIN entityRatings r ON r.entityId = e.id
-            WHERE e.categoryId = (
-                SELECT categoryId
-                FROM entities
-                WHERE id = :sourceEntityId
+            WHERE e.id <> :currentEntityId
+            AND (
+                EXISTS (
+                    SELECT 1
+                    FROM entityTags sourceTags
+                    WHERE sourceTags.entityId = :sourceEntityId
+                    AND sourceTags.tagId = et.tagId
+                )
+                OR e.categoryId = (
+                    SELECT categoryId
+                    FROM entities
+                    WHERE id = :sourceCategoryEntityId
+                )
             )
-            AND e.id <> :currentEntityId
             $typeSql
             GROUP BY e.id
-            ORDER BY COALESCE(AVG(r.rating), 0) DESC, e.id DESC
+            ORDER BY
+                COUNT(DISTINCT CASE
+                    WHEN EXISTS (
+                        SELECT 1
+                        FROM entityTags sourceTags
+                        WHERE sourceTags.entityId = :sourceTagEntityId
+                        AND sourceTags.tagId = et.tagId
+                    ) THEN et.tagId
+                END) DESC,
+                COALESCE(AVG(r.rating), 0) DESC,
+                e.id DESC
             LIMIT :limit
         ");
 
         $query->bindValue(":sourceEntityId", $entityId, PDO::PARAM_INT);
+        $query->bindValue(":sourceCategoryEntityId", $entityId, PDO::PARAM_INT);
+        $query->bindValue(":sourceTagEntityId", $entityId, PDO::PARAM_INT);
         $query->bindValue(":currentEntityId", $entityId, PDO::PARAM_INT);
         if($isMovie !== null) {
             $query->bindValue(":isMovie", $isMovie ? 1 : 0, PDO::PARAM_INT);
@@ -429,14 +477,14 @@ class EntityProvider {
         }
 
         $query = $con->prepare("
-            SELECT DISTINCT e.id
+            SELECT e.id
             FROM entities e
-            INNER JOIN entityCategories ec ON ec.entityId = e.id
+            INNER JOIN entityTags et ON et.entityId = e.id
             WHERE e.id <> :seedEntityId
-            AND ec.categoryId IN (
-                SELECT seedCategories.categoryId
-                FROM entityCategories seedCategories
-                WHERE seedCategories.entityId = :seedCategoryEntityId
+            AND et.tagId IN (
+                SELECT seedTags.tagId
+                FROM entityTags seedTags
+                WHERE seedTags.entityId = :seedTagEntityId
             )
             AND e.id NOT IN (
                 SELECT rated.entityId
@@ -456,12 +504,13 @@ class EntityProvider {
                 AND watchedProgress.finished = 1
             )
             $typeSql
-            ORDER BY RAND()
+            GROUP BY e.id
+            ORDER BY COUNT(DISTINCT et.tagId) DESC, RAND()
             LIMIT :limit
         ");
 
         $query->bindValue(":seedEntityId", (int)$seedEntityId, PDO::PARAM_INT);
-        $query->bindValue(":seedCategoryEntityId", (int)$seedEntityId, PDO::PARAM_INT);
+        $query->bindValue(":seedTagEntityId", (int)$seedEntityId, PDO::PARAM_INT);
         $query->bindValue(":ratedUsername", $username);
         $query->bindValue(":wishlistUsername", $username);
         $query->bindValue(":watchedUsername", $username);
@@ -523,6 +572,41 @@ class EntityProvider {
         $query->execute();
 
         return array_map("intval", $query->fetchAll(PDO::FETCH_COLUMN));
+    }
+
+    private static function getEntitiesByAggregateMetric($con, $metric, $limit, $movies, $tvShows) {
+
+        RecommendationProvider::ensureSchema($con);
+
+        $limit = (int)$limit;
+        if($limit <= 0) {
+            return [];
+        }
+
+        $typeSql = "";
+        if($movies xor $tvShows) {
+            $typeSql = "AND v.isMovie = " . ($movies ? "1" : "0");
+        }
+
+        $orderSql = $metric === "newest"
+            ? "MAX(v.releaseDate) DESC, MAX(v.uploadDate) DESC, e.id DESC"
+            : "SUM(v.views) DESC, MAX(v.releaseDate) DESC, e.id DESC";
+
+        $query = $con->prepare("
+            SELECT e.id
+            FROM entities e
+            INNER JOIN videos v ON v.entityId = e.id
+            WHERE 1 = 1
+            $typeSql
+            GROUP BY e.id
+            ORDER BY $orderSql
+            LIMIT :limit
+        ");
+        $query->bindValue(":limit", $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        $entityIds = array_map("intval", $query->fetchAll(PDO::FETCH_COLUMN));
+        return self::getEntitiesByIds($con, $entityIds, $movies, $tvShows);
     }
 
 }

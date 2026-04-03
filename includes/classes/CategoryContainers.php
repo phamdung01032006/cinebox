@@ -23,6 +23,9 @@ class CategoryContainers {
             $html .= $this->getBecauseYouWatchedCategoryHtml(true, true);
         }
 
+        $html .= $this->getMostViewedCategoryHtml(true, true);
+        $html .= $this->getNewestCategoryHtml(true, true);
+
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $html .= $this->getCategoryHtml($row, null, true, true);
         }
@@ -42,6 +45,9 @@ class CategoryContainers {
             $html .= $this->getBecauseYouWatchedCategoryHtml(true, false);
         }
 
+        $html .= $this->getMostViewedCategoryHtml(true, false);
+        $html .= $this->getNewestCategoryHtml(true, false);
+
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $html .= $this->getCategoryHtml($row, null, true, false);
         }
@@ -60,6 +66,9 @@ class CategoryContainers {
             $html .= $this->getContinueWatchingCategoryHtml(false, true);
             $html .= $this->getBecauseYouWatchedCategoryHtml(false, true);
         }
+
+        $html .= $this->getMostViewedCategoryHtml(false, true);
+        $html .= $this->getNewestCategoryHtml(false, true);
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $html .= $this->getCategoryHtml($row, null, false, true);
@@ -122,8 +131,8 @@ class CategoryContainers {
 	        </div>";
     }
 
-    private function getBecauseYouWatchedCategoryHtml($tvShows, $movies) {
-        $recommendation = EntityProvider::getBecauseYouWatchedRecommendation($this->con, $this->username, 30, $movies, $tvShows);
+	    private function getBecauseYouWatchedCategoryHtml($tvShows, $movies) {
+	        $recommendation = EntityProvider::getBecauseYouWatchedRecommendation($this->con, $this->username, 30, $movies, $tvShows);
 
         if(!$recommendation || empty($recommendation["entities"])) {
             return "";
@@ -137,19 +146,8 @@ class CategoryContainers {
             $entitiesHtml .= $previewProvider->createEntityPreviewSquare($entity);
         }
 
-        return "<div class='category recommendedCategory'>
-                <div class='category-header'>
-                    <h3>$title</h3>
-                    <div class='category-arrows'>
-                        <button class='scroll-arrow left'><i class='fa-solid fa-chevron-left'></i></button>
-                        <button class='scroll-arrow right'><i class='fa-solid fa-chevron-right'></i></button>
-                    </div>
-                </div>
-                <div class='entities'>
-                    $entitiesHtml
-                </div>
-        </div>";
-    }
+	        return $this->renderCategoryRow($title, $entitiesHtml, "recommendedCategory");
+	    }
 
     private function getContinueWatchingCategoryHtml($tvShows, $movies) {
         $items = VideoProvider::getContinueWatchingVideos($this->con, $this->username, 30, $movies, $tvShows);
@@ -166,7 +164,48 @@ class CategoryContainers {
 
         $title = htmlspecialchars(t("category.continue_watching"), ENT_QUOTES, "UTF-8");
 
-        return "<div class='category continueWatchingCategory'>
+	        return $this->renderCategoryRow($title, $itemsHtml, "continueWatchingCategory", "continueWatchingRow");
+	    }
+
+    private function getMostViewedCategoryHtml($tvShows, $movies) {
+        $entities = EntityProvider::getMostViewedEntities($this->con, 10, $movies, $tvShows);
+
+        if(empty($entities)) {
+            return "";
+        }
+
+        $title = htmlspecialchars(t("category.top_viewed"), ENT_QUOTES, "UTF-8");
+        $previewProvider = new PreviewProvider($this->con, $this->username);
+        $entitiesHtml = "";
+        foreach($entities as $entity) {
+            $entitiesHtml .= $previewProvider->createEntityPreviewSquare($entity);
+        }
+
+        return $this->renderCategoryRow($title, $entitiesHtml, "topViewedCategory");
+    }
+
+    private function getNewestCategoryHtml($tvShows, $movies) {
+        $entities = EntityProvider::getNewestEntities($this->con, 10, $movies, $tvShows);
+
+        if(empty($entities)) {
+            return "";
+        }
+
+        $title = htmlspecialchars(t("category.newest_releases"), ENT_QUOTES, "UTF-8");
+        $previewProvider = new PreviewProvider($this->con, $this->username);
+        $entitiesHtml = "";
+        foreach($entities as $entity) {
+            $entitiesHtml .= $previewProvider->createEntityPreviewSquare($entity);
+        }
+
+        return $this->renderCategoryRow($title, $entitiesHtml, "newestCategory");
+    }
+
+    private function renderCategoryRow($title, $itemsHtml, $categoryClass = "", $entitiesClass = "") {
+        $categoryClass = trim("category " . $categoryClass);
+        $entitiesClass = trim("entities " . $entitiesClass);
+
+        return "<div class='$categoryClass'>
                 <div class='category-header'>
                     <h3>$title</h3>
                     <div class='category-arrows'>
@@ -174,7 +213,7 @@ class CategoryContainers {
                         <button class='scroll-arrow right'><i class='fa-solid fa-chevron-right'></i></button>
                     </div>
                 </div>
-                <div class='entities continueWatchingRow'>
+                <div class='$entitiesClass'>
                     $itemsHtml
                 </div>
         </div>";
