@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 02, 2026 at 05:19 PM
+-- Generation Time: Apr 03, 2026 at 09:40 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `categories` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `categories`
@@ -69,7 +69,7 @@ CREATE TABLE `entities` (
   `thumbnail` varchar(250) NOT NULL,
   `preview` varchar(250) NOT NULL,
   `categoryId` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `entities`
@@ -214,7 +214,375 @@ CREATE TABLE `entityratings` (
 INSERT INTO `entityratings` (`id`, `username`, `entityId`, `rating`, `createdAt`, `updatedAt`) VALUES
 (1, 'recce-kenny', 62, 5, '2026-03-31 06:55:48', '2026-03-31 06:55:50'),
 (4, 'recce-kenny', 87, 5, '2026-03-31 07:02:35', '2026-03-31 07:02:35'),
-(5, 'recce-kenny', 99, 5, '2026-03-31 08:06:16', '2026-03-31 08:06:16');
+(5, 'recce-kenny', 99, 5, '2026-03-31 08:06:16', '2026-03-31 08:06:16'),
+(6, 'recce-kenny', 54, 5, '2026-04-03 07:32:23', '2026-04-03 07:32:23');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `entitytags`
+--
+
+CREATE TABLE `entitytags` (
+  `id` int(11) NOT NULL,
+  `entityId` int(11) NOT NULL,
+  `tagId` int(11) NOT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `entitytags`
+--
+
+INSERT INTO `entitytags` (`id`, `entityId`, `tagId`, `createdAt`) VALUES
+(1, 1, 81, '2026-04-03 06:57:38'),
+(2, 1, 2, '2026-04-03 06:57:38'),
+(3, 1, 17, '2026-04-03 06:57:38'),
+(4, 1, 20, '2026-04-03 06:57:38'),
+(5, 1, 50, '2026-04-03 06:57:38'),
+(6, 1, 89, '2026-04-03 06:57:38'),
+(7, 1, 93, '2026-04-03 06:57:38'),
+(8, 3, 81, '2026-04-03 06:57:38'),
+(9, 3, 11, '2026-04-03 06:57:38'),
+(10, 3, 20, '2026-04-03 06:57:38'),
+(11, 3, 50, '2026-04-03 06:57:38'),
+(12, 3, 89, '2026-04-03 06:57:38'),
+(13, 3, 93, '2026-04-03 06:57:38'),
+(14, 4, 78, '2026-04-03 06:57:38'),
+(15, 4, 12, '2026-04-03 06:57:38'),
+(16, 4, 23, '2026-04-03 06:57:38'),
+(17, 4, 20, '2026-04-03 06:57:38'),
+(18, 4, 89, '2026-04-03 06:57:38'),
+(19, 4, 42, '2026-04-03 06:57:38'),
+(20, 45, 81, '2026-04-03 06:57:38'),
+(21, 45, 2, '2026-04-03 06:57:38'),
+(23, 45, 17, '2026-04-03 06:57:38'),
+(25, 45, 20, '2026-04-03 06:57:38'),
+(26, 45, 50, '2026-04-03 06:57:38'),
+(28, 45, 89, '2026-04-03 06:57:38'),
+(32, 45, 85, '2026-04-03 06:57:38'),
+(36, 45, 93, '2026-04-03 06:57:38'),
+(40, 46, 81, '2026-04-03 06:57:38'),
+(44, 46, 3, '2026-04-03 06:57:38'),
+(48, 46, 26, '2026-04-03 06:57:38'),
+(52, 46, 15, '2026-04-03 06:57:38'),
+(56, 46, 23, '2026-04-03 06:57:38'),
+(60, 46, 89, '2026-04-03 06:57:38'),
+(64, 46, 93, '2026-04-03 06:57:38'),
+(68, 46, 50, '2026-04-03 06:57:38'),
+(72, 47, 81, '2026-04-03 06:57:38'),
+(76, 47, 12, '2026-04-03 06:57:38'),
+(80, 47, 23, '2026-04-03 06:57:38'),
+(84, 47, 20, '2026-04-03 06:57:38'),
+(88, 47, 93, '2026-04-03 06:57:38'),
+(92, 47, 50, '2026-04-03 06:57:38'),
+(96, 48, 81, '2026-04-03 06:57:38'),
+(100, 48, 2, '2026-04-03 06:57:38'),
+(103, 48, 17, '2026-04-03 06:57:38'),
+(107, 48, 20, '2026-04-03 06:57:38'),
+(112, 48, 50, '2026-04-03 06:57:38'),
+(115, 48, 89, '2026-04-03 06:57:38'),
+(120, 48, 93, '2026-04-03 06:57:38'),
+(123, 49, 81, '2026-04-03 06:57:38'),
+(127, 49, 2, '2026-04-03 06:57:38'),
+(131, 49, 17, '2026-04-03 06:57:38'),
+(135, 49, 20, '2026-04-03 06:57:38'),
+(139, 49, 50, '2026-04-03 06:57:38'),
+(143, 49, 89, '2026-04-03 06:57:38'),
+(147, 49, 93, '2026-04-03 06:57:38'),
+(151, 50, 81, '2026-04-03 06:57:38'),
+(155, 50, 11, '2026-04-03 06:57:38'),
+(157, 50, 20, '2026-04-03 06:57:38'),
+(161, 50, 50, '2026-04-03 06:57:38'),
+(166, 50, 89, '2026-04-03 06:57:38'),
+(170, 50, 93, '2026-04-03 06:57:38'),
+(175, 51, 81, '2026-04-03 06:57:38'),
+(178, 51, 11, '2026-04-03 06:57:38'),
+(181, 51, 20, '2026-04-03 06:57:38'),
+(186, 51, 50, '2026-04-03 06:57:38'),
+(188, 51, 89, '2026-04-03 06:57:38'),
+(192, 51, 85, '2026-04-03 06:57:38'),
+(197, 51, 93, '2026-04-03 06:57:38'),
+(202, 52, 81, '2026-04-03 06:57:38'),
+(205, 52, 11, '2026-04-03 06:57:38'),
+(209, 52, 20, '2026-04-03 06:57:38'),
+(213, 52, 50, '2026-04-03 06:57:38'),
+(217, 52, 89, '2026-04-03 06:57:38'),
+(222, 52, 93, '2026-04-03 06:57:38'),
+(225, 53, 81, '2026-04-03 06:57:38'),
+(230, 53, 11, '2026-04-03 06:57:38'),
+(234, 53, 20, '2026-04-03 06:57:38'),
+(237, 53, 50, '2026-04-03 06:57:38'),
+(240, 53, 89, '2026-04-03 06:57:38'),
+(244, 53, 93, '2026-04-03 06:57:38'),
+(249, 54, 81, '2026-04-03 06:57:38'),
+(254, 54, 11, '2026-04-03 06:57:38'),
+(257, 54, 20, '2026-04-03 06:57:38'),
+(260, 54, 50, '2026-04-03 06:57:38'),
+(266, 54, 89, '2026-04-03 06:57:38'),
+(270, 54, 85, '2026-04-03 06:57:38'),
+(272, 54, 93, '2026-04-03 06:57:38'),
+(276, 55, 81, '2026-04-03 06:57:38'),
+(281, 55, 11, '2026-04-03 06:57:38'),
+(286, 55, 20, '2026-04-03 06:57:38'),
+(289, 55, 50, '2026-04-03 06:57:38'),
+(294, 55, 89, '2026-04-03 06:57:38'),
+(297, 55, 85, '2026-04-03 06:57:38'),
+(301, 55, 93, '2026-04-03 06:57:38'),
+(305, 56, 81, '2026-04-03 06:57:38'),
+(310, 56, 11, '2026-04-03 06:57:38'),
+(313, 56, 20, '2026-04-03 06:57:38'),
+(317, 56, 50, '2026-04-03 06:57:38'),
+(321, 56, 89, '2026-04-03 06:57:38'),
+(325, 56, 85, '2026-04-03 06:57:38'),
+(328, 56, 93, '2026-04-03 06:57:38'),
+(334, 57, 81, '2026-04-03 06:57:38'),
+(338, 57, 7, '2026-04-03 06:57:38'),
+(340, 57, 62, '2026-04-03 06:57:38'),
+(346, 57, 30, '2026-04-03 06:57:38'),
+(348, 57, 34, '2026-04-03 06:57:38'),
+(354, 57, 89, '2026-04-03 06:57:38'),
+(356, 57, 93, '2026-04-03 06:57:38'),
+(362, 57, 50, '2026-04-03 06:57:38'),
+(366, 58, 78, '2026-04-03 06:57:38'),
+(369, 58, 74, '2026-04-03 06:57:38'),
+(373, 58, 23, '2026-04-03 06:57:38'),
+(378, 58, 42, '2026-04-03 06:57:38'),
+(380, 58, 20, '2026-04-03 06:57:38'),
+(385, 58, 89, '2026-04-03 06:57:38'),
+(390, 59, 78, '2026-04-03 06:57:38'),
+(393, 59, 12, '2026-04-03 06:57:38'),
+(398, 59, 23, '2026-04-03 06:57:38'),
+(401, 59, 20, '2026-04-03 06:57:38'),
+(406, 59, 89, '2026-04-03 06:57:38'),
+(410, 59, 42, '2026-04-03 06:57:38'),
+(414, 60, 78, '2026-04-03 06:57:38'),
+(416, 60, 70, '2026-04-03 06:57:38'),
+(421, 60, 12, '2026-04-03 06:57:38'),
+(425, 60, 23, '2026-04-03 06:57:38'),
+(429, 60, 20, '2026-04-03 06:57:38'),
+(432, 60, 89, '2026-04-03 06:57:38'),
+(436, 60, 93, '2026-04-03 06:57:38'),
+(440, 61, 81, '2026-04-03 06:57:38'),
+(446, 61, 12, '2026-04-03 06:57:38'),
+(449, 61, 23, '2026-04-03 06:57:38'),
+(453, 61, 20, '2026-04-03 06:57:38'),
+(457, 61, 89, '2026-04-03 06:57:38'),
+(460, 61, 93, '2026-04-03 06:57:38'),
+(465, 61, 50, '2026-04-03 06:57:38'),
+(469, 62, 78, '2026-04-03 06:57:38'),
+(474, 62, 1, '2026-04-03 06:57:38'),
+(478, 62, 58, '2026-04-03 06:57:38'),
+(481, 62, 30, '2026-04-03 06:57:38'),
+(485, 62, 13, '2026-04-03 06:57:38'),
+(489, 62, 89, '2026-04-03 06:57:38'),
+(493, 62, 85, '2026-04-03 06:57:38'),
+(497, 62, 42, '2026-04-03 06:57:38'),
+(500, 63, 78, '2026-04-03 06:57:38'),
+(506, 63, 70, '2026-04-03 06:57:38'),
+(508, 63, 12, '2026-04-03 06:57:38'),
+(512, 63, 23, '2026-04-03 06:57:38'),
+(518, 63, 20, '2026-04-03 06:57:38'),
+(522, 63, 89, '2026-04-03 06:57:38'),
+(525, 63, 93, '2026-04-03 06:57:38'),
+(528, 64, 78, '2026-04-03 06:57:38'),
+(532, 64, 70, '2026-04-03 06:57:38'),
+(537, 64, 12, '2026-04-03 06:57:38'),
+(540, 64, 23, '2026-04-03 06:57:38'),
+(544, 64, 20, '2026-04-03 06:57:38'),
+(548, 64, 42, '2026-04-03 06:57:38'),
+(552, 65, 78, '2026-04-03 06:57:38'),
+(557, 65, 70, '2026-04-03 06:57:38'),
+(561, 65, 12, '2026-04-03 06:57:38'),
+(565, 65, 23, '2026-04-03 06:57:38'),
+(569, 65, 20, '2026-04-03 06:57:38'),
+(574, 65, 89, '2026-04-03 06:57:38'),
+(577, 65, 93, '2026-04-03 06:57:38'),
+(580, 66, 78, '2026-04-03 06:57:38'),
+(585, 66, 70, '2026-04-03 06:57:38'),
+(590, 66, 12, '2026-04-03 06:57:38'),
+(592, 66, 23, '2026-04-03 06:57:38'),
+(598, 66, 20, '2026-04-03 06:57:38'),
+(602, 66, 89, '2026-04-03 06:57:38'),
+(606, 67, 78, '2026-04-03 06:57:38'),
+(609, 67, 70, '2026-04-03 06:57:38'),
+(612, 67, 12, '2026-04-03 06:57:38'),
+(618, 67, 23, '2026-04-03 06:57:38'),
+(620, 67, 20, '2026-04-03 06:57:38'),
+(624, 67, 89, '2026-04-03 06:57:38'),
+(629, 68, 78, '2026-04-03 06:57:38'),
+(632, 68, 7, '2026-04-03 06:57:38'),
+(637, 68, 62, '2026-04-03 06:57:38'),
+(641, 68, 30, '2026-04-03 06:57:38'),
+(645, 68, 34, '2026-04-03 06:57:38'),
+(649, 68, 89, '2026-04-03 06:57:38'),
+(652, 68, 93, '2026-04-03 06:57:38'),
+(658, 69, 78, '2026-04-03 06:57:38'),
+(660, 69, 7, '2026-04-03 06:57:38'),
+(666, 69, 62, '2026-04-03 06:57:38'),
+(670, 69, 30, '2026-04-03 06:57:38'),
+(674, 69, 34, '2026-04-03 06:57:38'),
+(676, 69, 89, '2026-04-03 06:57:38'),
+(681, 70, 81, '2026-04-03 06:57:38'),
+(686, 70, 7, '2026-04-03 06:57:38'),
+(688, 70, 62, '2026-04-03 06:57:38'),
+(692, 70, 30, '2026-04-03 06:57:38'),
+(697, 70, 34, '2026-04-03 06:57:38'),
+(701, 70, 89, '2026-04-03 06:57:38'),
+(705, 70, 93, '2026-04-03 06:57:38'),
+(708, 70, 50, '2026-04-03 06:57:38'),
+(714, 81, 81, '2026-04-03 06:57:38'),
+(717, 81, 1, '2026-04-03 06:57:38'),
+(721, 81, 58, '2026-04-03 06:57:38'),
+(724, 81, 30, '2026-04-03 06:57:38'),
+(729, 81, 13, '2026-04-03 06:57:38'),
+(732, 81, 89, '2026-04-03 06:57:38'),
+(736, 81, 85, '2026-04-03 06:57:38'),
+(742, 81, 93, '2026-04-03 06:57:38'),
+(746, 81, 50, '2026-04-03 06:57:38'),
+(749, 82, 81, '2026-04-03 06:57:38'),
+(754, 82, 1, '2026-04-03 06:57:38'),
+(756, 82, 58, '2026-04-03 06:57:38'),
+(762, 82, 30, '2026-04-03 06:57:38'),
+(764, 82, 13, '2026-04-03 06:57:38'),
+(769, 82, 89, '2026-04-03 06:57:38'),
+(774, 82, 85, '2026-04-03 06:57:38'),
+(776, 82, 93, '2026-04-03 06:57:38'),
+(780, 82, 50, '2026-04-03 06:57:38'),
+(786, 83, 81, '2026-04-03 06:57:38'),
+(788, 83, 1, '2026-04-03 06:57:38'),
+(792, 83, 58, '2026-04-03 06:57:38'),
+(798, 83, 30, '2026-04-03 06:57:38'),
+(802, 83, 13, '2026-04-03 06:57:38'),
+(805, 83, 89, '2026-04-03 06:57:38'),
+(808, 83, 85, '2026-04-03 06:57:38'),
+(814, 83, 93, '2026-04-03 06:57:38'),
+(817, 83, 50, '2026-04-03 06:57:38'),
+(820, 84, 81, '2026-04-03 06:57:38'),
+(824, 84, 1, '2026-04-03 06:57:38'),
+(829, 84, 58, '2026-04-03 06:57:38'),
+(834, 84, 30, '2026-04-03 06:57:38'),
+(836, 84, 13, '2026-04-03 06:57:38'),
+(840, 84, 89, '2026-04-03 06:57:38'),
+(845, 84, 85, '2026-04-03 06:57:38'),
+(850, 84, 93, '2026-04-03 06:57:38'),
+(855, 84, 50, '2026-04-03 06:57:38'),
+(858, 85, 81, '2026-04-03 06:57:38'),
+(862, 85, 6, '2026-04-03 06:57:38'),
+(867, 85, 38, '2026-04-03 06:57:38'),
+(871, 85, 58, '2026-04-03 06:57:38'),
+(874, 85, 13, '2026-04-03 06:57:38'),
+(878, 85, 89, '2026-04-03 06:57:38'),
+(882, 85, 93, '2026-04-03 06:57:38'),
+(887, 85, 50, '2026-04-03 06:57:38'),
+(890, 86, 81, '2026-04-03 06:57:38'),
+(895, 86, 2, '2026-04-03 06:57:38'),
+(899, 86, 17, '2026-04-03 06:57:38'),
+(902, 86, 20, '2026-04-03 06:57:38'),
+(906, 86, 50, '2026-04-03 06:57:38'),
+(910, 86, 89, '2026-04-03 06:57:38'),
+(914, 86, 93, '2026-04-03 06:57:38'),
+(918, 87, 81, '2026-04-03 06:57:38'),
+(922, 87, 3, '2026-04-03 06:57:38'),
+(927, 87, 26, '2026-04-03 06:57:38'),
+(931, 87, 15, '2026-04-03 06:57:38'),
+(935, 87, 23, '2026-04-03 06:57:38'),
+(939, 87, 89, '2026-04-03 06:57:38'),
+(943, 87, 93, '2026-04-03 06:57:38'),
+(947, 87, 50, '2026-04-03 06:57:38'),
+(951, 88, 81, '2026-04-03 06:57:38'),
+(954, 88, 3, '2026-04-03 06:57:38'),
+(958, 88, 26, '2026-04-03 06:57:38'),
+(963, 88, 15, '2026-04-03 06:57:38'),
+(967, 88, 23, '2026-04-03 06:57:38'),
+(970, 88, 89, '2026-04-03 06:57:38'),
+(975, 88, 93, '2026-04-03 06:57:38'),
+(979, 88, 50, '2026-04-03 06:57:38'),
+(982, 89, 81, '2026-04-03 06:57:38'),
+(987, 89, 3, '2026-04-03 06:57:38'),
+(990, 89, 26, '2026-04-03 06:57:38'),
+(995, 89, 15, '2026-04-03 06:57:38'),
+(999, 89, 23, '2026-04-03 06:57:38'),
+(1002, 89, 89, '2026-04-03 06:57:38'),
+(1007, 89, 93, '2026-04-03 06:57:38'),
+(1010, 89, 50, '2026-04-03 06:57:38'),
+(1014, 90, 81, '2026-04-03 06:57:38'),
+(1019, 90, 3, '2026-04-03 06:57:38'),
+(1022, 90, 26, '2026-04-03 06:57:38'),
+(1026, 90, 15, '2026-04-03 06:57:38'),
+(1030, 90, 23, '2026-04-03 06:57:38'),
+(1034, 90, 89, '2026-04-03 06:57:38'),
+(1039, 90, 93, '2026-04-03 06:57:38'),
+(1043, 90, 50, '2026-04-03 06:57:38'),
+(1046, 91, 81, '2026-04-03 06:57:38'),
+(1050, 91, 74, '2026-04-03 06:57:38'),
+(1055, 91, 23, '2026-04-03 06:57:38'),
+(1059, 91, 42, '2026-04-03 06:57:38'),
+(1062, 91, 20, '2026-04-03 06:57:38'),
+(1067, 91, 89, '2026-04-03 06:57:38'),
+(1071, 91, 93, '2026-04-03 06:57:38'),
+(1075, 91, 50, '2026-04-03 06:57:38'),
+(1079, 92, 81, '2026-04-03 06:57:38'),
+(1083, 92, 74, '2026-04-03 06:57:38'),
+(1087, 92, 23, '2026-04-03 06:57:38'),
+(1091, 92, 42, '2026-04-03 06:57:38'),
+(1095, 92, 20, '2026-04-03 06:57:38'),
+(1098, 92, 89, '2026-04-03 06:57:38'),
+(1103, 92, 93, '2026-04-03 06:57:38'),
+(1106, 92, 50, '2026-04-03 06:57:38'),
+(1111, 93, 81, '2026-04-03 06:57:38'),
+(1115, 93, 74, '2026-04-03 06:57:38'),
+(1119, 93, 23, '2026-04-03 06:57:38'),
+(1122, 93, 42, '2026-04-03 06:57:38'),
+(1126, 93, 20, '2026-04-03 06:57:38'),
+(1131, 93, 89, '2026-04-03 06:57:38'),
+(1135, 93, 93, '2026-04-03 06:57:38'),
+(1139, 93, 50, '2026-04-03 06:57:38'),
+(1142, 94, 81, '2026-04-03 06:57:38'),
+(1147, 94, 74, '2026-04-03 06:57:38'),
+(1151, 94, 23, '2026-04-03 06:57:38'),
+(1154, 94, 42, '2026-04-03 06:57:38'),
+(1159, 94, 20, '2026-04-03 06:57:38'),
+(1162, 94, 89, '2026-04-03 06:57:38'),
+(1166, 94, 93, '2026-04-03 06:57:38'),
+(1171, 94, 50, '2026-04-03 06:57:38'),
+(1174, 95, 81, '2026-04-03 06:57:38'),
+(1178, 95, 6, '2026-04-03 06:57:38'),
+(1182, 95, 38, '2026-04-03 06:57:38'),
+(1187, 95, 58, '2026-04-03 06:57:38'),
+(1191, 95, 13, '2026-04-03 06:57:38'),
+(1194, 95, 93, '2026-04-03 06:57:38'),
+(1198, 95, 50, '2026-04-03 06:57:38'),
+(1203, 96, 81, '2026-04-03 06:57:38'),
+(1206, 96, 6, '2026-04-03 06:57:38'),
+(1211, 96, 38, '2026-04-03 06:57:38'),
+(1214, 96, 58, '2026-04-03 06:57:38'),
+(1218, 96, 13, '2026-04-03 06:57:38'),
+(1223, 96, 89, '2026-04-03 06:57:38'),
+(1227, 96, 93, '2026-04-03 06:57:38'),
+(1231, 96, 50, '2026-04-03 06:57:38'),
+(1234, 97, 81, '2026-04-03 06:57:38'),
+(1239, 97, 6, '2026-04-03 06:57:38'),
+(1243, 97, 38, '2026-04-03 06:57:38'),
+(1246, 97, 58, '2026-04-03 06:57:38'),
+(1251, 97, 13, '2026-04-03 06:57:38'),
+(1254, 97, 89, '2026-04-03 06:57:38'),
+(1259, 97, 93, '2026-04-03 06:57:38'),
+(1262, 97, 50, '2026-04-03 06:57:38'),
+(1267, 98, 81, '2026-04-03 06:57:38'),
+(1270, 98, 12, '2026-04-03 06:57:38'),
+(1275, 98, 23, '2026-04-03 06:57:38'),
+(1279, 98, 20, '2026-04-03 06:57:38'),
+(1283, 98, 93, '2026-04-03 06:57:38'),
+(1287, 98, 50, '2026-04-03 06:57:38'),
+(1291, 99, 81, '2026-04-03 06:57:38'),
+(1294, 99, 7, '2026-04-03 06:57:38'),
+(1299, 99, 62, '2026-04-03 06:57:38'),
+(1303, 99, 30, '2026-04-03 06:57:38'),
+(1307, 99, 34, '2026-04-03 06:57:38'),
+(1310, 99, 89, '2026-04-03 06:57:38'),
+(1314, 99, 93, '2026-04-03 06:57:38'),
+(1319, 99, 50, '2026-04-03 06:57:38');
 
 -- --------------------------------------------------------
 
@@ -236,6 +604,65 @@ CREATE TABLE `plans` (
 
 INSERT INTO `plans` (`id`, `name`, `price`, `interval`, `intervalCount`) VALUES
 (1, 'Basic Monthly', 9.99, 'MONTH', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tags`
+--
+
+CREATE TABLE `tags` (
+  `id` int(11) NOT NULL,
+  `name` varchar(120) NOT NULL,
+  `slug` varchar(140) NOT NULL,
+  `tagType` varchar(50) NOT NULL,
+  `searchTerms` text DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tags`
+--
+
+INSERT INTO `tags` (`id`, `name`, `slug`, `tagType`, `searchTerms`, `createdAt`) VALUES
+(1, 'Action & Adventure', 'action-adventure', 'genre', 'action, adventure, hanh dong, phieu luu, truy duoi', '2026-04-03 06:57:38'),
+(2, 'Comedy', 'comedy', 'genre', 'comedy, funny, hai, hai huoc', '2026-04-03 06:57:38'),
+(3, 'Drama', 'drama', 'genre', 'drama, chinh kich, tinh cam', '2026-04-03 06:57:38'),
+(4, 'Horror', 'horror', 'genre', 'horror, kinh di, supernatural, sieu nhien', '2026-04-03 06:57:38'),
+(5, 'Romance', 'romance', 'genre', 'romance, lang man, ngon tinh, tinh cam', '2026-04-03 06:57:38'),
+(6, 'Sci-Fi & Fantasy', 'sci-fi-fantasy', 'genre', 'science fiction, fantasy, vien tuong, ky ao, phep thuat', '2026-04-03 06:57:38'),
+(7, 'Thriller', 'thriller', 'genre', 'thriller, giat gan, cang thang, tam ly toi pham', '2026-04-03 06:57:38'),
+(8, 'Documentary', 'documentary', 'genre', 'documentary, tai lieu, based on true story, su kien co that', '2026-04-03 06:57:38'),
+(9, 'Sports', 'sports', 'genre', 'sports, the thao, thi dau', '2026-04-03 06:57:38'),
+(10, 'Anime', 'anime', 'genre', 'anime, hoat hinh nhat ban', '2026-04-03 06:57:38'),
+(11, 'Cartoon', 'cartoon', 'genre', 'cartoon, hoat hinh', '2026-04-03 06:57:38'),
+(12, 'Family', 'family', 'audience', 'family, gia dinh, kids, tre em', '2026-04-03 06:57:38'),
+(13, 'Teens', 'teens', 'audience', 'teens, teen, thanh thieu nien, tuoi moi lon', '2026-04-03 06:57:38'),
+(15, 'Adults', 'adults', 'audience', 'adults, nguoi lon, 18+', '2026-04-03 06:57:38'),
+(17, 'Funny', 'funny', 'mood', 'funny, vui nhon, hai huoc, giai tri', '2026-04-03 06:57:38'),
+(20, 'Lighthearted', 'lighthearted', 'mood', 'lighthearted, nhe nhang, de thuong', '2026-04-03 06:57:38'),
+(23, 'Heartwarming', 'heartwarming', 'mood', 'heartwarming, healing, chua lanh, am ap', '2026-04-03 06:57:38'),
+(26, 'Emotional', 'emotional', 'mood', 'emotional, dau long, cam dong, tearjerker', '2026-04-03 06:57:38'),
+(30, 'Suspenseful', 'suspenseful', 'mood', 'suspenseful, cang thang, gay can', '2026-04-03 06:57:38'),
+(34, 'Dark', 'dark', 'mood', 'dark, tam toi, am anh', '2026-04-03 06:57:38'),
+(38, 'Imaginative', 'imaginative', 'mood', 'imaginative, hack nao, mind-bending, the gioi song song', '2026-04-03 06:57:38'),
+(42, 'Nostalgic', 'nostalgic', 'mood', 'nostalgic, hoai co, co dien', '2026-04-03 06:57:38'),
+(46, 'Inspiring', 'inspiring', 'mood', 'inspiring, truyen cam hung, vuon len', '2026-04-03 06:57:38'),
+(50, 'Friendship', 'friendship', 'content', 'friendship, tinh ban, dong doi', '2026-04-03 06:57:38'),
+(54, 'Coming of Age', 'coming-of-age', 'content', 'coming of age, thanh xuan, truong hoc, school life', '2026-04-03 06:57:38'),
+(58, 'Adventure', 'adventure', 'content', 'adventure, phieu luu, hanh trinh', '2026-04-03 06:57:38'),
+(62, 'Crime', 'crime', 'content', 'crime, toi pham, dieu tra', '2026-04-03 06:57:38'),
+(66, 'True Story', 'true-story', 'content', 'true story, chuyen co that, su kien co that', '2026-04-03 06:57:38'),
+(70, 'Holiday', 'holiday', 'content', 'holiday, christmas, giang sinh, le hoi', '2026-04-03 06:57:38'),
+(74, 'Musical', 'musical', 'content', 'musical, am nhac, ca nhac', '2026-04-03 06:57:38'),
+(78, 'Movie', 'movie-format', 'metadata', 'movie, phim le, feature film', '2026-04-03 06:57:38'),
+(81, 'Series', 'series-format', 'metadata', 'series, phim bo, tv show', '2026-04-03 06:57:38'),
+(85, 'Trending', 'trending', 'metadata', 'trending, xu huong, hot', '2026-04-03 06:57:38'),
+(89, 'Most Viewed', 'most-viewed', 'metadata', 'most viewed, xem nhieu, pho bien', '2026-04-03 06:57:38'),
+(93, 'New Release', 'new-release', 'metadata', 'new, moi phat hanh, moi nhat', '2026-04-03 06:57:38'),
+(97, 'Classic', 'classic-tag', 'metadata', 'classic, co dien, bat hu', '2026-04-03 06:57:38'),
+(101, 'Independent', 'independent', 'metadata', 'independent, indie, doc lap', '2026-04-03 06:57:38'),
+(104, 'Foreign', 'foreign', 'metadata', 'foreign, quoc te, nuoc ngoai', '2026-04-03 06:57:38');
 
 -- --------------------------------------------------------
 
@@ -465,7 +892,7 @@ CREATE TABLE `videos` (
   `season` int(11) DEFAULT 0,
   `episode` int(11) DEFAULT 0,
   `entityId` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `videos`
@@ -618,7 +1045,7 @@ INSERT INTO `videos` (`id`, `title`, `description`, `filePath`, `isMovie`, `uplo
 (160, 'The Licking Flowers', 'Nulla id faucibus orci morbi, at finibus scelerisque aliquam felis libero nisl. Condimentum lectus blandit. Amet a tortor primis pretium arcu quam dic', 'entities/videos/2.mp4', 0, '2019-10-12 22:07:53', '2016-08-09', 0, '34:37', 4, 12, 3),
 (161, 'Toy Story', 'Non lacus maecenas leo quisque ultrices platea enim accumsan. Ipsum luctus ultrices cursus hendrerit tempus hac. Nec augue sollicitudin tristique, ves', 'entities/videos/3.mp4', 1, '2019-10-12 22:07:53', '2000-08-14', 1, '25:51', 0, 0, 4),
 (196, 'Birch of Trainer', 'Lobortis ultrices varius et tempus sagittis conubia duis. Dolor nibh ligula vehicula. Lacinia quis proin eu taciti litora netus. Malesuada ut quis pri', 'entities/videos/2.mp4', 0, '2019-10-12 22:07:53', '2002-06-29', 10, '31:30', 1, 1, 45),
-(197, 'The Tale\'s Door', 'Mi metus mauris suspendisse ex massa proin hendrerit condimentum pellentesque sociosqu litora nam imperdiet morbi. Adipiscing mi at volutpat aliquam u', 'entities/videos/6.mp4', 0, '2019-10-12 22:07:53', '2017-04-05', 20, '49:29', 1, 2, 45),
+(197, 'The Tale\'s Door', 'Mi metus mauris suspendisse ex massa proin hendrerit condimentum pellentesque sociosqu litora nam imperdiet morbi. Adipiscing mi at volutpat aliquam u', 'entities/videos/6.mp4', 0, '2019-10-12 22:07:53', '2017-04-05', 21, '49:29', 1, 2, 45),
 (198, 'Shard of Dragon', 'Nulla ac massa vivamus sodales. Sit in erat massa per. Nulla nisi ex varius cubilia porttitor quam condimentum nostra eros habitant. Vitae vestibulum ', 'entities/videos/1.mp4', 0, '2019-10-12 22:07:53', '2005-08-25', 0, '32:28', 1, 3, 45),
 (199, 'The Dwindling Voyage', 'Malesuada erat viverra facilisis semper faucibus aptent taciti sem senectus. Auctor ante vivamus nostra. Nulla sed lobortis tortor posuere quam vel en', 'entities/videos/6.mp4', 0, '2019-10-12 22:07:53', '2015-10-19', 0, '46:28', 1, 4, 45),
 (200, 'The Dwindling Voyage', 'Sed id mauris luctus ultricies lectus turpis porta enim curabitur diam imperdiet dignissim netus. Amet egestas lacinia auctor faucibus ante dapibus ha', 'entities/videos/4.mp4', 0, '2019-10-12 22:07:53', '2018-01-04', 0, '43:43', 1, 5, 45),
@@ -1073,7 +1500,7 @@ INSERT INTO `videos` (`id`, `title`, `description`, `filePath`, `isMovie`, `uplo
 (646, 'Seventh Fire', 'Nulla ac ex dictumst nam aliquet. Tincidunt phasellus convallis augue urna gravida lectus taciti. Malesuada luctus ac venenatis hendrerit lectus donec', 'entities/videos/4.mp4', 0, '2019-10-12 22:07:53', '2012-04-14', 0, '34:49', 8, 6, 56),
 (647, 'The Dwindling Voyage', 'Placerat ac tortor est et eget hac himenaeos blandit duis ullamcorper. Volutpat a nec phasellus pretium odio. Maecenas facilisis auctor mollis nullam ', 'entities/videos/5.mp4', 0, '2019-10-12 22:07:53', '2009-11-08', 0, '46:14', 8, 7, 56),
 (648, 'Birch of Trainer', 'Lorem erat feugiat eleifend phasellus dapibus vel nostra accumsan imperdiet tristique senectus. Lobortis sollicitudin porttitor vel nostra blandit pot', 'entities/videos/2.mp4', 0, '2019-10-12 22:07:53', '2002-01-29', 0, '30:59', 8, 8, 56),
-(649, 'The Dwindling Voyage', 'At tincidunt ac felis eget consequat hac per tristique. Viverra vestibulum porta. At finibus nec tortor per conubia donec bibendum suscipit. Dolor pra', 'entities/videos/3.mp4', 0, '2019-10-12 22:07:53', '2005-08-23', 1, '24:59', 1, 1, 57),
+(649, 'The Dwindling Voyage', 'At tincidunt ac felis eget consequat hac per tristique. Viverra vestibulum porta. At finibus nec tortor per conubia donec bibendum suscipit. Dolor pra', 'entities/videos/3.mp4', 0, '2019-10-12 22:07:53', '2005-08-23', 2, '24:59', 1, 1, 57),
 (650, 'Silver Twilight', 'Non sapien tellus eget porttitor eu dui sodales laoreet. Velit vestibulum integer quisque faucibus pharetra sollicitudin, praesent dictum erat a est q', 'entities/videos/5.mp4', 0, '2019-10-12 22:07:53', '2006-01-03', 0, '22:29', 1, 2, 57),
 (651, 'Birch of Trainer', 'Adipiscing pharetra dapibus consequat platea elementum, egestas sed placerat volutpat pulvinar mollis pretium gravida sociosqu odio rhoncus nam tristi', 'entities/videos/3.mp4', 0, '2019-10-12 22:07:53', '2015-12-21', 0, '31:32', 1, 3, 57),
 (652, 'The Female of the Twins', 'Ex primis sagittis lectus enim. In lacus malesuada a est massa sollicitudin porttitor turpis accumsan congue suscipit fames. Interdum lobortis euismod', 'entities/videos/6.mp4', 0, '2019-10-12 22:07:53', '2010-11-14', 0, '41:56', 1, 4, 57),
@@ -2010,10 +2437,27 @@ ALTER TABLE `entityratings`
   ADD KEY `idx_rating_username` (`username`);
 
 --
+-- Indexes for table `entitytags`
+--
+ALTER TABLE `entitytags`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_entity_tag` (`entityId`,`tagId`),
+  ADD KEY `idx_entity_tags_entity` (`entityId`),
+  ADD KEY `idx_entity_tags_tag` (`tagId`);
+
+--
 -- Indexes for table `plans`
 --
 ALTER TABLE `plans`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tags`
+--
+ALTER TABLE `tags`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_tag_slug` (`slug`),
+  ADD KEY `idx_tags_type` (`tagType`);
 
 --
 -- Indexes for table `users`
@@ -2069,19 +2513,31 @@ ALTER TABLE `entities`
 -- AUTO_INCREMENT for table `entitycategories`
 --
 ALTER TABLE `entitycategories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=432;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=479;
 
 --
 -- AUTO_INCREMENT for table `entityratings`
 --
 ALTER TABLE `entityratings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `entitytags`
+--
+ALTER TABLE `entitytags`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11485;
 
 --
 -- AUTO_INCREMENT for table `plans`
 --
 ALTER TABLE `plans`
   MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `tags`
+--
+ALTER TABLE `tags`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1255;
 
 --
 -- AUTO_INCREMENT for table `users`
