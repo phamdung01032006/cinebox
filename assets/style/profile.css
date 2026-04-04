@@ -467,6 +467,46 @@
     background-color: transparent;
 }
 
+.profilePasswordField{
+    position: relative;
+    width: 100%;
+}
+
+.profilePasswordField input{
+    width: 100%;
+    padding-right: 72px;
+}
+
+.profilePasswordField .passwordToggle{
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    min-width: 44px;
+    height: 28px;
+    padding: 0 10px;
+    border: 1px solid rgba(255, 170, 84, 0.28);
+    border-radius: 999px;
+    background: rgba(22, 18, 16, 0.82);
+    color: rgba(255, 170, 84, 0.96);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.profilePasswordField .passwordToggle:hover{
+    background: rgba(255, 170, 84, 0.14);
+    border-color: rgba(255, 211, 165, 0.52);
+    color: #ffffff;
+    transform: translateY(-50%) scale(1.03);
+}
+
+.profilePasswordField .passwordToggle:active{
+    transform: translateY(-50%) scale(0.97);
+}
+
 .profileField select option{
     color: #111111;
 }

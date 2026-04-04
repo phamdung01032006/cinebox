@@ -166,6 +166,7 @@
     require_once("includes/header.php");
 ?>
 <link rel="stylesheet" href="assets/style/profile.css">
+<script src="assets/js/password-toggle.js" defer></script>
 <div class="profilePage">
     <div class="profileLayout">
         <aside class="profileLeft">
@@ -301,20 +302,29 @@
                 <div class="profileCol right">
                     <h3 class="updateProfile"><?php echo htmlspecialchars(t("profile.update_password")); ?></h3>
 
-                    <div class="profileField">
-                    <label for="oldPassword"><?php echo htmlspecialchars(t("profile.old_password")); ?></label>
-                    <input type="password" id="oldPassword" name="oldPassword" placeholder="<?php echo htmlspecialchars(t("profile.old_password")); ?>">
-                    </div>
+	                    <div class="profileField">
+	                    <label for="oldPassword"><?php echo htmlspecialchars(t("profile.old_password")); ?></label>
+                        <div class="passwordFieldWrap profilePasswordField">
+	                        <input type="password" id="oldPassword" name="oldPassword" placeholder="<?php echo htmlspecialchars(t("profile.old_password")); ?>">
+                            <button type="button" class="passwordToggle" data-show-label="<?php echo htmlspecialchars(t("form.show_password"), ENT_QUOTES, "UTF-8"); ?>" data-hide-label="<?php echo htmlspecialchars(t("form.hide_password"), ENT_QUOTES, "UTF-8"); ?>"></button>
+                        </div>
+	                    </div>
 
-                    <div class="profileField">
-                    <label for="newPassword"><?php echo htmlspecialchars(t("profile.new_password")); ?></label>
-                    <input type="password" id="newPassword" name="newPassword" placeholder="<?php echo htmlspecialchars(t("profile.new_password")); ?>">
-                    </div>
+	                    <div class="profileField">
+	                    <label for="newPassword"><?php echo htmlspecialchars(t("profile.new_password")); ?></label>
+                        <div class="passwordFieldWrap profilePasswordField">
+	                        <input type="password" id="newPassword" name="newPassword" placeholder="<?php echo htmlspecialchars(t("profile.new_password")); ?>">
+                            <button type="button" class="passwordToggle" data-show-label="<?php echo htmlspecialchars(t("form.show_password"), ENT_QUOTES, "UTF-8"); ?>" data-hide-label="<?php echo htmlspecialchars(t("form.hide_password"), ENT_QUOTES, "UTF-8"); ?>"></button>
+                        </div>
+	                    </div>
 
-                    <div class="profileField full">
-                    <label for="newPassword2"><?php echo htmlspecialchars(t("profile.confirm_new_password")); ?></label>
-                    <input type="password" id="newPassword2" name="newPassword2" placeholder="<?php echo htmlspecialchars(t("profile.confirm_new_password")); ?>">
-                    </div>
+	                    <div class="profileField full">
+	                    <label for="newPassword2"><?php echo htmlspecialchars(t("profile.confirm_new_password")); ?></label>
+                        <div class="passwordFieldWrap profilePasswordField">
+	                        <input type="password" id="newPassword2" name="newPassword2" placeholder="<?php echo htmlspecialchars(t("profile.confirm_new_password")); ?>">
+                            <button type="button" class="passwordToggle" data-show-label="<?php echo htmlspecialchars(t("form.show_password"), ENT_QUOTES, "UTF-8"); ?>" data-hide-label="<?php echo htmlspecialchars(t("form.hide_password"), ENT_QUOTES, "UTF-8"); ?>"></button>
+                        </div>
+	                    </div>
                     <div class="profileActions full">
                     <div class="message">
                         <?php echo $passwordMessage; ?>

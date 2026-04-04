@@ -12,7 +12,6 @@ class User {
     public function __construct($con, $username) {
         $this->con = $con;
         $this->ensureUserSchema();
-        RecommendationProvider::ensureSchema($this->con);
 
         $query = $con->prepare("SELECT * FROM users WHERE username=:username");
         $query->bindValue(":username",$username);
@@ -188,12 +187,8 @@ class User {
             return false;
         }
 
-        if($this->hasEntityInWishlist($entityId)) {
-            return "exists";
-        }
-
         $query = $this->con->prepare("
-            INSERT INTO wishlist(username, entityId)
+            INSERT IGNORE INTO wishlist(username, entityId)
             VALUES(:username, :entityId)
         ");
         $query->bindValue(":username", $this->sqlData["username"]);
@@ -202,7 +197,7 @@ class User {
             return false;
         }
 
-        return "added";
+        return $query->rowCount() > 0 ? "added" : "exists";
     }
 
     public function getWishlistEntities() {

@@ -35,13 +35,14 @@ function getInputValue($name) {
 
 <!DOCTYPE html>
 <html lang="<?php echo htmlspecialchars(getCurrentLanguage()); ?>">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars(t("site.title")); ?></title>
-    <link rel="stylesheet" type="text/css" href="assets/style/style.css"/>
+	<head>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <title><?php echo htmlspecialchars(t("site.title")); ?></title>
+	    <link rel="stylesheet" type="text/css" href="assets/style/style.css"/>
+        <script src="assets/js/password-toggle.js" defer></script>
 
-</head>
+	</head>
 <body>
     
     <div class="signInContainer">
@@ -71,10 +72,13 @@ function getInputValue($name) {
                 <label for="username"><?php echo htmlspecialchars(t("auth.username")); ?></label>
                 <input type="text" name="username" placeholder="<?php echo htmlspecialchars(t("auth.username")); ?>" value="<?php getInputValue("username") ?>" required>
                 
-                <label for="password"><?php echo htmlspecialchars(t("auth.password")); ?></label>
-                <input type="password" name="password" placeholder="<?php echo htmlspecialchars(t("auth.password")); ?>" required>
-                
-                <a href="register.php" class="signInMessage"><?php echo htmlspecialchars(t("auth.need_account")); ?> <span><?php echo htmlspecialchars(t("auth.sign_up_here")); ?></span></a>
+	                <label for="password"><?php echo htmlspecialchars(t("auth.password")); ?></label>
+                    <div class="passwordFieldWrap authPasswordField">
+	                    <input type="password" id="password" name="password" placeholder="<?php echo htmlspecialchars(t("auth.password")); ?>" required>
+                        <button type="button" class="passwordToggle" data-show-label="<?php echo htmlspecialchars(t("form.show_password"), ENT_QUOTES, "UTF-8"); ?>" data-hide-label="<?php echo htmlspecialchars(t("form.hide_password"), ENT_QUOTES, "UTF-8"); ?>"></button>
+                    </div>
+	                
+	                <a href="register.php" class="signInMessage"><?php echo htmlspecialchars(t("auth.need_account")); ?> <span><?php echo htmlspecialchars(t("auth.sign_up_here")); ?></span></a>
 
                 <button type="submit" name="submitButton"><?php echo htmlspecialchars(t("auth.login_button")); ?></button>
                 

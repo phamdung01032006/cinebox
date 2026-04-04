@@ -41,12 +41,13 @@ function getInputValue($name) {
 
 <!DOCTYPE html>
 <html lang="<?php echo htmlspecialchars(getCurrentLanguage()); ?>">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars(t("site.title")); ?></title>
-    <link rel="stylesheet" type="text/css" href="assets/style/style.css"/>
-</head>
+	<head>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <title><?php echo htmlspecialchars(t("site.title")); ?></title>
+	    <link rel="stylesheet" type="text/css" href="assets/style/style.css"/>
+        <script src="assets/js/password-toggle.js" defer></script>
+	</head>
 <body>
     
     <div class="signInContainer">
@@ -105,13 +106,19 @@ function getInputValue($name) {
                     </select>
 
 	                <?php echo $account->getError(Constants::$passwordsDontMatch)?>
-                <label for="password"><?php echo htmlspecialchars(t("auth.password")); ?></label>
-                <input type="password" id="password" name="password" placeholder="<?php echo htmlspecialchars(t("auth.password")); ?>" required>
+	                <label for="password"><?php echo htmlspecialchars(t("auth.password")); ?></label>
+                    <div class="passwordFieldWrap authPasswordField">
+	                    <input type="password" id="password" name="password" placeholder="<?php echo htmlspecialchars(t("auth.password")); ?>" required>
+                        <button type="button" class="passwordToggle" data-show-label="<?php echo htmlspecialchars(t("form.show_password"), ENT_QUOTES, "UTF-8"); ?>" data-hide-label="<?php echo htmlspecialchars(t("form.hide_password"), ENT_QUOTES, "UTF-8"); ?>"></button>
+                    </div>
 
-                <label for="password2"><?php echo htmlspecialchars(t("auth.confirm_password")); ?></label>
-                <input type="password" id="password2" name="password2" placeholder="<?php echo htmlspecialchars(t("auth.confirm_password")); ?>" required>
-                
-                <a href="login.php" class="signInMessage"><?php echo htmlspecialchars(t("auth.already_have_account")); ?> <span><?php echo htmlspecialchars(t("auth.log_in_here")); ?></span></a>
+	                <label for="password2"><?php echo htmlspecialchars(t("auth.confirm_password")); ?></label>
+                    <div class="passwordFieldWrap authPasswordField">
+	                    <input type="password" id="password2" name="password2" placeholder="<?php echo htmlspecialchars(t("auth.confirm_password")); ?>" required>
+                        <button type="button" class="passwordToggle" data-show-label="<?php echo htmlspecialchars(t("form.show_password"), ENT_QUOTES, "UTF-8"); ?>" data-hide-label="<?php echo htmlspecialchars(t("form.hide_password"), ENT_QUOTES, "UTF-8"); ?>"></button>
+                    </div>
+	                
+	                <a href="login.php" class="signInMessage"><?php echo htmlspecialchars(t("auth.already_have_account")); ?> <span><?php echo htmlspecialchars(t("auth.log_in_here")); ?></span></a>
 
                 <button type="submit" name="submitButton"><?php echo htmlspecialchars(t("auth.sign_up_button")); ?></button>
                 

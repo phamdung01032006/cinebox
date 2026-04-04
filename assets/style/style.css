@@ -238,6 +238,47 @@ a {
     border-radius: 100px;
 }
 
+.passwordFieldWrap {
+    position: relative;
+    width: 100%;
+}
+
+.authPasswordField input {
+    width: 100%;
+    margin-bottom: 0 !important;
+    padding-right: 72px !important;
+}
+
+.passwordToggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    min-width: 44px;
+    height: 28px;
+    padding: 0 10px;
+    border: 1px solid rgba(255, 170, 84, 0.28);
+    border-radius: 999px;
+    background: rgba(22, 18, 16, 0.82);
+    color: rgba(255, 170, 84, 0.96);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.passwordToggle:hover {
+    background: rgba(255, 170, 84, 0.14);
+    border-color: rgba(255, 211, 165, 0.52);
+    color: #ffffff;
+    transform: translateY(-50%) scale(1.03);
+}
+
+.passwordToggle:active {
+    transform: translateY(-50%) scale(0.97);
+}
+
 .column form select option {
     color: #111111;
 }
@@ -1615,7 +1656,7 @@ button i {
 }
 
 .textboxContainer {
-    padding:100px 100px 0px 100px;
+    padding:100px 50px 0px 50px;
     display: flex;
     justify-content: center;
 }
