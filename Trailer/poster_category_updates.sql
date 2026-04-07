@@ -2672,14 +2672,6 @@ UPDATE entities
 SET categoryId = 7
 WHERE id IN (433);
 
--- High School Teacher: Maturing
--- TMDB genres: Drama, Romance
--- Local category: Romantic (6)
--- Mapping reason: TMDB genre Romance
-UPDATE entities
-SET categoryId = 6
-WHERE id IN (434);
-
 -- Wonder Woman
 -- TMDB genres: Action, Adventure, Fantasy
 -- Local category: Sci - Fi & Fantasy (7)

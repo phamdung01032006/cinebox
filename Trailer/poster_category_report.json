@@ -1,8 +1,8 @@
 {
     "summary": {
-        "csvRows": 338,
-        "processedTitles": 338,
-        "updatedEntities": 338,
+        "csvRows": 337,
+        "processedTitles": 337,
+        "updatedEntities": 337,
         "fallbackCount": 0,
         "unmatchedTmdbCount": 0,
         "missingImportedEntities": 0
@@ -11080,32 +11080,6 @@
             "categoryId": 7,
             "categoryName": "Sci - Fi & Fantasy",
             "mappingReason": "TMDB genre Science Fiction/Fantasy",
-            "fallback": false
-        },
-        {
-            "title": "High School Teacher: Maturing",
-            "poster": "https://image.tmdb.org/t/p/original/r83w6ClnMYLIlyP46uKp5MFJd7y.jpg",
-            "entityIds": [
-                434
-            ],
-            "tmdbStatus": "matched",
-            "tmdbUrl": "https://www.themoviedb.org/movie/630639?language=en-US",
-            "tmdbGenres": [
-                "Drama",
-                "Romance"
-            ],
-            "keywords": [
-                "high school teacher",
-                "softcore",
-                "pink film"
-            ],
-            "releaseYear": 1985,
-            "countries": [
-                "Japan"
-            ],
-            "categoryId": 6,
-            "categoryName": "Romantic",
-            "mappingReason": "TMDB genre Romance",
             "fallback": false
         },
         {
