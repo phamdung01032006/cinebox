@@ -5,13 +5,14 @@ class PosterMovieLibrary {
     private const IMPORT_CATEGORY_ID = 19;
     private const IMPORT_VIDEO_PREFIX = "Trailer/imported/";
     private const DEFAULT_DURATION = "02:30";
+    private const DEFAULT_TRAILER_SOURCE_SUBDIR = "entities/videos";
 
-    public static function syncFromCsv($con, $csvPath, $trailerDir) {
+    public static function syncFromCsv($con, $csvPath, $trailerDir, $trailerSourceDir = null) {
         $rows = self::readPosterRows($csvPath);
-        $videoPool = self::prepareTrailerVideoPool($trailerDir);
+        $videoPool = self::prepareTrailerVideoPool($trailerDir, $trailerSourceDir);
 
         if(empty($videoPool)) {
-            throw new RuntimeException("No trailer videos were found in the Trailer directory.");
+            throw new RuntimeException("No trailer videos were found in the configured trailer source.");
         }
 
         $desiredCounts = [];
@@ -109,7 +110,7 @@ class PosterMovieLibrary {
                 }
             }
 
-            $rebalancedCount = 0;
+            $rebalancedCount = self::rebalanceImportedMediaPaths($con, $videoPool);
 
             $con->commit();
         }
@@ -125,6 +126,7 @@ class PosterMovieLibrary {
             "csvRows" => count($rows),
             "existingMatched" => $existingMatched,
             "inserted" => $inserted,
+            "rebalancedTrailers" => $rebalancedCount,
             "rebalancedCategories" => $rebalancedCount,
             "importedMovieCount" => self::countImportedMovies($con),
             "trailerVideoCount" => count($videoPool)
@@ -201,15 +203,17 @@ class PosterMovieLibrary {
         return $rows;
     }
 
-    private static function prepareTrailerVideoPool($trailerDir) {
-        $sourceFiles = glob(rtrim($trailerDir, "\\/") . DIRECTORY_SEPARATOR . "*.mp4") ?: [];
+    private static function prepareTrailerVideoPool($trailerDir, $trailerSourceDir = null) {
+        $trailerDir = rtrim($trailerDir, "\\/");
+        $sourceDir = self::resolveTrailerSourceDir($trailerDir, $trailerSourceDir);
+        $sourceFiles = glob($sourceDir . DIRECTORY_SEPARATOR . "*.mp4") ?: [];
         sort($sourceFiles, SORT_NATURAL | SORT_FLAG_CASE);
 
         if(empty($sourceFiles)) {
             return [];
         }
 
-        $importDir = rtrim($trailerDir, "\\/") . DIRECTORY_SEPARATOR . "imported";
+        $importDir = $trailerDir . DIRECTORY_SEPARATOR . "imported";
         if(!is_dir($importDir) && !mkdir($importDir, 0777, true) && !is_dir($importDir)) {
             throw new RuntimeException("Unable to create Trailer/imported directory.");
         }
@@ -219,7 +223,7 @@ class PosterMovieLibrary {
             $targetFileName = sprintf("trailer-%03d.mp4", $index + 1);
             $targetFilePath = $importDir . DIRECTORY_SEPARATOR . $targetFileName;
 
-            if(!is_file($targetFilePath) && !copy($sourceFile, $targetFilePath)) {
+            if(!self::syncTrailerFile($sourceFile, $targetFilePath)) {
                 throw new RuntimeException("Unable to prepare sanitized trailer files.");
             }
 
@@ -245,6 +249,104 @@ class PosterMovieLibrary {
         }
 
         return $counts;
+    }
+
+    private static function rebalanceImportedMediaPaths($con, $videoPool) {
+        if(empty($videoPool)) {
+            return 0;
+        }
+
+        $entityQuery = $con->prepare("
+            SELECT id, preview
+            FROM entities
+            WHERE preview LIKE :previewPrefix
+            ORDER BY id ASC
+        ");
+        $entityQuery->bindValue(":previewPrefix", self::IMPORT_VIDEO_PREFIX . "%");
+        $entityQuery->execute();
+
+        $videoQuery = $con->prepare("
+            SELECT id, filePath
+            FROM videos
+            WHERE entityId = :entityId
+            ORDER BY id ASC
+        ");
+        $updateEntity = $con->prepare("
+            UPDATE entities
+            SET preview = :preview
+            WHERE id = :id
+        ");
+        $updateVideo = $con->prepare("
+            UPDATE videos
+            SET filePath = :filePath
+            WHERE id = :id
+        ");
+
+        $rebalancedCount = 0;
+        $index = 0;
+
+        while($entity = $entityQuery->fetch(PDO::FETCH_ASSOC)) {
+            $targetVideoPath = $videoPool[$index % count($videoPool)];
+            $updated = false;
+
+            if((string)$entity["preview"] !== $targetVideoPath) {
+                $updateEntity->bindValue(":preview", $targetVideoPath);
+                $updateEntity->bindValue(":id", (int)$entity["id"], PDO::PARAM_INT);
+                $updateEntity->execute();
+                $updated = true;
+            }
+
+            $videoQuery->bindValue(":entityId", (int)$entity["id"], PDO::PARAM_INT);
+            $videoQuery->execute();
+
+            while($video = $videoQuery->fetch(PDO::FETCH_ASSOC)) {
+                if((string)$video["filePath"] === $targetVideoPath) {
+                    continue;
+                }
+
+                $updateVideo->bindValue(":filePath", $targetVideoPath);
+                $updateVideo->bindValue(":id", (int)$video["id"], PDO::PARAM_INT);
+                $updateVideo->execute();
+                $updated = true;
+            }
+
+            if($updated) {
+                $rebalancedCount++;
+            }
+
+            $index++;
+        }
+
+        return $rebalancedCount;
+    }
+
+    private static function resolveTrailerSourceDir($trailerDir, $trailerSourceDir = null) {
+        if($trailerSourceDir !== null) {
+            $trailerSourceDir = rtrim((string)$trailerSourceDir, "\\/");
+            if(!is_dir($trailerSourceDir)) {
+                throw new RuntimeException("Trailer source directory was not found: " . $trailerSourceDir);
+            }
+
+            return $trailerSourceDir;
+        }
+
+        $defaultSourceDir = dirname($trailerDir) . DIRECTORY_SEPARATOR . self::DEFAULT_TRAILER_SOURCE_SUBDIR;
+        if(is_dir($defaultSourceDir)) {
+            return $defaultSourceDir;
+        }
+
+        return $trailerDir;
+    }
+
+    private static function syncTrailerFile($sourceFile, $targetFilePath) {
+        $sourceRealPath = realpath($sourceFile);
+        $targetRealPath = is_file($targetFilePath) ? realpath($targetFilePath) : false;
+
+        if($sourceRealPath !== false && $targetRealPath !== false && strcasecmp($sourceRealPath, $targetRealPath) === 0) {
+            return true;
+        }
+
+        return copy($sourceFile, $targetFilePath);
     }
 
     private static function getNextId($con, $tableName) {

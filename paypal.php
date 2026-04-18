@@ -4,7 +4,7 @@ require_once("includes/config.php");
 require_once("includes/header.php");
 
 // Include the database connection file 
-include_once 'dbConnect.php'; 
+include_once 'includes/dbConnect.php'; 
 
 // Fetch plans from the database 
 $sqlQ = "SELECT * FROM plans"; 
@@ -252,4 +252,4 @@ const resultMessage = (msg_txt) => {
 </body>
 </html>
 
-<?php require_once("footer.php"); ?>
+<?php require_once("includes/footer.php"); ?>

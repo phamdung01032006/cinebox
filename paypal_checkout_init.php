@@ -2,10 +2,10 @@
 // Include the configuration file  
 require_once("includes/config.php");
 // Include the database connection file  
-include_once 'dbConnect.php';  
+include_once 'includes/dbConnect.php';  
   
 // Include the PayPal API library  
-require_once 'PaypalCheckout.class.php';  
+require_once 'includes/classes/PayPalCheckout.php';  
 $paypal = new PaypalCheckout;  
   
 $response = array('status' => 0, 'msg' => 'Request Failed!');  

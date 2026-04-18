@@ -1,2 +1,6 @@
 #file config.php
 config.php
+sess_*
+ai_service/__pycache__/
+ai_service/*.log
+ai_service/.uvicorn.pid
