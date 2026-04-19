@@ -38,7 +38,7 @@ echo $containers->showCategory($_GET["id"]);
         </div>
     </div>
 
-    <?php require_once("footer.php"); ?>
+    <?php require_once("includes/footer.php"); ?>
     
 </body>
 </html>

@@ -3,7 +3,7 @@
 require_once("includes/config.php");
 require_once("includes/header.php");
 // Include the database connection file  
-require_once 'dbConnect.php'; 
+require_once 'includes/dbConnect.php'; 
 
 $statusMsg = ''; 
 $status = 'error'; 
@@ -100,4 +100,4 @@ if(!empty($_GET['checkout_ref_id'])){
     </div>
 </div>
 
-<?php require_once("footer.php"); ?>
+<?php require_once("includes/footer.php"); ?>

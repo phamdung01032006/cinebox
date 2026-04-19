@@ -132,4 +132,4 @@ $upNextNotice = $upNextLocked ? htmlspecialchars($user->getVideoAccessMessage($u
     initVideo("<?php echo $video->getId(); ?>", "<?php echo $userLoggedIn; ?>");
 </script>
 
-<?php require_once("footer.php"); ?>
+<?php require_once("includes/footer.php"); ?>
