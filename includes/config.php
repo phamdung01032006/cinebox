@@ -48,10 +48,13 @@ if(!defined("HOME_CATEGORY_ROW_LIMIT")) {
     define("HOME_CATEGORY_ROW_LIMIT", 8);
 }
 if(!defined("BROWSE_CATEGORY_ROW_LIMIT")) {
-    define("BROWSE_CATEGORY_ROW_LIMIT", 12);
+    define("BROWSE_CATEGORY_ROW_LIMIT", 8);
 }
 if(!defined("CATEGORY_PAGE_ROW_LIMIT")) {
     define("CATEGORY_PAGE_ROW_LIMIT", 30);
+}
+if(!defined("BROWSE_MAX_CATEGORIES")) {
+    define("BROWSE_MAX_CATEGORIES", 10);
 }
 if(!defined("CONTINUE_WATCHING_LIMIT")) {
     define("CONTINUE_WATCHING_LIMIT", 12);
@@ -61,6 +64,9 @@ if(!defined("RECOMMENDATION_ROW_LIMIT")) {
 }
 if(!defined("HOMEPAGE_MAX_CATEGORIES")) {
     define("HOMEPAGE_MAX_CATEGORIES", 8);
+}
+if(!defined("FEATURED_ROW_LIMIT")) {
+    define("FEATURED_ROW_LIMIT", 8);
 }
  
  

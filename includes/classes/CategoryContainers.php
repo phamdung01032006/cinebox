@@ -35,7 +35,20 @@ class CategoryContainers {
     }
 
     public function showTVShowCategories() {
-        $query = $this->con->prepare("SELECT * FROM categories");
+        $query = $this->con->prepare("
+            SELECT c.*
+            FROM categories c
+            WHERE EXISTS (
+                SELECT 1
+                FROM entities e
+                INNER JOIN videos v ON v.entityId = e.id
+                WHERE e.categoryId = c.id
+                AND v.isMovie = 0
+            )
+            ORDER BY c.id ASC
+            LIMIT :limit
+        ");
+        $query->bindValue(":limit", (int)BROWSE_MAX_CATEGORIES, PDO::PARAM_INT);
         $query->execute();
 
         $html = "<div class='previewCategories'>
@@ -46,8 +59,8 @@ class CategoryContainers {
             $html .= $this->getBecauseYouWatchedCategoryHtml(true, false);
         }
 
-        $html .= $this->getMostViewedCategoryHtml(true, false);
-        $html .= $this->getNewestCategoryHtml(true, false);
+        $html .= $this->getMostViewedCategoryHtml(true, false, FEATURED_ROW_LIMIT);
+        $html .= $this->getNewestCategoryHtml(true, false, FEATURED_ROW_LIMIT);
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $html .= $this->getCategoryHtml($row, null, true, false, BROWSE_CATEGORY_ROW_LIMIT);
@@ -57,7 +70,20 @@ class CategoryContainers {
     }
 
     public function showMovieCategories() {
-        $query = $this->con->prepare("SELECT * FROM categories");
+        $query = $this->con->prepare("
+            SELECT c.*
+            FROM categories c
+            WHERE EXISTS (
+                SELECT 1
+                FROM entities e
+                INNER JOIN videos v ON v.entityId = e.id
+                WHERE e.categoryId = c.id
+                AND v.isMovie = 1
+            )
+            ORDER BY c.id ASC
+            LIMIT :limit
+        ");
+        $query->bindValue(":limit", (int)BROWSE_MAX_CATEGORIES, PDO::PARAM_INT);
         $query->execute();
 
         $html = "<div class='previewCategories'>
@@ -68,8 +94,8 @@ class CategoryContainers {
             $html .= $this->getBecauseYouWatchedCategoryHtml(false, true);
         }
 
-        $html .= $this->getMostViewedCategoryHtml(false, true);
-        $html .= $this->getNewestCategoryHtml(false, true);
+        $html .= $this->getMostViewedCategoryHtml(false, true, FEATURED_ROW_LIMIT);
+        $html .= $this->getNewestCategoryHtml(false, true, FEATURED_ROW_LIMIT);
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $html .= $this->getCategoryHtml($row, null, false, true, BROWSE_CATEGORY_ROW_LIMIT);
@@ -169,8 +195,8 @@ class CategoryContainers {
 	        return $this->renderCategoryRow($title, $itemsHtml, "continueWatchingCategory", "continueWatchingRow");
 	    }
 
-    private function getMostViewedCategoryHtml($tvShows, $movies) {
-        $entities = EntityProvider::getMostViewedEntities($this->con, 10, $movies, $tvShows);
+    private function getMostViewedCategoryHtml($tvShows, $movies, $limit = FEATURED_ROW_LIMIT) {
+        $entities = EntityProvider::getMostViewedEntities($this->con, (int)$limit, $movies, $tvShows);
 
         if(empty($entities)) {
             return "";
@@ -186,8 +212,8 @@ class CategoryContainers {
         return $this->renderCategoryRow($title, $entitiesHtml, "topViewedCategory");
     }
 
-    private function getNewestCategoryHtml($tvShows, $movies) {
-        $entities = EntityProvider::getNewestEntities($this->con, 10, $movies, $tvShows);
+    private function getNewestCategoryHtml($tvShows, $movies, $limit = FEATURED_ROW_LIMIT) {
+        $entities = EntityProvider::getNewestEntities($this->con, (int)$limit, $movies, $tvShows);
 
         if(empty($entities)) {
             return "";

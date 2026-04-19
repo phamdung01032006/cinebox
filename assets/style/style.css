@@ -524,6 +524,12 @@ a {
     overflow: visible;
 }
 
+/* Only render visible category rows to reduce initial paint cost. */
+.category {
+    content-visibility: auto;
+    contain-intrinsic-size: 420px;
+}
+
 /* Chỉ cho cuộn ngang ở entities bằng auto + thêm khoảng đệm */
 .entities {
     overflow-x: auto;
