@@ -13,7 +13,8 @@ class CategoryContainers {
     }
 
     public function showAllCategories() {
-        $query = $this->con->prepare("SELECT * FROM categories");
+        $query = $this->con->prepare("SELECT * FROM categories ORDER BY id ASC LIMIT :limit");
+        $query->bindValue(":limit", (int)HOMEPAGE_MAX_CATEGORIES, PDO::PARAM_INT);
         $query->execute();
 
         $html = "<div class='previewCategories'>";
@@ -27,7 +28,7 @@ class CategoryContainers {
         $html .= $this->getNewestCategoryHtml(true, true);
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
-            $html .= $this->getCategoryHtml($row, null, true, true);
+            $html .= $this->getCategoryHtml($row, null, true, true, HOME_CATEGORY_ROW_LIMIT);
         }
 
         return $html . "</div>";
@@ -49,7 +50,7 @@ class CategoryContainers {
         $html .= $this->getNewestCategoryHtml(true, false);
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
-            $html .= $this->getCategoryHtml($row, null, true, false);
+            $html .= $this->getCategoryHtml($row, null, true, false, BROWSE_CATEGORY_ROW_LIMIT);
         }
 
         return $html . "</div>";
@@ -71,7 +72,7 @@ class CategoryContainers {
         $html .= $this->getNewestCategoryHtml(false, true);
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
-            $html .= $this->getCategoryHtml($row, null, false, true);
+            $html .= $this->getCategoryHtml($row, null, false, true, BROWSE_CATEGORY_ROW_LIMIT);
         }
 
         return $html . "</div>";
@@ -85,24 +86,25 @@ class CategoryContainers {
         $html = "<div class='previewCategories noScroll'>";
 
         while($row = $query->fetch(PDO::FETCH_ASSOC)) {
-            $html .= $this->getCategoryHtml($row, $title, true, true);
+            $html .= $this->getCategoryHtml($row, $title, true, true, CATEGORY_PAGE_ROW_LIMIT);
         }
 
         return $html . "</div>";
     }
 
-    private function getCategoryHtml($sqlData, $title, $tvShows, $movies) {
+    private function getCategoryHtml($sqlData, $title, $tvShows, $movies, $limit = BROWSE_CATEGORY_ROW_LIMIT) {
         $categoryId = $sqlData["id"];
         $title = $title == null ? $sqlData["name"] : $title;
+        $limit = max(1, (int)$limit);
 
         if($tvShows && $movies) {
-            $entities = EntityProvider::getEntities($this->con, $categoryId, 30);
+            $entities = EntityProvider::getEntities($this->con, $categoryId, $limit);
         }
         else if($tvShows) {
-            $entities = EntityProvider::getTVShowEntities($this->con, $categoryId, 30);
+            $entities = EntityProvider::getTVShowEntities($this->con, $categoryId, $limit);
         }
         else {
-            $entities = EntityProvider::getMoviesEntities($this->con, $categoryId, 30);
+            $entities = EntityProvider::getMoviesEntities($this->con, $categoryId, $limit);
         }
 
         if(sizeof($entities) == 0) {
@@ -132,7 +134,7 @@ class CategoryContainers {
     }
 
 	    private function getBecauseYouWatchedCategoryHtml($tvShows, $movies) {
-	        $recommendation = EntityProvider::getBecauseYouWatchedRecommendation($this->con, $this->username, 30, $movies, $tvShows);
+	        $recommendation = EntityProvider::getBecauseYouWatchedRecommendation($this->con, $this->username, RECOMMENDATION_ROW_LIMIT, $movies, $tvShows);
 
         if(!$recommendation || empty($recommendation["entities"])) {
             return "";
@@ -150,7 +152,7 @@ class CategoryContainers {
 	    }
 
     private function getContinueWatchingCategoryHtml($tvShows, $movies) {
-        $items = VideoProvider::getContinueWatchingVideos($this->con, $this->username, 30, $movies, $tvShows);
+        $items = VideoProvider::getContinueWatchingVideos($this->con, $this->username, CONTINUE_WATCHING_LIMIT, $movies, $tvShows);
 
         if(empty($items)) {
             return "";

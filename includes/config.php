@@ -42,6 +42,26 @@ if(!$recommendationApiBaseUrl) {
     $recommendationApiBaseUrl = 'http://127.0.0.1:8000';
 }
 define('RECOMMENDATION_API_BASE_URL', rtrim($recommendationApiBaseUrl, '/'));
+
+// Listing performance tuning
+if(!defined("HOME_CATEGORY_ROW_LIMIT")) {
+    define("HOME_CATEGORY_ROW_LIMIT", 8);
+}
+if(!defined("BROWSE_CATEGORY_ROW_LIMIT")) {
+    define("BROWSE_CATEGORY_ROW_LIMIT", 12);
+}
+if(!defined("CATEGORY_PAGE_ROW_LIMIT")) {
+    define("CATEGORY_PAGE_ROW_LIMIT", 30);
+}
+if(!defined("CONTINUE_WATCHING_LIMIT")) {
+    define("CONTINUE_WATCHING_LIMIT", 12);
+}
+if(!defined("RECOMMENDATION_ROW_LIMIT")) {
+    define("RECOMMENDATION_ROW_LIMIT", 12);
+}
+if(!defined("HOMEPAGE_MAX_CATEGORIES")) {
+    define("HOMEPAGE_MAX_CATEGORIES", 8);
+}
  
  
 // Start session 

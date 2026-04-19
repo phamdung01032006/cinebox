@@ -46,11 +46,9 @@ $clientTranslations = [
         window.cineboxI18n = <?php echo json_encode($clientTranslations, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
     </script>
     <script src="assets/js/script.js"></script>
-    <script src="assets/js/background.js" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-    <?php require_once(__DIR__ . "/background.php"); ?>
     <div class='wrapper'>
 
     <div class="topBar">

@@ -75,14 +75,16 @@ $(document).ready(function() {
 let popupPlayer = null;
 
 $(document).ready(function () {
+    const popupEl = document.getElementById("videoPopupPlayer");
+    if (!popupEl) return;
 
-	    popupPlayer = new Plyr("#videoPopupPlayer", {
-	        controls: [
-	            "restart", "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
-	            "mute", "volume", "settings", "pip", "fullscreen",
-	        ],
-	        volume: 1
-	    });
+    popupPlayer = new Plyr("#videoPopupPlayer", {
+        controls: [
+            "restart", "play-large", "rewind", "play", "fast-forward", "progress", "current-time", "duration",
+            "mute", "volume", "settings", "pip", "fullscreen",
+        ],
+        volume: 1
+    });
 });
 
 
@@ -132,6 +134,8 @@ $(document).ready(function () {
 // });
 
 function openVideoPopup(button) {
+    if (!popupPlayer) return;
+
     var src = $(button).data("src");
     var title = $(button).data("title") || "";
 
@@ -350,6 +354,11 @@ $(document).on("click", ".ratingStar", function() {
 });
 
 function closeVideoPopup() {
+    if (!popupPlayer) {
+        $("#videoPopup").removeClass("show");
+        return;
+    }
+
     popupPlayer.pause();
     popupPlayer.stop();
     $("#videoPopup").removeClass("show");

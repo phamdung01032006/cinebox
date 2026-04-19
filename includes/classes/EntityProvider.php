@@ -10,7 +10,7 @@ class EntityProvider {
             $sql .= "WHERE categoryId=:categoryId ";
         }
 
-        $sql .= "ORDER BY RAND() LIMIT :limit";
+        $sql .= "ORDER BY id DESC LIMIT :limit";
 
         $query = $con->prepare($sql);
 
@@ -40,7 +40,7 @@ class EntityProvider {
             $sql .= "AND categoryId=:categoryId ";
         }
 
-        $sql .= "ORDER BY RAND() LIMIT :limit";
+        $sql .= "ORDER BY entities.id DESC LIMIT :limit";
 
         $query = $con->prepare($sql);
 
@@ -70,7 +70,7 @@ class EntityProvider {
             $sql .= "AND categoryId=:categoryId ";
         }
 
-        $sql .= "ORDER BY RAND() LIMIT :limit";
+        $sql .= "ORDER BY entities.id DESC LIMIT :limit";
 
         $query = $con->prepare($sql);
 
@@ -136,6 +136,54 @@ class EntityProvider {
         }
 
         return $result;
+    }
+
+    public static function getRandomEntity($con, $categoryId = null, $isMovie = null) {
+
+        $where = [];
+        if($categoryId !== null) {
+            $where[] = "e.categoryId = :categoryId";
+        }
+        if($isMovie !== null) {
+            $where[] = "EXISTS (
+                SELECT 1
+                FROM videos v
+                WHERE v.entityId = e.id
+                AND v.isMovie = :isMovie
+            )";
+        }
+
+        $whereSql = empty($where) ? "" : ("WHERE " . implode(" AND ", $where));
+
+        $countSql = "SELECT COUNT(*) FROM entities e $whereSql";
+        $countQuery = $con->prepare($countSql);
+        if($categoryId !== null) {
+            $countQuery->bindValue(":categoryId", (int)$categoryId, PDO::PARAM_INT);
+        }
+        if($isMovie !== null) {
+            $countQuery->bindValue(":isMovie", $isMovie ? 1 : 0, PDO::PARAM_INT);
+        }
+        $countQuery->execute();
+        $total = (int)$countQuery->fetchColumn();
+
+        if($total <= 0) {
+            return null;
+        }
+
+        $offset = mt_rand(0, $total - 1);
+        $sql = "SELECT e.* FROM entities e $whereSql ORDER BY e.id DESC LIMIT 1 OFFSET :offset";
+        $query = $con->prepare($sql);
+        if($categoryId !== null) {
+            $query->bindValue(":categoryId", (int)$categoryId, PDO::PARAM_INT);
+        }
+        if($isMovie !== null) {
+            $query->bindValue(":isMovie", $isMovie ? 1 : 0, PDO::PARAM_INT);
+        }
+        $query->bindValue(":offset", $offset, PDO::PARAM_INT);
+        $query->execute();
+
+        $row = $query->fetch(PDO::FETCH_ASSOC);
+        return $row ? new Entity($con, $row) : null;
     }
 
     public static function getMostViewedEntities($con, $limit = 10, $movies = true, $tvShows = true) {

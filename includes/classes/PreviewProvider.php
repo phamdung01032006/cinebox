@@ -49,9 +49,13 @@ class PreviewProvider {
             $entity = $this->getRandomEntity();
         }
 
+        if($entity == null) {
+            return "";
+        }
+
         $id = $entity->getId();
         $name = $entity->getName();
-        $preview = $entity->getPreview();
+        $preview = $this->resolvePreviewPath($entity->getPreview());
         $thumbnail = $entity->getThumbnail();
 
 	        $safePreview = htmlspecialchars($preview, ENT_QUOTES, 'UTF-8');
@@ -89,9 +93,9 @@ class PreviewProvider {
         $subHeading = $video->isMovie() ? "" : "<h4>" . htmlspecialchars($seasonEpisode, ENT_QUOTES, "UTF-8") . "</h4>";
 
 	        return "<div class='previewContainer'>
-	            <img src='$thumbnail' class='previewImage' hidden>
+            <img src='$thumbnail' class='previewImage' hidden loading='lazy' decoding='async'>
 
-            <video autoplay muted class='previewVideo' onended='previewEnded()'>
+            <video autoplay muted playsinline preload='metadata' class='previewVideo' onended='previewEnded()' onerror='previewEnded()'>
                 <source src='$preview' type='video/mp4'>
             </video>
 
@@ -131,7 +135,7 @@ class PreviewProvider {
                             $wishlistButton
 	                        <a href='entity.php?id=$id' class='entityCardLink'>
 	    	                    <div class='previewContainer small'>
-	    	                        <img src='$thumbnail' title='$safeName' alt='$safeName'>
+                                <img src='$thumbnail' title='$safeName' alt='$safeName' loading='lazy' decoding='async'>
     	                    </div>
     	                    <div class='entityTitle'>$safeName</div>
                         </a>
@@ -156,7 +160,7 @@ class PreviewProvider {
         return "<div class='continueWatchCard'>
                     <a href='watch.php?id=$videoId' class='continueWatchLink'>
                         <div class='continueWatchThumbWrap'>
-                            <img src='$thumbnail' alt='$entityName' class='continueWatchThumb'>
+                            <img src='$thumbnail' alt='$entityName' class='continueWatchThumb' loading='lazy' decoding='async'>
                             <span class='continueWatchBadge'>" . htmlspecialchars(t("preview.resume_now"), ENT_QUOTES, 'UTF-8') . "</span>
                             <div class='continueWatchProgress'>
                                 <span $progressStyle></span>
@@ -211,9 +215,40 @@ class PreviewProvider {
     // chọn film ngẫu nhiên để chiếu preview
     private function getRandomEntity() {
 
-        $entity = EntityProvider::getEntities($this->con, null, 1);
-        return $entity[0];
+        $entity = EntityProvider::getRandomEntity($this->con);
+        if($entity) {
+            return $entity;
+        }
 
+        $fallback = EntityProvider::getEntities($this->con, null, 1);
+        return empty($fallback) ? null : $fallback[0];
+
+    }
+
+    private function resolvePreviewPath($previewPath) {
+        $previewPath = trim((string)$previewPath);
+        if($previewPath === "") {
+            return $previewPath;
+        }
+
+        if(strpos($previewPath, "http://") === 0 || strpos($previewPath, "https://") === 0 || strpos($previewPath, "/") === 0) {
+            return $previewPath;
+        }
+
+        $candidates = [$previewPath];
+
+        if(stripos($previewPath, "Trailer/") === 0) {
+            $candidates[] = "database/" . $previewPath;
+        }
+
+        foreach($candidates as $candidate) {
+            $absolute = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . str_replace(["/", "\\"], DIRECTORY_SEPARATOR, $candidate);
+            if(is_file($absolute)) {
+                return str_replace("\\", "/", $candidate);
+            }
+        }
+
+        return $previewPath;
     }
 
 }
