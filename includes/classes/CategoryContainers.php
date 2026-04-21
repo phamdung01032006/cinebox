@@ -20,6 +20,7 @@ class CategoryContainers {
         $html = "<div class='previewCategories'>";
 
         if($this->username) {
+            $html .= $this->getRecommendedForYouCategoryHtml(true, true);
             $html .= $this->getContinueWatchingCategoryHtml(true, true);
             $html .= $this->getBecauseYouWatchedCategoryHtml(true, true);
         }
@@ -55,6 +56,7 @@ class CategoryContainers {
                     <h1>" . htmlspecialchars(t("category.tv_shows_heading"), ENT_QUOTES, "UTF-8") . "</h1>";
 
         if($this->username) {
+            $html .= $this->getRecommendedForYouCategoryHtml(true, false);
             $html .= $this->getContinueWatchingCategoryHtml(true, false);
             $html .= $this->getBecauseYouWatchedCategoryHtml(true, false);
         }
@@ -90,6 +92,7 @@ class CategoryContainers {
                     <h1>" . htmlspecialchars(t("category.movies_heading"), ENT_QUOTES, "UTF-8") . "</h1>";
 
         if($this->username) {
+            $html .= $this->getRecommendedForYouCategoryHtml(false, true);
             $html .= $this->getContinueWatchingCategoryHtml(false, true);
             $html .= $this->getBecauseYouWatchedCategoryHtml(false, true);
         }
@@ -159,7 +162,7 @@ class CategoryContainers {
 	        </div>";
     }
 
-	    private function getBecauseYouWatchedCategoryHtml($tvShows, $movies) {
+    private function getBecauseYouWatchedCategoryHtml($tvShows, $movies) {
 	        $recommendation = EntityProvider::getBecauseYouWatchedRecommendation($this->con, $this->username, RECOMMENDATION_ROW_LIMIT, $movies, $tvShows);
 
         if(!$recommendation || empty($recommendation["entities"])) {
@@ -176,6 +179,29 @@ class CategoryContainers {
 
 	        return $this->renderCategoryRow($title, $entitiesHtml, "recommendedCategory");
 	    }
+
+    private function getRecommendedForYouCategoryHtml($tvShows, $movies) {
+        $entities = EntityProvider::getRecommendedEntitiesForUser(
+            $this->con,
+            $this->username,
+            RECOMMENDATION_ROW_LIMIT,
+            $movies,
+            $tvShows
+        );
+
+        if(empty($entities)) {
+            return "";
+        }
+
+        $title = htmlspecialchars(t("category.recommended_for_you"), ENT_QUOTES, "UTF-8");
+        $entitiesHtml = "";
+        $previewProvider = new PreviewProvider($this->con, $this->username);
+        foreach($entities as $entity) {
+            $entitiesHtml .= $previewProvider->createEntityPreviewSquare($entity);
+        }
+
+        return $this->renderCategoryRow($title, $entitiesHtml, "recommendedCategory");
+    }
 
     private function getContinueWatchingCategoryHtml($tvShows, $movies) {
         $items = VideoProvider::getContinueWatchingVideos($this->con, $this->username, CONTINUE_WATCHING_LIMIT, $movies, $tvShows);
